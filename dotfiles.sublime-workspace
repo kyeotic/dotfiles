@@ -1,0 +1,356 @@
+{
+	"auto_complete":
+	{
+		"selected_items":
+		[
+			[
+				"nav",
+				"navLinks"
+			],
+			[
+				"react",
+				"react-burger-menu"
+			],
+			[
+				"Na",
+				"NavLink"
+			],
+			[
+				"ini",
+				"initialState"
+			],
+			[
+				"rot",
+				"rootReducer"
+			],
+			[
+				"con",
+				"configureStore"
+			],
+			[
+				"Rea",
+				"ReactDOM"
+			],
+			[
+				"class",
+				"className"
+			]
+		]
+	},
+	"buffers":
+	[
+	],
+	"build_system": "",
+	"build_system_choices":
+	[
+	],
+	"build_varint": "",
+	"command_palette":
+	{
+		"height": 267.0,
+		"last_filter": "",
+		"selected_items":
+		[
+			[
+				"html",
+				"HTMLPrettify"
+			],
+			[
+				"instal",
+				"Package Control: Install Package"
+			],
+			[
+				"remove",
+				"Package Control: Remove Package"
+			],
+			[
+				"install",
+				"Package Control: Install Package"
+			],
+			[
+				"reint",
+				"Indentation: Reindent Lines"
+			],
+			[
+				"sshtml",
+				"Set Syntax: HTML"
+			],
+			[
+				"ssbabe",
+				"Set Syntax: JavaScript (Babel)"
+			],
+			[
+				"json",
+				"Pretty JSON: Format (Pretty Print) JSON"
+			],
+			[
+				"ins",
+				"Package Control: Install Package"
+			],
+			[
+				"isnta",
+				"Package Control: Install Package"
+			],
+			[
+				"instla",
+				"Package Control: Install Package"
+			],
+			[
+				"ssmd",
+				"Set Syntax: Markdown"
+			],
+			[
+				"ssjs",
+				"Set Syntax: JavaScript (Babel)"
+			],
+			[
+				"insta",
+				"Package Control: Install Package"
+			]
+		],
+		"width": 467.0
+	},
+	"console":
+	{
+		"height": 126.0,
+		"history":
+		[
+			"import urllib.request,os,hashlib; h = '2915d1851351e5ee549c20394736b442' + '8bc59f460fa1548d1514676163dafc88'; pf = 'Package Control.sublime-package'; ipp = sublime.installed_packages_path(); urllib.request.install_opener( urllib.request.build_opener( urllib.request.ProxyHandler()) ); by = urllib.request.urlopen( 'http://packagecontrol.io/' + pf.replace(' ', '%20')).read(); dh = hashlib.sha256(by).hexdigest(); print('Error validating download (got %s instead of %s), please try manual install' % (dh, h)) if dh != h else open(os.path.join( ipp, pf), 'wb' ).write(by)"
+		]
+	},
+	"distraction_free":
+	{
+		"menu_visible": true,
+		"show_minimap": false,
+		"show_open_files": false,
+		"show_tabs": false,
+		"side_bar_visible": false,
+		"status_bar_visible": false
+	},
+	"expanded_folders":
+	[
+		"/Users/tkye/dotfiles"
+	],
+	"file_history":
+	[
+		"/Users/tkye/dev/swagger-editor/app/scripts/bootstrap.js",
+		"/Users/tkye/dev/techrev-devportal-client/jspm.config.js",
+		"/Users/tkye/dev/techrev-devportal-client/src/config/config.prod.js",
+		"/Users/tkye/dev/techrev-devportal-client/src/editor/editorPage.js",
+		"/Users/tkye/dev/techrev-devportal-client/src/config/config.dev.js",
+		"/Users/tkye/dev/techrev-devportal-client/swagger-editor/package.json",
+		"/Users/tkye/dev/techrev-devportal-client/swagger-editor/CNAME",
+		"/Users/tkye/dev/techrev-devportal-client/src/editor/app_bak/index.html",
+		"/Users/tkye/dev/techrev-devportal-client/src/editor/app/CNAME",
+		"/Users/tkye/dev/techrev-devportal-client/src/editor/app/index.html",
+		"/Users/tkye/dev/techrev-devportal-client/src/editor/app/config/defaults.json",
+		"/Users/tkye/dev/techrev-devportal-client/dist/index.html",
+		"/Users/tkye/dev/techrev-devportal-client/src/editor/app_bak/config/defaults.json",
+		"/Users/tkye/dev/techrev-devportal-client/src/editor/app/styles/branding.css",
+		"/Users/tkye/dev/techrev-devportal-client/src/editor/app_bak/styles/branding.css",
+		"/Users/tkye/dev/techrev-devportal-client/.gitignore",
+		"/Users/tkye/dev/techrev-devportal-client/src/root/app.js",
+		"/Users/tkye/dev/techrev-devportal-client/dist/app.js",
+		"/Users/tkye/dev/techrev-devportal-client/jspm_packages/.dependencies.json",
+		"/Users/tkye/dev/techrev-devportal-client/index.html",
+		"/Users/tkye/dev/techrev-devportal-client/package.json",
+		"/Users/tkye/dev/techrev-devportal-client/src/editor/app/scripts/branding.js",
+		"/Users/tkye/dev/techrev-devportal-client/src/editor/app/views/main.html",
+		"/Users/tkye/dev/techrev-devportal-client/src/navigation/navLink.js",
+		"/Users/tkye/dev/techrev-devportal-client/src/navigation/slideMenu.js",
+		"/Users/tkye/dev/techrev-devportal-client/assets/stylus/app.styl",
+		"/Users/tkye/dev/techrev-devportal-client/assets/stylus/navbar.styl",
+		"/Users/tkye/dev/techrev-devportal-client/assets/stylus/core.styl",
+		"/Users/tkye/dev/techrev-devportal-client/lib/react-burger-menu/react-burger-menu.js",
+		"/Users/tkye/dev/techrev-devportal-client/jspm.browser.js",
+		"/Users/tkye/dev/techrev-devportal-client/assets/stylus/browser-fixes.styl",
+		"/Users/tkye/dev/techrev-devportal-client/src/main.js",
+		"/Users/tkye/dev/techrev-devportal-client/src/root/store.js",
+		"/Users/tkye/dev/techrev-devportal-client/assets/css/snkrs.css",
+		"/Users/tkye/dev/techrev-devportal-client/src/root/root.js",
+		"/Users/tkye/dev/techrev-devportal-client/src/root/rootReducer.js",
+		"/Users/tkye/dev/swagger-editor/package.json",
+		"/Users/tkye/dev/swagger-editor2/swagger-editor/package.json",
+		"/Users/tkye/dev/semantic-demo/package.json",
+		"/Users/tkye/dev/semantic-demo/index.html",
+		"/Users/tkye/dev/techrev-apigateway-client/package.json",
+		"/Users/tkye/dev/techrev-apigateway-client/.gitignore",
+		"/Users/tkye/dev/semantic-demo/src/root/reducer.js",
+		"/Users/tkye/dev/semantic-demo/src/main.js",
+		"/Users/tkye/dev/semantic-demo/jspm.browser.js",
+		"/Users/tkye/dev/semantic-demo/src/components/containers.js",
+		"/Users/tkye/dev/semantic-demo/src/test.js",
+		"/Users/tkye/dev/semantic-demo/jspm.config.js",
+		"/Users/tkye/dev/semantic-demo/src/root.js",
+		"/Users/tkye/dev/generator-react-jspm/generators/app/templates/index.html",
+		"/Users/tkye/Google Drive/Work/work-notes",
+		"/Users/tkye/Downloads/solarized/osx-terminal.app-colors-solarized/README.md"
+	],
+	"find":
+	{
+		"height": 23.0
+	},
+	"find_in_files":
+	{
+		"height": 93.0,
+		"where_history":
+		[
+			"/Users/tkye/dev/techrev-devportal-client/src",
+			"/Users/tkye/dev/techrev-devportal-client/src,-/Users/tkye/dev/techrev-devportal-client/src/editor/*",
+			"/Users/tkye/dev/techrev-devportal-client/src"
+		]
+	},
+	"find_state":
+	{
+		"case_sensitive": false,
+		"find_history":
+		[
+			";",
+			"swaywork",
+			"decor",
+			";",
+			":",
+			"	",
+			"  ",
+			"toggle",
+			"Show",
+			";",
+			"}",
+			"{",
+			"Sidebar",
+			":",
+			";",
+			"{",
+			"}",
+			":",
+			";",
+			"class",
+			"span",
+			"pathname",
+			";",
+			"exports",
+			";",
+			"getState",
+			"syncHistory",
+			";",
+			"Segment",
+			"class",
+			"routeReducer",
+			"syncHistory",
+			"app",
+			";",
+			"semantic",
+			";"
+		],
+		"highlight": true,
+		"in_selection": false,
+		"preserve_case": false,
+		"regex": false,
+		"replace_history":
+		[
+		],
+		"reverse": false,
+		"show_context": true,
+		"use_buffer2": true,
+		"whole_word": false,
+		"wrap": true
+	},
+	"groups":
+	[
+		{
+			"sheets":
+			[
+			]
+		}
+	],
+	"incremental_find":
+	{
+		"height": 23.0
+	},
+	"input":
+	{
+		"height": 31.0
+	},
+	"layout":
+	{
+		"cells":
+		[
+			[
+				0,
+				0,
+				1,
+				1
+			]
+		],
+		"cols":
+		[
+			0.0,
+			1.0
+		],
+		"rows":
+		[
+			0.0,
+			1.0
+		]
+	},
+	"menu_visible": true,
+	"output.find_results":
+	{
+		"height": 0.0
+	},
+	"pinned_build_system": "",
+	"project": "dotfiles.sublime-project",
+	"replace":
+	{
+		"height": 42.0
+	},
+	"save_all_on_build": true,
+	"select_file":
+	{
+		"height": 0.0,
+		"last_filter": "",
+		"selected_items":
+		[
+			[
+				"",
+				"package.json"
+			],
+			[
+				"inde.html",
+				"index.html"
+			]
+		],
+		"width": 0.0
+	},
+	"select_project":
+	{
+		"height": 0.0,
+		"last_filter": "",
+		"selected_items":
+		[
+		],
+		"width": 0.0
+	},
+	"select_symbol":
+	{
+		"height": 0.0,
+		"last_filter": "",
+		"selected_items":
+		[
+		],
+		"width": 0.0
+	},
+	"selected_group": 0,
+	"settings":
+	{
+	},
+	"show_minimap": true,
+	"show_open_files": false,
+	"show_tabs": true,
+	"side_bar_visible": true,
+	"side_bar_width": 183.0,
+	"status_bar_visible": true,
+	"template_settings":
+	{
+	}
+}

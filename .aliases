@@ -8,3 +8,9 @@ alias .....="cd ../../../.."
 alias dev="cd ~/dev"
 alias g="git"
 alias serve-http="http-server ./ -p 3000 -c-1 --silent"
+alias g-clean="git branch --merged | grep -v \"\*\" | grep -v master | grep -v dev | xargs -n 1 git branch -d"
+
+#Work Shortcuts
+alias load-vpn="sudo launchctl load -w /Library/LaunchDaemons/com.cisco.anyconnect.vpnagentd.plist"
+alias unload-vpn="sudo launchctl unload -w /Library/LaunchDaemons/com.cisco.anyconnect.vpnagentd.plist"
+alias jenkins-ssh="ssh -i ~/.ssh/JenkinsKey.pem ec2-user@10.178.155.95"
