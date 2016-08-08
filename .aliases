@@ -10,8 +10,15 @@ alias g="git"
 alias serve-http="http-server ./ -p 3000 -c-1 --silent"
 alias g-clean="git branch --merged | grep -v \"\*\" | grep -v master | grep -v dev | xargs -n 1 git branch -d"
 alias g-clean-remote="git branch -r --merged | grep -v master | sed 's/origin\///' | xargs -n 1 git push --delete origin"
+alias disk-usage="du -hsx * | sort -n -r"
 
 #Work Shortcuts
 alias load-vpn="sudo launchctl load -w /Library/LaunchDaemons/com.cisco.anyconnect.vpnagentd.plist"
 alias unload-vpn="sudo launchctl unload -w /Library/LaunchDaemons/com.cisco.anyconnect.vpnagentd.plist"
 alias jenkins-ssh="ssh -i ~/.ssh/JenkinsKey.pem ec2-user@10.178.155.95"
+alias upgrade-nikepipe="sudo pip install nikepipe -U -i http://artifactory.pes.nikecloud.com/artifactory/api/pypi/techrev/simple --trusted-host artifactory.pes.nikecloud.com --ignore-installed"
+
+ec2connect() {
+  ssh -i ~/.ssh/JenkinsKey.pem ec2-user@$1
+}
+alias ec2-ssh=ec2connect
