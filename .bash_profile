@@ -5,8 +5,7 @@ for file in ~/.{bash_prompt,aliases}; do
 	[ -r "$file" ] && [ -f "$file" ] && source "$file";
 done;
 unset file;
-
-export HOMEBREW_GITHUB_API_TOKEN=ee4a70705209d9acfbd73b882420274c0466efeb
+[[ -s ~/.bashrc ]] && source ~/.bashrc
 
 # Add tab completion for many Bash commands
 if which brew > /dev/null && [ -f "$(brew --prefix)/share/bash-completion/bash_completion" ]; then
@@ -20,4 +19,9 @@ if type _git &> /dev/null && [ -f /usr/local/etc/bash_completion.d/git-completio
 	complete -o default -o nospace -F _git g;
 fi;
 
-export EDITOR='subl -w'
+export EDITOR='code'
+ssh-add -A #osx keychain identities
+
+export HOMEBREW_GITHUB_API_TOKEN=ee4a70705209d9acfbd73b882420274c0466efeb
+export GOPATH=$HOME/dev/go
+export PATH=$PATH:$(go env GOPATH)/bin

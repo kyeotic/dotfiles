@@ -1,9 +1,13 @@
 [alias]
+	stat = status
+	c = !g commit -m
 	ac = !git add -A && git commit -m
 	nuke = !sh -c 'git branch -D $1 && git push origin :$1' -
 	amend = commit -a --amend
 	undo = reset HEAD~1 --mixed
+	clear = !git clean -df && git checkout -- .
 	wipe = !git add -A && git commit -qm 'WIPE SAVEPOINT' && git reset HEAD~1 --hard
 	up = !git pull --rebase --prune $@ && git submodule update --init --recursive
 	co = checkout
 	cob = checkout -b
+	push-all = !git push && git push --tags
