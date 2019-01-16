@@ -23,5 +23,11 @@ export EDITOR='code'
 ssh-add -A #osx keychain identities
 
 export HOMEBREW_GITHUB_API_TOKEN=ee4a70705209d9acfbd73b882420274c0466efeb
-export GOPATH=$HOME/go
+export GOPATH=$HOME/dev/go
 export PATH=$PATH:$(go env GOPATH)/bin
+
+#export NVM_DIR="$HOME/.nvm"
+#[ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh" # This loads nvm
+if command -v pyenv 1>/dev/null 2>&1; then
+  eval "$(pyenv init -)"
+fi

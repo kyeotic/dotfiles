@@ -11,8 +11,9 @@ alias k="kubectl"
 alias t="terraform"
 alias d="docker"
 alias serve-http="http-server ./ -p 3000 -c-1 --silent"
-alias g-clean="git branch --merged | grep -v \"\*\" | grep -v master | grep -v dev | xargs -n 1 git branch -d"
+alias g-clean="git remote prune origin && git branch --merged | grep -v \"\*\" | grep -v master | grep -v dev | xargs -n 1 git branch -d"
 alias g-clean-remote="git branch -r --merged | grep -v master | sed 's/origin\///' | xargs -n 1 git push --delete origin"
+alias g-up="git checkout master && git pull && g-clean"
 alias disk-usage="du -hsx * | sort -n -r"
 alias file-size='ls -hlS'
 alias docker-kill-all='docker rm -f $(docker ps -a -q)'
@@ -22,28 +23,10 @@ alias load-vpn="sudo launchctl load -w /Library/LaunchDaemons/com.cisco.anyconne
 alias unload-vpn="sudo launchctl unload -w /Library/LaunchDaemons/com.cisco.anyconnect.vpnagentd.plist"
 alias jenkins-ssh="ssh -i ~/.ssh/JenkinsKey.pem ec2-user@10.178.155.95"
 alias upgrade-nikepipe="sudo pip install nikepipe -U -i http://artifactory.pes.nikecloud.com/artifactory/api/pypi/techrev/simple --trusted-host artifactory.pes.nikecloud.com --ignore-installed"
+alias clear-aws="rm ~/.aws/credentials"
 
 ec2connect() {
   key=${2-"JenkinsKey"}
   ssh -i ~/.ssh/$key.pem ec2-user@$1
 }
 alias ec2-ssh=ec2connect
-
-update_terraform() {
-  INSTALL_DIR="$(dirname $(which terraform))"
-  URL="https://releases.hashicorp.com/terraform"
-  current_version=$($(which terraform) -v | awk '{print $2}'| sed s/v//)
-  latest_version="$(curl -sL $URL | grep -v beta | egrep -Eo "(\d*.?){3}" | sed 's///' | sort -n | tail -1)"
-  if [[ $current_version == $latest_version ]]; then
-  echo "[+] Already up to date"
-  return 0
-  fi
-  ZIP="terraform_${latest_version}darwin_amd64.zip"
-  echo "[+] Downloading ${URL}/${latest_version}/terraform${latest_version}darwin_amd64.zip"
-  curl --progress-bar ${URL}/${latest_version}/terraform${latest_version}_darwin_amd64.zip -o ${INSTALL_DIR}/${ZIP}
-  echo "[+] Extracting $ZIP into $INSTALL_DIR"
-  unzip -o ${INSTALL_DIR}/$ZIP -d $INSTALL_DIR
-  echo "[+] Deleting temporary zip"
-  rm -v ${INSTALL_DIR}/$ZIP
-  echo "[+] updated to $latest_version"
-}

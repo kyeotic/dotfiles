@@ -1,3 +1,6 @@
+[user]
+	name = Tim Kye
+	email = Timothy.Kye@nike.com
 [alias]
 	st = status
 	c = !g commit -m
@@ -12,3 +15,23 @@
 	cob = checkout -b
 	push-all = !git push && git push --tags
 	pr = !git push --set-upstream origin `git symbolic-ref --short HEAD`
+[push]
+	default = simple
+[core]
+	editor = nano
+	preloadindex = true
+[merge]
+	tool = diffmerge
+[mergetool "diffmerge"]
+	cmd = diffmerge --merge --result=$MERGED $LOCAL $BASE $REMOTE
+	trustExitCode = true
+[mergetool]
+	keepBackup = false
+[credential]
+	helper = osxkeychain
+[filter "lfs"]
+	clean = git-lfs clean %f
+	smudge = git-lfs smudge %f
+	required = true
+[hub]
+	host = github.nike.com
