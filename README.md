@@ -15,6 +15,5 @@ To Setup dotfiles, run
 
 ```
 git clone git@github.com:kyeotic/dotfiles.git
-./dotfiles/link.sh
 ./dotfiles/init.sh
 ```

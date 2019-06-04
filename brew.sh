@@ -30,9 +30,7 @@ brew install gnu-sed --with-default-names
 # running `chsh`.
 # sudo bash -c 'echo /usr/local/bin/bash >> /etc/shells'
 # chsh -s /usr/local/bin/bash
-brew install bash
 brew tap homebrew/versions
-brew install bash-completion2
 
 # Remove outdated versions from the cellar.
 brew cleanup
