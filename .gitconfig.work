@@ -20,6 +20,7 @@
 [core]
 	editor = nano
 	preloadindex = true
+	pager = less -FRX
 [merge]
 	tool = diffmerge
 [mergetool "diffmerge"]

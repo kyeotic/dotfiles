@@ -35,3 +35,9 @@ for file in "${files[@]}"; do
     echo "Creating symlink to $file in home directory."
     ln -s $dir/$file ~/$file
 done
+
+chsh -s `which zsh`
+
+sh -c "$(curl -fsSL https://raw.github.com/robbyrussell/oh-my-zsh/master/tools/install.sh)"
+brew install zsh zsh-completions
+git clone https://github.com/powerline/fonts.git
