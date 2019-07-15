@@ -11,4 +11,5 @@ git clone https://github.com/powerline/fonts.git
 # update rc
 patch $HOME/.zshrc dotfiles/zshrc.patch
 sed -i ''  "s/__USER__/$USER/g" ./test-zsh
-cat dotfiles/zsh-extend >> $HOME/.zshrc
+ln -sf dotfiles/.localrc $HOME/.localrc
+cat dotfiles/zshrc-extend >> $HOME/.zshrc
