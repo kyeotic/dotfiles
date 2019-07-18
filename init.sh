@@ -1,3 +1,4 @@
+#!/usr/bin/env bash
 
 # Use Zsh
 chsh -s `which zsh`
@@ -10,7 +11,4 @@ git clone https://github.com/powerline/fonts.git
 (cd .oh-my-zsh/custom && git clone https://github.com/romkatv/powerlevel10k.git themes/powerlevel10k)
 
 # update rc
-patch $HOME/.zshrc dotfiles/zshrc.patch
-sed -i ''  "s/__USER__/$USER/g" ./test-zsh
-ln -sf dotfiles/.localrc $HOME/.localrc
-cat dotfiles/zshrc-extend >> $HOME/.zshrc
+./link.sh

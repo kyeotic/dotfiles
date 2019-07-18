@@ -1,14 +1,14 @@
-POWERLEVEL9K_PROMPT_ADD_NEWLINE=true
-POWERLEVEL9K_PROMPT_ON_NEWLINE=false
-POWERLEVEL9K_LEFT_PROMPT_ELEMENTS=(context dir vcs newline prompt_char)
-POWERLEVEL9K_LEFT_SEGMENT_END_SEPARATOR=
-POWERLEVEL9K_MULTILINE_FIRST_PROMPT_PREFIX=
-POWERLEVEL9K_MULTILINE_LAST_PROMPT_PREFIX=
-POWERLEVEL9K_MULTILINE_LAST_PROMPT_PREFIX=
-POWERLEVEL9K_PROMPT_CHAR_BACKGROUND=
-POWERLEVEL9K_PROMPT_CHAR_LEFT_SEGMENT_SEPARATOR=
-POWERLEVEL9K_PROMPT_CHAR_WHITESPACE_BETWEEN_LEFT_SEGMENTS=
-POWERLEVEL9K_RIGHT_PROMPT_ELEMENTS=(background_jobs time)
+# If you come from bash you might have to change your $PATH.
+# export PATH=$HOME/bin:/usr/local/bin:$PATH
+
+# Path to your oh-my-zsh installation.
+export ZSH="/Users/tkye/.oh-my-zsh"
+if [[ -a ~/.zsh_prompt ]]; then source ~/.zsh_prompt; fi
+if [[ -a ~/.zsh_user ]]; then source ~/.zsh_user; fi
+plugins=(git ssh-agent nvm npm aws kubectl dotenv)
+
+source $ZSH/oh-my-zsh.sh
+
 
 export EDITOR='code'
 
@@ -24,3 +24,8 @@ alias g-clean-remote="git branch -r --merged | grep -v master | sed 's/origin\//
 alias disk-usage="du -hsx * | sort -n -r"
 alias file-size='ls -hlS'
 alias docker-kill-all='docker rm -f $(docker ps -a -q)'
+
+if [[ -a ~/.localrc ]]
+then
+  source ~/.localrc
+fi
