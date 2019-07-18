@@ -25,6 +25,8 @@ alias disk-usage="du -hsx * | sort -n -r"
 alias file-size='ls -hlS'
 alias docker-kill-all='docker rm -f $(docker ps -a -q)'
 
+# Allow local-machine-only configuration
+
 if [[ -a ~/.localrc ]]
 then
   source ~/.localrc

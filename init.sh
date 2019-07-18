@@ -12,3 +12,4 @@ git clone https://github.com/powerline/fonts.git
 
 # update rc
 ./link.sh
+touch ~/.localrc
