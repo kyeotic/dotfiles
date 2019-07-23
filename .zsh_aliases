@@ -11,3 +11,4 @@ alias disk-usage="du -hsx * | sort -n -r"
 alias file-size='ls -hlS'
 alias docker-kill-all='docker rm -f $(docker ps -a -q)'
 alias n="pnpm"
+alias nx="pnpx"
