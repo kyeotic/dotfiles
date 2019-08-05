@@ -11,5 +11,5 @@ git clone https://github.com/powerline/fonts.git
 (cd .oh-my-zsh/custom && git clone https://github.com/romkatv/powerlevel10k.git themes/powerlevel10k)
 
 # update rc
-./link.sh
+./dotfiles/link.sh
 touch ~/.localrc
