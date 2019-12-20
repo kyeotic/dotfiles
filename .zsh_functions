@@ -1,0 +1,17 @@
+function colorize-log {
+  colorize red ERROR | \
+  colorize yellow 'WARN(ING)?' | \
+  colorize green INFO | \
+  colorize white DEBUG | \
+  colorize white TRACE | \
+  colorize red error | \
+  colorize yellow 'warn(ing)?' | \
+  colorize green info | \
+  colorize white debug | \
+  colorize white trace
+}
+
+function colorize {
+  COLOR="$1"; shift
+  ack --flush --passthru --color --color-match="$COLOR" $@
+}

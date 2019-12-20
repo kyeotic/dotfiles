@@ -12,6 +12,7 @@ source $ZSH/oh-my-zsh.sh
 export EDITOR='code'
 
 if [[ -a ~/.zsh_aliases ]]; then source ~/.zsh_aliases; fi
+if [[ -a ~/.zsh_functions ]]; then source ~/.zsh_functions; fi
 
 # Allow local-machine-only configuration
 
@@ -19,3 +20,13 @@ if [[ -a ~/.localrc ]]
 then
   source ~/.localrc
 fi
+
+# tabtab source for serverless package
+# uninstall by removing these lines or running `tabtab uninstall serverless`
+[[ -f /Users/tkye/dev/digital-library-api/node_modules/tabtab/.completions/serverless.zsh ]] && . /Users/tkye/dev/digital-library-api/node_modules/tabtab/.completions/serverless.zsh
+# tabtab source for sls package
+# uninstall by removing these lines or running `tabtab uninstall sls`
+[[ -f /Users/tkye/dev/digital-library-api/node_modules/tabtab/.completions/sls.zsh ]] && . /Users/tkye/dev/digital-library-api/node_modules/tabtab/.completions/sls.zsh
+# tabtab source for slss package
+# uninstall by removing these lines or running `tabtab uninstall slss`
+[[ -f /Users/tkye/dev/digital-library-api/node_modules/tabtab/.completions/slss.zsh ]] && . /Users/tkye/dev/digital-library-api/node_modules/tabtab/.completions/slss.zsh
