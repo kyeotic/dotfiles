@@ -14,7 +14,11 @@ sudo apt-get install powerline fonts-powerline
 # Install Homebrew
 
 ```
+# MacOS
 /usr/bin/ruby -e "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/master/install)"
+
+# Linux/WSL
+sh -c "$(curl -fsSL https://raw.githubusercontent.com/Linuxbrew/install/master/install.sh)"
 ```
 
 ## Init
