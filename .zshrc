@@ -5,7 +5,7 @@
 export ZSH="$HOME/.oh-my-zsh"
 if [[ -a ~/.zsh_prompt ]]; then source ~/.zsh_prompt; fi
 if [[ -a ~/.zsh_user ]]; then source ~/.zsh_user; fi
-plugins=(git ssh-agent nvm aws kubectl dotenv)
+plugins=(git ssh-agent nvm aws kubectl dotenv rust)
 
 source $ZSH/oh-my-zsh.sh
 
