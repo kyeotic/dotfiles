@@ -9,7 +9,11 @@ plugins=(git ssh-agent nvm aws kubectl dotenv rust)
 
 source $ZSH/oh-my-zsh.sh
 
+
+export PATH="$PATH:/Applications/Visual Studio Code.app/Contents/Resources/app/bin"
 export EDITOR='code'
+export DENO_INSTALL=$HOME/.deno
+export PATH="$DENO_INSTALL/bin:$PATH"
 
 if [[ -a ~/.zsh_aliases ]]; then source ~/.zsh_aliases; fi
 if [[ -a ~/.zsh_functions ]]; then source ~/.zsh_functions; fi

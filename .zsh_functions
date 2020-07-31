@@ -15,3 +15,7 @@ function colorize {
   COLOR="$1"; shift
   ack --flush --passthru --color --color-match="$COLOR" $@
 }
+
+function aws-me {
+  aws sts get-caller-identity | jq -r '.Account'
+}
