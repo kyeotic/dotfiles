@@ -10,6 +10,9 @@ git clone https://github.com/powerline/fonts.git
 (cd fonts && ./install.sh)
 (cd .oh-my-zsh/custom && git clone https://github.com/romkatv/powerlevel10k.git themes/powerlevel10k)
 
+brew tap homebrew/cask-fonts
+brew cask install font-hack-nerd-font
+
 # Install node/npm
 ./dotfiles/install_nvm.sh
 
