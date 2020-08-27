@@ -19,3 +19,7 @@ function colorize {
 function aws-me {
   aws sts get-caller-identity | jq -r '.Account'
 }
+
+function passgen {
+  openssl rand -base64 $1
+}
