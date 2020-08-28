@@ -6,9 +6,12 @@ chsh -s `which zsh`
 # Install oh-my-zsh
 sh -c "$(curl -fsSL https://raw.github.com/robbyrussell/oh-my-zsh/master/tools/install.sh)"
 brew install zsh zsh-completions wget tfenv
-git clone https://github.com/powerline/fonts.git
-(cd fonts && ./install.sh)
-(cd .oh-my-zsh/custom && git clone https://github.com/romkatv/powerlevel10k.git themes/powerlevel10k)
+
+# Install fonts
+./dotfiles/install_fonts
+
+# Install oh-my-zsh
+(cd .oh-my-zsh/custom && git clone --depth=1 https://github.com/romkatv/powerlevel10k.git themes/powerlevel10k)
 # Fix "insecure directories" warning
 sudo chmod -R 755 ~/.oh-my-zsh
 
