@@ -9,6 +9,7 @@ brew install zsh zsh-completions wget tfenv
 git clone https://github.com/powerline/fonts.git
 (cd fonts && ./install.sh)
 (cd .oh-my-zsh/custom && git clone https://github.com/romkatv/powerlevel10k.git themes/powerlevel10k)
+sudo chmod -R 755 ~/.oh-my-zsh
 
 brew tap homebrew/cask-fonts
 brew cask install font-hack-nerd-font

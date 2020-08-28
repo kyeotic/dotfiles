@@ -46,11 +46,3 @@ curl -s 'https://api.macapps.link/en/firefox-drive-vscode-docker-spotify-slack' 
 brew install aws-iam-authenticator awscli gettext gdbm git httpie jq kubernetes-cli kustomize openssl pcre pcre2 python readline telnet watch watchman wget yarn yq zsh zsh-completion
 brew install warrensbox/tap/tfswitch
 ```
-
-## Issues
-
-Fixing "insecure directories"
-
-```bash
-sudo chmod -R 755 ~/.oh-my-zsh    
-```
