@@ -40,7 +40,7 @@ curl -s 'https://api.macapps.link/en/firefox-drive-vscode-docker-spotify-slack' 
 * [Clipy](https://github.com/Clipy/Clipy) - Multiple Clipboards
 * [Hyper](https://hyper.is/) - Terminal (uses dotfiles config `.hyper.js`)
 
-# Work Configuration
+# Additional Work Apps
 
 ```
 brew install aws-iam-authenticator awscli gettext gdbm git httpie jq kubernetes-cli kustomize openssl pcre pcre2 python readline telnet watch watchman wget yarn yq zsh zsh-completion
