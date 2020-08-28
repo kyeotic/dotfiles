@@ -21,7 +21,7 @@ sudo apt-get install powerline fonts-powerline
 sh -c "$(curl -fsSL https://raw.githubusercontent.com/Linuxbrew/install/master/install.sh)"
 ```
 
-## Init
+# Init
 
 To Setup dotfiles, run
 
