@@ -3,7 +3,7 @@
 rm -f ~/.zshrc ~/.zsh_prompt ~/.zsh_user
 ln -sf dotfiles/.zshrc $HOME/.zshrc
 # ln -sf dotfiles/.zsh_prompt $HOME/.zsh_prompt
-ln -sf dotfiles/.p10k.zsh $HOME/.p10k.zsh
+# ln -sf dotfiles/.p10k.zsh $HOME/.p10k.zsh
 ln -sf dotfiles/.zsh_aliases $HOME/.zsh_aliases
 ln -sf dotfiles/.zsh_functions $HOME/.zsh_functions
 ln -sf dotfiles/.gitconfig.work $HOME/.gitconfig
@@ -12,5 +12,10 @@ ln -sf dotfiles/.gitconfig.work $HOME/.gitconfig
 cp dotfiles/.hyper.js $HOME/.hyper.js
 rm dotfiles/.hyper.js
 ln -sf $HOME/.hyper.js dotfiles/.hyper.js
+
+# p10k doesnt like symlinks
+cp dotfiles/.p10k.zsh $HOME/.p10k.zsh
+rm dotfiles/.p10k.zsh
+ln -sf $HOME/.p10k.zsh dotfiles/.p10k.zsh
 
 echo "DEFAULT_USER="$USER" # Current User" >> ~/.zsh_user

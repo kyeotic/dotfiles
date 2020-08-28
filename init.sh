@@ -4,8 +4,8 @@
 chsh -s `which zsh`
 
 # Install oh-my-zsh
-sh -c "$(curl -fsSL https://raw.github.com/robbyrussell/oh-my-zsh/master/tools/install.sh)"
-brew install zsh zsh-completions wget tfenv
+sh -c "$(curl -fsSL https://raw.github.com/robbyrussell/oh-my-zsh/master/tools/install.sh) --skip-chsh"
+brew install zsh zsh-completions wget
 
 # Install fonts
 ./dotfiles/install_fonts
