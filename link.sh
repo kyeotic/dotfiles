@@ -8,14 +8,8 @@ ln -sf dotfiles/.zsh_aliases $HOME/.zsh_aliases
 ln -sf dotfiles/.zsh_functions $HOME/.zsh_functions
 ln -sf dotfiles/.gitconfig.work $HOME/.gitconfig
 
-# Hyper doesnt like symlinks, work backwards
-cp dotfiles/.hyper.js $HOME/.hyper.js
-rm dotfiles/.hyper.js
-ln -sf $HOME/.hyper.js dotfiles/.hyper.js
-
-# p10k doesnt like symlinks
-cp dotfiles/.p10k.zsh $HOME/.p10k.zsh
-rm dotfiles/.p10k.zsh
-ln -sf $HOME/.p10k.zsh dotfiles/.p10k.zsh
+# Hyper and p10k require hardlinkes
+ln dotfiles/.p10k.zsh $HOME/.p10k.zsh
+ln dotfiles/.hyper.js $HOME/.hyper.js 
 
 echo "DEFAULT_USER="$USER" # Current User" >> ~/.zsh_user

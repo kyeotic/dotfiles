@@ -39,3 +39,5 @@
 	host = github.nike.com
 [url "ssh://git@github.nike.com/"]
 	insteadOf = https://github.nike.com/
+[pull]
+	rebase = preserve
