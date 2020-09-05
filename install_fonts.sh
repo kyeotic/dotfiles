@@ -4,7 +4,6 @@
 git clone https://github.com/powerline/fonts.git
 pushd fonts
 
-(cd fonts && )
 # Extra Powerlevel 10k Fonts
 mkdir powerlevel10k
 pushd powerlevel10k
