@@ -1,11 +1,21 @@
 #!/usr/bin/env bash
 
 
-git clone https://github.com/powerline/fonts.git
+if [ -d "fonts" ] 
+then
+    (cd fonts && git pull)
+else
+    git clone https://github.com/powerline/fonts.git
+fi
+
 pushd fonts
 
 # Extra Powerlevel 10k Fonts
-mkdir powerlevel10k
+if [ ! -d "powerlevel10k" ] 
+then
+    mkdir powerlevel10k
+fi
+
 pushd powerlevel10k
 wget https://github.com/romkatv/powerlevel10k-media/raw/master/MesloLGS%20NF%20Regular.ttf
 wget https://github.com/romkatv/powerlevel10k-media/raw/master/MesloLGS%20NF%20Italic.ttf
@@ -15,4 +25,8 @@ popd
 
 # Install them to Fonts
 ./install.sh
+
 popd
+
+brew tap homebrew/cask-fonts
+brew cask install font-hack-nerd-font
