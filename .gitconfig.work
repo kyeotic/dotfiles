@@ -16,6 +16,7 @@
 	cob = checkout -b
 	push-all = !git push && git push --tags
 	pr = !git push --set-upstream origin `git symbolic-ref --short HEAD`
+	gpv = !git push --no-verify
 [push]
 	default = simple
 [core]
@@ -40,4 +41,4 @@
 [url "ssh://git@github.nike.com/"]
 	insteadOf = https://github.nike.com/
 [pull]
-	rebase = preserve
+	rebase = merges
