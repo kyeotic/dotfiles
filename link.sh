@@ -7,8 +7,9 @@ ln -sf dotfiles/.zsh_functions $HOME/.zsh_functions
 ln -sf dotfiles/.gitconfig.work $HOME/.gitconfig
 
 # Hyper and p10k require hardlinkes
-rm $HOME/.p10k.zsh
-rm $HOME/.hyper.js
+
+if [[ -a $HOME/.p10k.zsh ]]; then rm $HOME/.p10k.zsh; fi
+if [[ -a $HOME/.hyper.js ]]; then rm $HOME/.hyper.js; fi
 ln dotfiles/.p10k.zsh $HOME/.p10k.zsh
 ln dotfiles/.hyper.js $HOME/.hyper.js 
 
