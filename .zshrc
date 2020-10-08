@@ -12,7 +12,17 @@ fi
 export ZSH="$HOME/.oh-my-zsh"
 # if [[ -a ~/.zsh_prompt ]]; then source ~/.zsh_prompt; fi
 if [[ -a ~/.zsh_user ]]; then source ~/.zsh_user; fi
-plugins=(git ssh-agent nvm aws docker kubectl dotenv rust zsh-autosuggestions)
+plugins=(
+  aws
+  docker
+  dotenv
+  git
+  kubectl
+  nvm
+  rust
+  ssh-agent
+  zsh-autosuggestions
+)
 
 ZSH_THEME="powerlevel10k/powerlevel10k"
 source $ZSH/oh-my-zsh.sh
@@ -20,7 +30,8 @@ source $ZSH/oh-my-zsh.sh
 export PATH="$PATH:/Applications/Visual Studio Code.app/Contents/Resources/app/bin"
 export EDITOR='code'
 export DENO_INSTALL=$HOME/.deno
-export PATH="$DENO_INSTALL/bin:$PATH"
+export PATH="$PATH:$DENO_INSTALL/bin:"
+export PATH="$PATH:$HOME/.cargo/bin"
 
 if [[ -a ~/.zsh_aliases ]]; then source ~/.zsh_aliases; fi
 if [[ -a ~/.zsh_functions ]]; then source ~/.zsh_functions; fi

@@ -16,7 +16,7 @@
 	cob = checkout -b
 	push-all = !git push && git push --tags
 	pr = !git push --set-upstream origin `git symbolic-ref --short HEAD`
-	gpv = !git push --no-verify
+	pv = !git push --no-verify
 [push]
 	default = simple
 [core]
