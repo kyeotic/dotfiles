@@ -30,7 +30,7 @@ source $ZSH/oh-my-zsh.sh
 export PATH="$PATH:/Applications/Visual Studio Code.app/Contents/Resources/app/bin"
 export EDITOR='code'
 export DENO_INSTALL=$HOME/.deno
-export PATH="$PATH:$DENO_INSTALL/bin:"
+export PATH="$PATH:$DENO_INSTALL/bin"
 export PATH="$PATH:$HOME/.cargo/bin"
 
 if [[ -a ~/.zsh_aliases ]]; then source ~/.zsh_aliases; fi
