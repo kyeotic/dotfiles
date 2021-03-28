@@ -14,6 +14,8 @@ then
     (cd .oh-my-zsh/custom && git clone --depth=1 https://github.com/romkatv/powerlevel10k.git themes/powerlevel10k)
 fi
 
+git config --global init.defaultBranch main
+
 # Fix "insecure directories" warning
 sudo chmod -R 755 ~/.oh-my-zsh
 

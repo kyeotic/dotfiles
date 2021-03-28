@@ -42,3 +42,5 @@
 	insteadOf = https://github.nike.com/
 [pull]
 	rebase = merges
+[init]
+	defaultBranch = main
