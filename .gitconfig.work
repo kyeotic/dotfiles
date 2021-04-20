@@ -41,6 +41,8 @@
 	host = github.nike.com
 [url "ssh://git@github.nike.com/"]
 	insteadOf = https://github.nike.com/
+[url "ssh://git@github.com/"]
+	insteadOf = https://github.com/
 [pull]
 	rebase = merges
 [init]
