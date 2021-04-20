@@ -11,6 +11,7 @@
 	undo = reset HEAD~1 --mixed
 	clear = !git clean -df && git checkout -- .
 	wipe = !git add -A && git commit -qm 'WIPE SAVEPOINT' && git reset HEAD~1 --hard
+	squash = "!f(){ git reset --soft HEAD~${1} && git commit --edit -m\"$(git log --format=%B --reverse HEAD..HEAD@{1})\"; };f"
 #	up = !git checkout master && git pull && g-clean
 	co = checkout
 	cob = checkout -b
