@@ -12,6 +12,10 @@ fi
 export ZSH="$HOME/.oh-my-zsh"
 # if [[ -a ~/.zsh_prompt ]]; then source ~/.zsh_prompt; fi
 if [[ -a ~/.zsh_user ]]; then source ~/.zsh_user; fi
+
+# Load SSH Identities
+zstyle :omz:plugins:ssh-agent identities id_rsa github_dev
+
 plugins=(
   aws
   docker
@@ -55,3 +59,4 @@ fi
 
 # To customize prompt, run `p10k configure` or edit ~/.p10k.zsh.
 [[ ! -f ~/.p10k.zsh ]] || source ~/.p10k.zsh
+export PATH="/usr/local/sbin:$PATH"
