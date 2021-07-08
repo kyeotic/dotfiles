@@ -14,7 +14,7 @@ export ZSH="$HOME/.oh-my-zsh"
 if [[ -a ~/.zsh_user ]]; then source ~/.zsh_user; fi
 
 # Load SSH Identities
-zstyle :omz:plugins:ssh-agent identities id_rsa github_dev
+zstyle :omz:plugins:ssh-agent identities id_rsa
 
 plugins=(
   aws
@@ -26,6 +26,7 @@ plugins=(
   rust
   ssh-agent
   zsh-autosuggestions
+  zsh-better-npm-completion
 )
 
 ZSH_THEME="powerlevel10k/powerlevel10k"
