@@ -1,6 +1,6 @@
 [user]
 	name = Tim Kye
-	email = Timothy.Kye@nike.com
+	email = tim@kye.dev
 [alias]
 	st = status
 	c = !g commit -m

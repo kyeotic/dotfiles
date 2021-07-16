@@ -27,6 +27,7 @@ plugins=(
   ssh-agent
   zsh-autosuggestions
   zsh-better-npm-completion
+  gcloud
 )
 
 ZSH_THEME="powerlevel10k/powerlevel10k"
