@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 
 # Use Zsh
-if [ $(echo $SHELL) != "/bin/zf\h" ]; then
+if [ $(echo $SHELL) != "/bin/zsh" ]; then
     chsh -s `which zsh`;
 fi
 
@@ -11,7 +11,7 @@ if [ -d "$HOME/.oh-my-zsh" ]
 then
     # Install oh-my-zsh
     sh -c "$(curl -fsSL https://raw.github.com/robbyrussell/oh-my-zsh/master/tools/install.sh) --skip-chsh"
-    (cd .oh-my-zsh/custom && git clone --depth=1 https://github.com/romkatv/powerlevel10k.git themes/powerlevel10k)
+    (cd $HOME/.oh-my-zsh/custom && git clone --depth=1 https://github.com/romkatv/powerlevel10k.git themes/powerlevel10k)
 fi
 
 git config --global init.defaultBranch main
@@ -21,6 +21,8 @@ sudo chmod -R 755 ~/.oh-my-zsh
 
 # Install Plugins
 git clone https://github.com/zsh-users/zsh-autosuggestions ${ZSH_CUSTOM:-~/.oh-my-zsh/custom}/plugins/zsh-autosuggestions || return 0
+git clone https://github.com/lukechilds/zsh-better-npm-completion ~/.oh-my-zsh/custom/plugins/zsh-better-npm-completion
+
 
 # update rc
 ./dotfiles/link.sh

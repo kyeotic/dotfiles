@@ -8,10 +8,11 @@ export NVM_DIR="$HOME/.nvm" && (
 ) && \. "$NVM_DIR/nvm.sh"
 
 
-zsh -lic "nvm install --lts=Dubnium" # node 10
+# zsh -lic "nvm install --lts=Dubnium" # node 10
 zsh -lic "nvm install --lts=Erbium" # node 12
-zsh -lic "nvm use 12"
-zsh -lic "nvm alias default 12"
+zsh -lic "nvm install --lts=Fermium" # node 14
+zsh -lic "nvm use 14"
+zsh -lic "nvm alias default 14"
 
-# Install pnpm
-curl -L https://unpkg.com/@pnpm/self-installer | node
+# # Install pnpm
+# curl -L https://unpkg.com/@pnpm/self-installer | node

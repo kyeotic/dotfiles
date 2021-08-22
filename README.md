@@ -33,7 +33,7 @@ git clone git@github.com:kyeotic/dotfiles.git
 ## Install Mac Apps
 
 ```
-curl -s 'https://api.macapps.link/en/firefox-drive-vscode-docker-spotify-slack' | sh
+curl -s 'https://api.macapps.link/en/discord-drive-vscode-docker-spotify-slack' | sh
 ```
 
 * [Rectangle](https://rectangleapp.com/) - Window Manager
@@ -46,4 +46,7 @@ brew install aws-iam-authenticator awscli gettext gdbm git httpie jq \
   kubernetes-cli kustomize openssl pcre pcre2 python readline telnet \
   watch watchman wget yarn yq zsh zsh-completion findutils bat exa fd
 brew install warrensbox/tap/tfswitch
+
+# Deno
+curl -fsSL https://deno.land/x/install/install.sh | sh
 ```

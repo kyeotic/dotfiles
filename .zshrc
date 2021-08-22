@@ -14,7 +14,7 @@ export ZSH="$HOME/.oh-my-zsh"
 if [[ -a ~/.zsh_user ]]; then source ~/.zsh_user; fi
 
 # Load SSH Identities
-zstyle :omz:plugins:ssh-agent identities id_rsa
+zstyle :omz:plugins:ssh-agent identities id
 
 plugins=(
   aws
