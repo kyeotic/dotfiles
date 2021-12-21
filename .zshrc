@@ -28,6 +28,7 @@ plugins=(
   zsh-autosuggestions
   zsh-better-npm-completion
   gcloud
+  pyenv
 )
 
 ZSH_THEME="powerlevel10k/powerlevel10k"

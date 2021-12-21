@@ -15,6 +15,7 @@ alias file-size='ls -hlS'
 alias docker-kill-all='docker rm -f $(docker ps -a -q)'
 alias n="npm"
 alias y="yarn"
+alias yr="yarn run"
 alias nx="npx"
 alias r="rustc"
 alias c="cargo"
