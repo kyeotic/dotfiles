@@ -46,6 +46,7 @@ brew install aws-iam-authenticator awscli gettext gdbm git httpie jq \
   kubernetes-cli kustomize openssl pcre pcre2 python readline telnet \
   watch watchman wget yarn yq zsh zsh-completion findutils bat exa fd
 brew install warrensbox/tap/tfswitch
+brew install --cask phoenix
 
 # Deno
 curl -fsSL https://deno.land/x/install/install.sh | sh
