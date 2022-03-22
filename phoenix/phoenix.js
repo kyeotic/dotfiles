@@ -76,9 +76,14 @@ const config = {
 
 const configApps = Object.keys(config);
 
-Key.on("l", ["alt", "cmd"], () => {
+Key.on("l", ["alt", "cmd"], useStandardLayout);
+Event.on("screensDidChange", useStandardLayout);
+
+function useStandardLayout() {
   // build a map of the target screens and their spaces
   const screens = Screen.all();
+  if (screens.length !== 2) return;
+
   const screenMap = screens.map((s) => ({
     spaces: s.spaces(),
   }));
@@ -95,67 +100,67 @@ Key.on("l", ["alt", "cmd"], () => {
     space.moveWindows([window]);
     window.setFrame(windowConfig.frame);
   });
-});
+}
 
 function log(...args) {
   Phoenix.log(JSON.stringify({ args: args }, null, 2));
 }
 
-function serialize(obj, { full = false } = {}) {
-  if (obj instanceof App) {
-    return serializeApp(obj, { full });
-  } else if (obj instanceof Space) {
-    return serializeSpace(obj, { full });
-  } else if (obj instanceof Window) {
-    return serializeWindow(obj, { full });
-  } else if (obj instanceof Screen) {
-    return serializeScreen(obj, { full });
-  } else {
-    Phoenix.log("unknown type", obj.constructor.name);
-  }
-  return {};
-}
+// function serialize(obj, { full = false } = {}) {
+//   if (obj instanceof App) {
+//     return serializeApp(obj, { full });
+//   } else if (obj instanceof Space) {
+//     return serializeSpace(obj, { full });
+//   } else if (obj instanceof Window) {
+//     return serializeWindow(obj, { full });
+//   } else if (obj instanceof Screen) {
+//     return serializeScreen(obj, { full });
+//   } else {
+//     Phoenix.log("unknown type", obj.constructor.name);
+//   }
+//   return {};
+// }
 
-function serializeApp(app, { full = false } = {}) {
-  if (!full) return app.name();
-  return {
-    name: app.name(),
-    isActive: app.isActive(),
-    isHidden: app.isHidden(),
-    isTerminated: app.isTerminated(),
-    windows: app.windows.length,
-  };
-}
+// function serializeApp(app, { full = false } = {}) {
+//   if (!full) return app.name();
+//   return {
+//     name: app.name(),
+//     isActive: app.isActive(),
+//     isHidden: app.isHidden(),
+//     isTerminated: app.isTerminated(),
+//     windows: app.windows.length,
+//   };
+// }
 
-function serializeSpace(space, { full = false } = {}) {
-  if (!full) return space.hash();
-  const screens = space.screens();
-  return {
-    id: space.hash(),
-    screen: screens.length === 1 ? serializeScreen(screens[0]) : undefined,
-    screens:
-      screens.length === 1
-        ? undefined
-        : screens.map((s) => serializeScreen(s, { full: false })),
-  };
-}
+// function serializeSpace(space, { full = false } = {}) {
+//   if (!full) return space.hash();
+//   const screens = space.screens();
+//   return {
+//     id: space.hash(),
+//     screen: screens.length === 1 ? serializeScreen(screens[0]) : undefined,
+//     screens:
+//       screens.length === 1
+//         ? undefined
+//         : screens.map((s) => serializeScreen(s, { full: false })),
+//   };
+// }
 
-function serializeWindow(window, { full = false } = {}) {
-  if (!full) return window.hash();
-  return {
-    id: window.hash(),
-    title: window.title(),
-    screen: serializeScreen(window.screen()),
-    spaces: window.spaces()?.map((s) => serializeSpace(s)),
-    frame: window.frame(),
-  };
-}
+// function serializeWindow(window, { full = false } = {}) {
+//   if (!full) return window.hash();
+//   return {
+//     id: window.hash(),
+//     title: window.title(),
+//     screen: serializeScreen(window.screen()),
+//     spaces: window.spaces()?.map((s) => serializeSpace(s)),
+//     frame: window.frame(),
+//   };
+// }
 
-function serializeScreen(screen, { full = false } = {}) {
-  if (!full) return screen.hash();
-  return {
-    id: screen.identifier(),
-    hash: screen.hash(),
-    spaces: screen.spaces().map((s) => serializeSpace(s)),
-  };
-}
+// function serializeScreen(screen, { full = false } = {}) {
+//   if (!full) return screen.hash();
+//   return {
+//     id: screen.identifier(),
+//     hash: screen.hash(),
+//     spaces: screen.spaces().map((s) => serializeSpace(s)),
+//   };
+// }
