@@ -11,8 +11,8 @@ const config = {
     screen: 1,
     space: 0,
     frame: {
-      y: 307,
-      x: 1440,
+      y: -388,
+      x: 3859,
       width: 1421,
       height: 885,
     },
@@ -60,8 +60,26 @@ const config = {
       height: 660,
     },
   },
-  Miro: {},
-  "1Password 7": {},
+  Miro: {
+    screen: 1,
+    space: 3,
+    frame: {
+      y: -388,
+      x: 1439,
+      width: 3840,
+      height: 1575,
+    },
+  },
+  "1Password 7": {
+    screen: 1,
+    space: 0,
+    frame: {
+      y: 312,
+      x: 4165,
+      width: 1115,
+      height: 875,
+    },
+  },
   "Brave Browser": {
     screen: 1,
     space: 1,
@@ -77,6 +95,7 @@ const config = {
 const configApps = Object.keys(config);
 
 Key.on("l", ["alt", "cmd"], useStandardLayout);
+Key.on(";", ["alt", "cmd"], inspectWindow);
 Event.on("screensDidChange", useStandardLayout);
 
 function useStandardLayout() {
@@ -84,7 +103,7 @@ function useStandardLayout() {
   const screens = Screen.all();
   if (screens.length !== 2) return;
 
-  const screenMap = screens.map((s) => ({
+  const screenSpaces = screens.map((s) => ({
     spaces: s.spaces(),
   }));
 
@@ -99,6 +118,16 @@ function useStandardLayout() {
     const space = screenMap[windowConfig.screen].spaces[windowConfig.space];
     space.moveWindows([window]);
     window.setFrame(windowConfig.frame);
+  });
+}
+
+function inspectWindow() {
+  const window = Window.focused();
+  log("Window", {
+    title: window.title(),
+    // screen: window.screen().hash(),
+    // space: window.space().hash(),
+    frame: window.frame(),
   });
 }
 
