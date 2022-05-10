@@ -23,3 +23,11 @@ function aws-me {
 function passgen {
   openssl rand -base64 $1
 }
+
+function g-clean-sqaushed {
+  TARGET_BRANCH=${1:-main} && git checkout -q $TARGET_BRANCH && git for-each-ref refs/heads/ "--format=%(refname:short)" | while read branch; do mergeBase=$(git merge-base $TARGET_BRANCH $branch) && [[ $(git cherry $TARGET_BRANCH $(git commit-tree $(git rev-parse $branch\^{tree}) -p $mergeBase -m _)) == "-"* ]] && git branch -D $branch; done
+}
+
+function g-clean-sqaushed-dry {
+  TARGET_BRANCH=${1:-main} && git checkout -q $TARGET_BRANCH && git for-each-ref refs/heads/ "--format=%(refname:short)" | while read branch; do mergeBase=$(git merge-base $TARGET_BRANCH $branch) && [[ $(git cherry $TARGET_BRANCH $(git commit-tree $(git rev-parse $branch\^{tree}) -p $mergeBase -m _)) == "-"* ]] && echo "$branch is ready to be deleted"; done
+}

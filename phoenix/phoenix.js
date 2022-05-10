@@ -98,12 +98,17 @@ Key.on("l", ["alt", "cmd"], useStandardLayout);
 Key.on(";", ["alt", "cmd"], inspectWindow);
 Event.on("screensDidChange", useStandardLayout);
 
+Key.on("k", ["alt", "cmd"], () => {
+  Phoenix.log("storing");
+  Storage.set("test", { thing: "name" });
+});
+
 function useStandardLayout() {
   // build a map of the target screens and their spaces
   const screens = Screen.all();
   if (screens.length !== 2) return;
 
-  const screenSpaces = screens.map((s) => ({
+  const screenMap = screens.map((s) => ({
     spaces: s.spaces(),
   }));
 
