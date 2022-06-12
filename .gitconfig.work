@@ -1,6 +1,7 @@
 [user]
 	name = Tim Kye
-	email = tim@kye.dev
+	email = tim.kye@blueocean.ai
+	signingkey = 70B6F913B59FD2DC
 [alias]
 	st = status
 	c = !g commit -m
