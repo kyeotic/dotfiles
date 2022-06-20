@@ -1,7 +1,8 @@
 [user]
 	name = Tim Kye
-	email = tim.kye@blueocean.ai
-	signingkey = 70B6F913B59FD2DC
+	email = tim@kye.dev
+[include]
+	path = .gitconfig.local
 [alias]
 	st = status
 	c = !g commit -m
@@ -38,12 +39,6 @@
 	clean = git-lfs clean %f
 	smudge = git-lfs smudge %f
 	required = true
-[hub]
-	host = github.nike.com
-#[url "ssh://git@github.nike.com/"]
-#	insteadOf = https://github.nike.com/
-#[url "ssh://git@github.com/"]
-#	insteadOf = https://github.com/
 [pull]
 	rebase = merges
 [init]

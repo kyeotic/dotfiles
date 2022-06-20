@@ -1,7 +1,21 @@
 /// <reference lib="./phoenix.d.ts" />
 
 // inspect logs with
-// $ log stream --process Phoenix
+// > log stream --process Phoenix
+
+const wideFirstThird = {
+  y: -286,
+  x: 1512,
+  width: 1280,
+  height: 1575,
+};
+
+const wideSecondThirds = {
+  y: -286,
+  x: 2792,
+  width: 2560,
+  height: 1575,
+};
 
 // screens and spaces are zero-indexed, not hash-indexed
 const config = {
@@ -43,12 +57,12 @@ const config = {
   Code: {
     screen: 1,
     space: 1,
-    frame: {
-      y: -388,
-      x: 2720,
-      width: 2560,
-      height: 1575,
-    },
+    frame: wideSecondThirds,
+  },
+  "IntelliJ IDEA": {
+    screen: 1,
+    space: 1,
+    frame: wideSecondThirds,
   },
   "zoom.us": {
     screen: 0,
@@ -83,12 +97,7 @@ const config = {
   "Brave Browser": {
     screen: 1,
     space: 1,
-    frame: {
-      y: -388,
-      x: 1440,
-      width: 1280,
-      height: 1575,
-    },
+    frame: wideFirstThird,
   },
 };
 
@@ -130,6 +139,7 @@ function inspectWindow() {
   const window = Window.focused();
   log("Window", {
     title: window.title(),
+    app: window.app().name(),
     frame: window.frame(),
   });
 }
