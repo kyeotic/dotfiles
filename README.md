@@ -42,7 +42,7 @@ curl -s 'https://api.macapps.link/en/discord-drive-vscode-docker-spotify-slack' 
 
 ## Additional Apps Apps
 ```
-brew install aws-iam-authenticator awscli gettext gdbm git httpie jq \
+brew install awscli gettext git httpie jq \
   kubernetes-cli kustomize openssl pcre pcre2 python readline telnet \
   watch watchman wget yarn yq zsh zsh-completion findutils bat exa fd
 brew install warrensbox/tap/tfswitch
