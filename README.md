@@ -27,7 +27,7 @@ Once the prereqs are installed setup dotfiles
 
 ```
 git clone git@github.com:kyeotic/dotfiles.git
-./dotfiles/init.sh
+./dotfiles/init
 ```
 
 ## Install Mac Apps

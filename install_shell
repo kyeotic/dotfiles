@@ -25,5 +25,5 @@ git clone https://github.com/lukechilds/zsh-better-npm-completion ~/.oh-my-zsh/c
 
 
 # update rc
-./dotfiles/link.sh
+./dotfiles/link
 touch ~/.localrc
