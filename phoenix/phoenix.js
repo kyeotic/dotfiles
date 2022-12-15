@@ -10,8 +10,8 @@ const configApps = Object.keys(config);
 
 Event.on("screensDidChange", useStandardLayout);
 
-const zoomEvents = ["spaceDidChange", "windowDidOpen", "windowDidMove"];
-zoomEvents.forEach((e) => Event.on(e, useZoomLayout));
+// const zoomEvents = ["spaceDidChange", "windowDidOpen", "windowDidMove"];
+// zoomEvents.forEach((e) => Event.on(e, useZoomLayout));
 
 Key.on("l", ["alt", "cmd"], useStandardLayout);
 Key.on(";", ["alt", "cmd"], inspectWindow);
@@ -30,10 +30,15 @@ function useStandardLayout() {
 
   // map them into the correct space and set their frames
   targetWindows.forEach((window) => {
-    const windowConfig = config[window.app().name()];
-    if (!windowConfig.manage) return;
-    moveWindowToSpace(window, windowConfig.screen, windowConfig.space);
-    window.setFrame(windowConfig.frame);
+    const app = window.app().name();
+    const title = window.title();
+
+    const appConfig = config[title] ?? config[app];
+    if (appConfig.manage === false) return;
+
+    moveWindowToSpace(window, appConfig.screen, appConfig.space);
+    if (appConfig.maximize) window.maximize();
+    else window.setFrame(appConfig.frame);
   });
 }
 

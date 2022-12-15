@@ -1,7 +1,7 @@
 /// <reference lib="./phoenix.d.ts" />
 
 function log(...args) {
-  Phoenix.log(JSON.stringify({ args: args }, null, 2));
+  Phoenix.log(JSON.stringify(args, null, 2));
 }
 
 function inspectWindow() {

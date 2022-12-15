@@ -1,13 +1,13 @@
 const wideFirstThird = {
-  y: -388,
-  x: 1440,
+  y: 25,
+  x: 1728,
   width: 1280,
   height: 1575,
 };
 
 const wideSecondThirds = {
-  y: -388,
-  x: 2720,
+  y: 25,
+  x: 3008,
   width: 2560,
   height: 1575,
 };
@@ -51,8 +51,18 @@ const config = {
   },
   Code: {
     screen: 1,
-    space: 1,
+    space: 2,
     frame: wideSecondThirds,
+  },
+  "Google Chrome": {
+    screen: 1,
+    space: 1,
+    frame: wideFirstThird,
+  },
+  "Google Meet - Google Chrome": {
+    screen: 0,
+    space: 3,
+    maximize: true,
   },
   "IntelliJ IDEA": {
     screen: 1,
