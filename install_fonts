@@ -1,5 +1,11 @@
 #!/usr/bin/env bash
 
+# does not work on WSL
+
+if uname -r |grep -q 'Microsoft' ; then
+  exit
+fi
+
 brew tap homebrew/cask-fonts
 brew install font-hack-nerd-font
 brew install font-meslo-lg-nerd-font
