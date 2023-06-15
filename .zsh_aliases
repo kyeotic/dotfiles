@@ -23,7 +23,8 @@ alias edit_hosts="sudo nano /etc/hosts"
 alias reset_dns="sudo killall -HUP mDNSResponder"
 alias aws-me="aws sts get-caller-identity | jq -r '.'"
 
-if ! uname -r |grep -q 'Microsoft' ; then
+# Dont add for WSL
+if [ ! -f /proc/sys/fs/binfmt_misc/WSLInterop ]; then
        alias gcp="git clone $(pbpaste)"
        alias jsonun="pbpaste | jq fromjson | pbcopy"
        alias g-clone='git clone $(pbpaste)'

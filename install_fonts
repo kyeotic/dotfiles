@@ -2,7 +2,7 @@
 
 # does not work on WSL
 
-if uname -r |grep -q 'Microsoft' ; then
+if [ ! -f /proc/sys/fs/binfmt_misc/WSLInterop ]; then
   exit
 fi
 
