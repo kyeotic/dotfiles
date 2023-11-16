@@ -15,7 +15,7 @@
 	wipe = !git add -A && git commit -qm 'WIPE SAVEPOINT' && git reset HEAD~1 --hard
 	squash = "!f(){ git reset --soft HEAD~${1} && git commit --edit -m\"$(git log --format=%B --reverse HEAD..HEAD@{1})\"; };f"
 	parent = "!git show-branch | grep '*' | grep -v \"$(git rev-parse --abbrev-ref HEAD)\" | head -n1 | sed 's/.*\\[\\(.*\\)\\].*/\\1/' | sed 's/[\\^~].*//' #"
-	# squash-branch = "!PARENT=$(git parent) f() { echo $PARENT };f"
+	squash-branch = "!f(){ PARENT=$(git parent); git reset --soft $(git merge-base $PARENT HEAD); git commit -m \"$1\"; };f"
 
 #	up = !git checkout master && git pull && g-clean
 	co = checkout
