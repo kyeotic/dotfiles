@@ -51,3 +51,11 @@ brew install --cask phoenix
 # Deno
 curl -fsSL https://deno.land/x/install/install.sh | sh
 ```
+
+
+## Rust
+
+```
+curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh
+cargo install cargo-watch
+```
