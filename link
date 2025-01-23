@@ -1,20 +1,16 @@
 #!/usr/bin/env bash
 
-rm -f ~/.zshrc ~/.zsh_prompt ~/.zsh_user
-ln -sf dotfiles/.zshrc $HOME/.zshrc
-ln -sf dotfiles/.zsh_aliases $HOME/.zsh_aliases
-ln -sf dotfiles/.zsh_functions $HOME/.zsh_functions
-ln -sf dotfiles/.zprofile $HOME/.zprofile
-ln -sf dotfiles/.gitconfig $HOME/.gitconfig
-ln -sf dotfiles/.gitconfig.work $HOME/.gitconfig.local
-ln -sf dotfiles/phoenix/phoenix.js $HOME/.phoenix.js
-ln -sf dotfiles/conky.conf $HOME/.config/conky/conky.conf
+# rm -f ~/.zshrc ~/.zsh_prompt ~/.zsh_user
+# ln -sf dotfiles/.zshrc $HOME/.zshrc
+ln -sf $HOME/dotfiles/.zsh_aliases $HOME/.zsh_aliases
+# ln -sf $HOME/dotfiles/.zprofile $HOME/.zprofile
+ln -sf $HOME/dotfiles/configs/.gitconfig $HOME/.gitconfig
+ln -sf $HOME/dotfiles/configs/gitconfig.work $HOME/.gitconfig.local
+ln -sf $HOME/dotfiles/phoenix/phoenix.js $HOME/.phoenix.js
+ln -sf $HOME/dotfiles/configs/direnv.toml $HOME/.config/direnv/direnv.toml
+ln -sf $HOME/dotfiles/configs/config.fish $HOME/.config/fish/config.fish
 
-# Hyper and p10k require hardlinkes
-
-if [[ -a $HOME/.p10k.zsh ]]; then rm $HOME/.p10k.zsh; fi
+# Hyper requires hardlinking
 if [[ -a $HOME/.hyper.js ]]; then rm $HOME/.hyper.js; fi
-ln dotfiles/.p10k.zsh $HOME/.p10k.zsh
-ln dotfiles/.hyper.js $HOME/.hyper.js 
+ln $HOME/dotfiles/configs/.hyper.js $HOME/.hyper.js 
 
-echo "DEFAULT_USER="$USER" # Current User" >> ~/.zsh_user

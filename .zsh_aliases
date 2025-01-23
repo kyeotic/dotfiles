@@ -11,7 +11,7 @@ alias g-clean-remote="git branch -r --merged | grep -v main | sed 's/origin\///'
 alias gbrD="git push -d origin"
 alias disk-usage="du -hsx * | sort -n -r"
 alias file-size='ls -hlS'
-alias docker-kill-all='docker rm -f $(docker ps -a -q)'
+# alias docker-kill-all='docker rm -f $(docker ps -a -q)'
 alias n="npm"
 alias y="yarn"
 alias yr="yarn run"
@@ -22,9 +22,3 @@ alias c="cargo"
 alias edit_hosts="sudo nano /etc/hosts"
 alias reset_dns="sudo killall -HUP mDNSResponder"
 alias aws-me="aws sts get-caller-identity | jq -r '.'"
-
-function git-up() {
-       BRANCH="${1:-main}"
-       gfa && git fetch origin $BRANCH:$BRANCH && git checkout $BRANCH && g-prune-squashed
-}
-

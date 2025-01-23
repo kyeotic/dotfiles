@@ -1,29 +1,26 @@
 #!/usr/bin/env bash
 
-# Use Zsh
-if [ $(echo $SHELL) != "/bin/zsh" ]; then
-    chsh -s `which zsh`;
-fi
-
-brew install zsh zsh-completions wget
-
-if [ -d "$HOME/.oh-my-zsh" ] 
-then
-    # Install oh-my-zsh
-    sh -c "$(curl -fsSL https://raw.github.com/robbyrussell/oh-my-zsh/master/tools/install.sh) --skip-chsh"
-    git clone --depth=1 https://github.com/romkatv/powerlevel10k.git ${ZSH_CUSTOM:-$HOME/.oh-my-zsh/custom}/themes/powerlevel10k
-fi
-
-git config --global init.defaultBranch main
-
-# Fix "insecure directories" warning
-sudo chmod -R 755 ~/.oh-my-zsh
-
-# Install Plugins
-git clone https://github.com/zsh-users/zsh-autosuggestions ${ZSH_CUSTOM:-~/.oh-my-zsh/custom}/plugins/zsh-autosuggestions || return 0
-git clone https://github.com/lukechilds/zsh-better-npm-completion ~/.oh-my-zsh/custom/plugins/zsh-better-npm-completion
+# ----------------------
+# Prerequisites
+#
+# Homebrew must already be installed
+# The init script will handle this, do not run this directly
+# ----------------------
 
 
-# update rc
-./dotfiles/link
-touch ~/.localrc
+# Install fish
+brew install fish
+chsh -s /usr/local/bin/fish
+
+# Install and configure oh my fish
+curl -L https://get.oh-my.fish | fish
+
+# Install theme
+omf install bobthefish 
+
+# install fisher
+curl -sL https://raw.githubusercontent.com/jorgebucaran/fisher/main/functions/fisher.fish | source && fisher install jorgebucaran/fisher
+fisher install jhillyerd/plugin-git
+
+# run the config linker
+$HOME/dotfiles/link
