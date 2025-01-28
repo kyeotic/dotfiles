@@ -1,2 +1,4 @@
 [user]
 	email = tkye@squareup.com
+[maintenance]
+	repo = /Users/tkye/dev/cash-server
