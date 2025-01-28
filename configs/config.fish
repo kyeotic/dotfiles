@@ -5,6 +5,7 @@ if status is-interactive
     set -g theme_nerd_fonts yes
 end
 
+fish_ssh_agent
 
 source ~/.zsh_aliases
 direnv hook fish | source
