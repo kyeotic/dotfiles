@@ -9,6 +9,7 @@ ln -sf $HOME/dotfiles/configs/gitconfig.work $HOME/.gitconfig.local
 ln -sf $HOME/dotfiles/phoenix/phoenix.js $HOME/.phoenix.js
 ln -sf $HOME/dotfiles/configs/direnv.toml $HOME/.config/direnv/direnv.toml
 ln -sf $HOME/dotfiles/configs/config.fish $HOME/.config/fish/config.fish
+ln -sf $HOME/dotfiles/configs/bobfish-monokai.fish $HOME/.config/fish/conf.d/config.fish
 
 # Hyper requires hardlinking
 if [[ -a $HOME/.hyper.js ]]; then rm $HOME/.hyper.js; fi
