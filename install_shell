@@ -10,7 +10,9 @@
 
 # Install fish
 brew install fish
-chsh -s /usr/local/bin/fish
+echo "/opt/homebrew/bin/fish" | sudo tee -a /etc/shells
+chsh -s /opt/homebrew/bin/fish
+#chsh -s /usr/local/bin/fish
 
 # Install and configure oh my fish
 curl -L https://get.oh-my.fish | fish
