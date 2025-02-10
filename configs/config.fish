@@ -8,4 +8,5 @@ end
 fish_ssh_agent
 
 source ~/.zsh_aliases
+source ~/.config/fish/functions/dot-functions.fish
 direnv hook fish | source
