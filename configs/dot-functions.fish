@@ -1,16 +1,25 @@
 
 
-function git-up
-    set BRANCH (or $argv[1] 'main')
+function gpup
+    if test -z "$argv[1]"
+        set BRANCH 'main'
+    else
+        set BRANCH $argv[1]
+    end
+    
     git fetch --all --prune
     git fetch origin $BRANCH:$BRANCH
     git checkout $BRANCH
-    gprunesquashmerged
+    gprunesquashmerged $BRANCH
 end
 
 function gprunesquashmerged
     # Set MAIN_BRANCH to the first argument or default to 'main'
-    set MAIN_BRANCH (or $argv[1] 'main')
+    if test -z "$argv[1]"
+        set BRANCH 'main'
+    else
+        set BRANCH $argv[1]
+    end
 
     # Check out the MAIN_BRANCH to ensure we're on the correct branch
     git checkout -q $MAIN_BRANCH

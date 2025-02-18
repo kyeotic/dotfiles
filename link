@@ -1,16 +1,18 @@
 #!/usr/bin/env bash
 
-# rm -f ~/.zshrc ~/.zsh_prompt ~/.zsh_user
-# ln -sf dotfiles/.zshrc $HOME/.zshrc
-ln -sf $HOME/dotfiles/.zsh_aliases $HOME/.zsh_aliases
-# ln -sf $HOME/dotfiles/.zprofile $HOME/.zprofile
+rm -f ~/.zshrc ~/.zsh_prompt ~/.zsh_user
+ln -sf $HOME/dotfiles/configs/.zshrc $HOME/.zshrc
+ln -sf $HOME/dotfiles/configs/.zsh_aliases $HOME/.zsh_aliases
+ln -sf $HOME/dotfiles/configs/.zsh_functions $HOME/.zsh_functions
+ln -sf $HOME/dotfiles/configs/.zprofile $HOME/.zprofile
+ln -sf $HOME/dotfiles/configs/.p10k.zsh $HOME/.p10k.zsh
 ln -sf $HOME/dotfiles/configs/.gitconfig $HOME/.gitconfig
 ln -sf $HOME/dotfiles/configs/gitconfig.work $HOME/.gitconfig.local
 ln -sf $HOME/dotfiles/phoenix/phoenix.js $HOME/.phoenix.js
-ln -sf $HOME/dotfiles/configs/direnv.toml $HOME/.config/direnv/direnv.toml
-ln -sf $HOME/dotfiles/configs/config.fish $HOME/.config/fish/config.fish
-ln -sf $HOME/dotfiles/configs/dot-functions.fish $HOME/.config/fish/functions/dot-functions.fish
-ln -sf $HOME/dotfiles/configs/bobfish-monokai.fish $HOME/.config/fish/conf.d/config.fish
+# ln -sf $HOME/dotfiles/configs/direnv.toml $HOME/.config/direnv/direnv.toml
+# ln -sf $HOME/dotfiles/configs/config.fish $HOME/.config/fish/config.fish
+# ln -sf $HOME/dotfiles/configs/dot-functions.fish $HOME/.config/fish/functions/dot-functions.fish
+# ln -sf $HOME/dotfiles/configs/bobfish-monokai.fish $HOME/.config/fish/conf.d/config.fish
 
 # Hyper requires hardlinking
 if [[ -a $HOME/.hyper.js ]]; then rm $HOME/.hyper.js; fi

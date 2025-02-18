@@ -23,7 +23,6 @@
 	push-all = !git push && git push --tags
 	pr = !git push --set-upstream origin `git symbolic-ref --short HEAD`
 	pv = !git push --no-verify
-	up = "!bash $HOME/dotfiles/git-prune-squashed.sh"
 [push]
 	default = simple
 [core]

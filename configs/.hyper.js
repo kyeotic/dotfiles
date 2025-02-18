@@ -15,10 +15,8 @@ module.exports = {
     // font family with optional fallbacks
     // fontFamily: "Source Code Pro for Powerline",
     fontFamily: 'MesloLGS Nerd Font',
-    verminal: {
-      fontFamily: '"MesloLGS Nerd Font"',
-      fontSize: 14,
-    },
+    // fontFamily:
+    //   '"JetBrainsMono Nerd Font Mono", Menlo, "DejaVu Sans Mono", Consolas, "Lucida Console", monospace',
 
     // default font weight: 'normal' or 'bold'
     fontWeight: 'normal',
@@ -109,7 +107,7 @@ module.exports = {
     //
     // PowerShell on Windows
     // - Example: `C:\\WINDOWS\\System32\\WindowsPowerShell\\v1.0\\powershell.exe`
-    shell: '/opt/homebrew/bin/fish',
+    shell: '/bin/zsh',
 
     // for setting shell arguments (i.e. for using interactive shellArgs: `['-i']`)
     // by default `['--login']` will be used
