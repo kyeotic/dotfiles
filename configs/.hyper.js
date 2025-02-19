@@ -15,6 +15,10 @@ module.exports = {
     // font family with optional fallbacks
     // fontFamily: "Source Code Pro for Powerline",
     fontFamily: 'MesloLGS Nerd Font',
+    verminal: {
+      fontFamily: '"MesloLGS Nerd Font"',
+      fontSize: 14,
+    },
     // fontFamily:
     //   '"JetBrainsMono Nerd Font Mono", Menlo, "DejaVu Sans Mono", Consolas, "Lucida Console", monospace',
 
