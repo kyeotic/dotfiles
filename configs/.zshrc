@@ -27,7 +27,6 @@ plugins=(
   ssh-agent
   zsh-autosuggestions
   zsh-better-npm-completion
-  gcloud
   pyenv
 )
 

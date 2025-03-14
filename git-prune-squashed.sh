@@ -25,6 +25,9 @@ do
 	shift
 done
 
+git checkout $BASE_BRANCH
+git pull
+
 echo "Pruning local branches that were squashed and merged onto $BASE_BRANCH..."
 if [[ $DRY_RUN -eq 1 ]]
 then
