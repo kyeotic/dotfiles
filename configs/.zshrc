@@ -1,3 +1,5 @@
+# Add deno completions to search path
+if [[ ":$FPATH:" != *":/home/kyeotic/completions:"* ]]; then export FPATH="/home/kyeotic/completions:$FPATH"; fi
 # Enable Powerlevel10k instant prompt. Should stay close to the top of ~/.zshrc.
 # Initialization code that may require console input (password prompts, [y/n]
 # confirmations, etc.) must go above this block; everything else may go below.
@@ -71,3 +73,16 @@ export GPG_TTY=$(tty)
 
 # Add RVM to PATH for scripting. Make sure this is the last PATH variable change.
 export PATH="$PATH:$HOME/.rvm/bin"
+# pnpm
+export PNPM_HOME="/home/kyeotic/.local/share/pnpm"
+case ":$PATH:" in
+  *":$PNPM_HOME:"*) ;;
+  *) export PATH="$PNPM_HOME:$PATH" ;;
+esac
+# pnpm end
+
+
+# This alias runs the Cursor Setup Wizard, simplifying installation and configuration.
+# For more details, visit: https://github.com/jorcelinojunior/cursor-setup-wizard
+alias cursor-setup="/home/kyeotic/cursor-setup-wizard/cursor_setup.sh"
+
