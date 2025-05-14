@@ -12,7 +12,8 @@
   networking.hostName = "kye-1"; # Define your hostname.
   # networking.wireless.enable = true;  # Enables wireless support via wpa_supplicant.
 
-  
+  # Set your time zone.
+  time.timeZone = "America/Los_Angeles";
 
   # Define a user account. Don't forget to set a password with ‘passwd’.
   users.users.kyeotic = {
@@ -21,15 +22,6 @@
     extraGroups = [ "networkmanager" "wheel" "input" ];
     shell = pkgs.zsh;
   };
-
-  # Enable the X11 windowing system.
-  # You can disable this if you're only using the Wayland session.
-  services.xserver.enable = true;
-
-  # Enable the KDE Plasma Desktop Environment.
-  services.displayManager.sddm.enable = true;
-  services.desktopManager.plasma6.enable = true;
-  # services.displayManager.defaultSession = "plasmax11";
 
   # Configure keymap in X11
   services.xserver.xkb = {
