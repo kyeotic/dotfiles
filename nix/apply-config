@@ -1,0 +1,7 @@
+#!/usr/bin/env bash
+set -euo pipefail
+sudo nixos-rebuild switch --flake ~/dotfiles/nix#default
+
+
+# Check if wayland
+# loginctl show-session $(awk '/tty/ {print $1}' <(loginctl)) -p Type | awk -F= '{print $2}'

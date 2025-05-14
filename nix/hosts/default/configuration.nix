@@ -8,7 +8,6 @@
   imports =
     [ # Include the results of the hardware scan.
       ./hardware-configuration.nix
-      inputs.home-manager.nixosModules.default
     ];
 
   # Bootloader.
@@ -58,7 +57,7 @@
   # Enable the KDE Plasma Desktop Environment.
   services.displayManager.sddm.enable = true;
   services.desktopManager.plasma6.enable = true;
-  services.displayManager.defaultSession = "plasmax11";
+  # services.displayManager.defaultSession = "plasmax11";
 
   # Configure keymap in X11
   services.xserver.xkb = {
@@ -128,6 +127,7 @@
     shell = pkgs.zsh;
     packages = with pkgs; [
       kdePackages.kate
+      thunderbird
       vscode-fhs
       discord
       lutris
@@ -135,13 +135,6 @@
       conky
       obsidian
     ];
-  };
-
-  home-manager = {
-    extraSpecialArgs = {inherit inputs;};
-    users = {
-      "kyeotic" = import ./home.nix;
-    };
   };
 
   # Install firefox.
