@@ -2,25 +2,24 @@
 # your system.  Help is available in the configuration.nix(5) man page
 # and in the NixOS manual (accessible by running ‘nixos-help’).
 
-
-# Reload
-# sudo nixos-rebuild switch -I nixos-config=$HOME/dev/nixos/configuration.nix
-# sudo nixos-rebuild switch --flake ~/dev/nixos
-
-# Cleanup
-# sudo nix-collect-garbage --delete-older-than 15d
-
-{ config, pkgs, ... }:
+{ config, pkgs, inputs, ... }:
 
 {
   imports =
     [ # Include the results of the hardware scan.
       ./hardware-configuration.nix
+      inputs.home-manager.nixosModules.default
     ];
 
   # Bootloader.
-  boot.loader.systemd-boot.enable = true;
+  #boot.loader.systemd-boot.enable = true;
+  #boot.loader.efi.canTouchEfiVariables = true;
+
   boot.loader.efi.canTouchEfiVariables = true;
+  boot.loader.grub.enable = true;
+  boot.loader.grub.devices = [ "nodev" ];
+  boot.loader.grub.efiSupport = true;
+  boot.loader.grub.useOSProber = true;
 
   networking.hostName = "nixos"; # Define your hostname.
   # networking.wireless.enable = true;  # Enables wireless support via wpa_supplicant.
@@ -53,11 +52,13 @@
   };
 
   # Enable the X11 windowing system.
+  # You can disable this if you're only using the Wayland session.
   services.xserver.enable = true;
 
-  # Enable the GNOME Desktop Environment.
-  services.xserver.displayManager.gdm.enable = true;
-  services.xserver.desktopManager.gnome.enable = true;
+  # Enable the KDE Plasma Desktop Environment.
+  services.displayManager.sddm.enable = true;
+  services.desktopManager.plasma6.enable = true;
+  services.displayManager.defaultSession = "plasmax11";
 
   # Configure keymap in X11
   services.xserver.xkb = {
@@ -76,7 +77,7 @@
   hardware.graphics.enable = true;
 
   # Enable sound with pipewire.
-  hardware.pulseaudio.enable = false;
+  services.pulseaudio.enable = false;
   security.rtkit.enable = true;
   services.pipewire = {
     enable = true;
@@ -94,18 +95,53 @@
   # Enable touchpad support (enabled default in most desktopManager).
   # services.xserver.libinput.enable = true;
 
+  # zsh
+  users.defaultUserShell = pkgs.zsh;
+  programs.zsh = {
+    enable = true;
+    autosuggestions.enable = true;
+    syntaxHighlighting.enable = true;
+    ohMyZsh = {
+      enable = true;
+      # theme = "robbyrussell";
+      custom = "$HOME/.oh-my-zsh/custom/";
+      theme = "powerlevel10k/powerlevel10k";
+      plugins = [
+        "docker"
+        "dotenv"
+        "git"
+        "nvm"
+        "rust"
+        "sudo"
+      ];
+    };
+  };
+
+  # SSH
+  programs.ssh.startAgent = true;
+
   # Define a user account. Don't forget to set a password with ‘passwd’.
   users.users.kyeotic = {
     isNormalUser = true;
     description = "Tim Kye";
-    extraGroups = [ "networkmanager" "wheel" ];
+    extraGroups = [ "networkmanager" "wheel" "input" ];
+    shell = pkgs.zsh;
     packages = with pkgs; [
-      thunderbird
+      kdePackages.kate
       vscode-fhs
       discord
       lutris
       bitwarden-desktop
+      conky
+      obsidian
     ];
+  };
+
+  home-manager = {
+    extraSpecialArgs = {inherit inputs;};
+    users = {
+      "kyeotic" = import ./home.nix;
+    };
   };
 
   # Install firefox.
@@ -119,21 +155,51 @@
   programs.steam.gamescopeSession.enable = true;
   programs.gamemode.enable = true; 
 
+
   # List packages installed in system profile. To search, run:
   # $ nix search wget
   environment.systemPackages = with pkgs; [
   #  vim # Do not forget to add an editor to edit configuration.nix! The Nano editor is also installed by default.
     wget
+    killall
     mangohud
     protonup
     curl
     fd
+    git
+    nerd-fonts.meslo-lg
+    xdotool
+    wmctrl
+    autokey
   ];
 
-  environment.sessionVariables = {
-    STEAM_EXTRA_COMPAT_TOOLS_PATHS =
-      "\${HOME}/.steam/root/compatibilitytools.d";
+  services.syncthing = {
+    enable = true;
+    openDefaultPorts = true;
+    group = "users";
+    user = "kyeotic";
+    dataDir = "/home/kyeotic";
+    settings = {
+      devices = {
+        "kye-0" = { id = "2USR2ZN-4UN3CWS-4XQK6HL-6PFAUB2-WSRZSPT-WHNFT7F-RKDCOCU-VNOPLAV"; };
+      };
+      folders = {
+        "Drive" = {
+          id = "gchnj-ydqu4";
+          path = "/home/kyeotic/sync/drive";
+          devices = [ "kye-0" ];
+        };
+        "Notes" = {
+          id = "2tuzu-km3cr";
+          path = "/home/kyeotic/sync/notes";
+          devices = [ "kye-0" ];
+        };
+      };
+    };
   };
+  # Don't create default ~/Sync folder
+  systemd.services.syncthing.environment.STNODEFAULTFOLDER = "true";
+
 
   # Some programs need SUID wrappers, can be configured further or are
   # started in user sessions.
@@ -163,3 +229,4 @@
   system.stateVersion = "24.11"; # Did you read the comment?
 
 }
+
