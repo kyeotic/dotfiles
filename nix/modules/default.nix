@@ -2,6 +2,7 @@
 {
   imports = [
     ./config.nix
+    ./desktop.nix
     ./fonts.nix
     ./grub.nix
     ./nvidia.nix
