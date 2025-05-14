@@ -2,7 +2,7 @@
 {
   # enable Nvidia
   hardware.nvidia.package = config.boot.kernelPackages.nvidiaPackages.stable;
-  hardware.nvidia.open = false;
+  hardware.nvidia.open = true;
   hardware.nvidia.modesetting.enable = true;
   services.xserver.videoDrivers = [ "nvidia" ]; 
   hardware.graphics.enable = true;

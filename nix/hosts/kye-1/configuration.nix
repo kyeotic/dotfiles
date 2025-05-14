@@ -14,6 +14,7 @@
 
   # Set your time zone.
   time.timeZone = "America/Los_Angeles";
+  time.hardwareClockInLocalTime = true;
 
   # Define a user account. Don't forget to set a password with ‘passwd’.
   users.users.kyeotic = {

@@ -42,8 +42,8 @@ fi
 # export PATH="$PATH:$HOME/.cargo/bin"
 # export AWS_PAGER=""
 
-# if [[ -a ~/.zsh_functions ]]; then source ~/.zsh_functions; fi
-# if [[ -a ~/.zsh_aliases ]]; then source ~/.zsh_aliases; fi
+if [[ -a ~/.zsh_functions ]]; then source ~/.zsh_functions; fi
+if [[ -a ~/.zsh_aliases ]]; then source ~/.zsh_aliases; fi
 
 # Allow local-machine-only configuration
 
@@ -51,16 +51,6 @@ if [[ -a ~/.localrc ]]
 then
   source ~/.localrc
 fi
-
-# tabtab source for serverless package
-# uninstall by removing these lines or running `tabtab uninstall serverless`
-[[ -f /Users/tkye/dev/digital-library-api/node_modules/tabtab/.completions/serverless.zsh ]] && . /Users/tkye/dev/digital-library-api/node_modules/tabtab/.completions/serverless.zsh
-# tabtab source for sls package
-# uninstall by removing these lines or running `tabtab uninstall sls`
-[[ -f /Users/tkye/dev/digital-library-api/node_modules/tabtab/.completions/sls.zsh ]] && . /Users/tkye/dev/digital-library-api/node_modules/tabtab/.completions/sls.zsh
-# tabtab source for slss package
-# uninstall by removing these lines or running `tabtab uninstall slss`
-[[ -f /Users/tkye/dev/digital-library-api/node_modules/tabtab/.completions/slss.zsh ]] && . /Users/tkye/dev/digital-library-api/node_modules/tabtab/.completions/slss.zsh
 
 # To customize prompt, run `p10k configure` or edit ~/.p10k.zsh.
 [[ ! -f ~/.p10k.zsh ]] || source ~/.p10k.zsh
@@ -81,8 +71,4 @@ case ":$PATH:" in
 esac
 # pnpm end
 
-
-# This alias runs the Cursor Setup Wizard, simplifying installation and configuration.
-# For more details, visit: https://github.com/jorcelinojunior/cursor-setup-wizard
-alias cursor-setup="/home/kyeotic/cursor-setup-wizard/cursor_setup.sh"
 
