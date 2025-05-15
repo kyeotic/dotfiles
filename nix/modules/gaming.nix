@@ -17,6 +17,9 @@
   # Gaming
   programs.steam.enable = true;
   programs.steam.gamescopeSession.enable = true;
-  programs.gamemode.enable = true; 
+
+  # enable in team options with
+  # gamemoderun %command%
+  programs.gamemode.enable = true;
 }
 
