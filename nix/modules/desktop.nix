@@ -8,4 +8,9 @@
   services.displayManager.sddm.enable = true;
   services.desktopManager.plasma6.enable = true;
   services.displayManager.defaultSession = "plasmax11";
+
+
+  # eventually you need to configure kde to remove the taskbar shortcuts
+  # that conflict with autokey window positions
+  # https://github.com/nix-community/plasma-manager?tab=readme-ov-file#whats-supported
 }
