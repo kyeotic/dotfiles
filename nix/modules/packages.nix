@@ -30,5 +30,6 @@
     xdotool
     wmctrl
     autokey
+    signal-desktop
   ];
 }

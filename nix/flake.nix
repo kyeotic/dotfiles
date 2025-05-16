@@ -6,15 +6,13 @@
 
     nix-gaming.url = "github:fufexan/nix-gaming";
 
-    # home-manager = {
-    #   url = "github:nix-community/home-manager";
-    #   inputs.nixpkgs.follows = "nixpkgs";
-    # };
+    home-manager = {
+      url = "github:nix-community/home-manager";
+      inputs.nixpkgs.follows = "nixpkgs";
+    };
   };
 
   outputs = { self, nixpkgs, ... }@inputs: {
-    # use "nixos", or your hostname as the name of the configuration
-    # it's a better practice than "default" shown in the video
     nixosConfigurations = {
       kye-1 = nixpkgs.lib.nixosSystem {
         specialArgs = { inherit inputs; };
@@ -25,8 +23,17 @@
             nix.nixPath = [ "nixpkgs=${nixpkgs}" ];
           }
           ./hosts/kye-1/hardware-configuration.nix
-          ./modules/default.nix
-          # inputs.home-manager.nixosModules.default
+          ./modules
+          home-manager.nixosModules.home-manager
+          {
+            home-manager.useGlobalPkgs = true;
+            home-manager.useUserPackages = true;
+            home-manager.users.kyeotic = ./modules/home.nix;
+            home-manager.extraSpecialArgs = {
+              inherit inputs;
+              self = inputs.self;
+            };
+          }
         ];
       };
     };
