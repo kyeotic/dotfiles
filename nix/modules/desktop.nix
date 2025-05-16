@@ -7,8 +7,10 @@
   # Enable the KDE Plasma Desktop Environment.
   services.displayManager.sddm.enable = true;
   services.desktopManager.plasma6.enable = true;
-  services.displayManager.defaultSession = "plasmax11";
+  # services.displayManager.defaultSession = "plasmax11";
 
+  programs.hyprland.enable = true; # enable Hyprland
+  services.displayManager.sddm.wayland.enable = true;
 
   # eventually you need to configure kde to remove the taskbar shortcuts
   # that conflict with autokey window positions

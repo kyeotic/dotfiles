@@ -10,6 +10,9 @@
   # Recommended by nix-gaming: https://github.com/fufexan/nix-gaming?tab=readme-ov-file#-tips
   boot.kernelPackages = pkgs.linuxKernel.packages.linux_xanmod_latest;
 
+  # Enable coretemp for conky
+  boot.kernelModules = [ "coretemp" "kvm-amd" ];
+
   # environment.systemPackages = with pkgs; [
   #   inputs.nix-gaming.packages.${pkgs.system}.
   # ];

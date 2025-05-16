@@ -9,6 +9,7 @@
     bind
     vscode-fhs
     lshw
+    lm_sensors
     discord
     lutris
     bitwarden-desktop
