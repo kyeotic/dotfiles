@@ -16,20 +16,22 @@
   fileSystems = let cfg = name: {
       device = "//192.168.0.11/${name}";
       fsType = "cifs";
-      options = [
-      "credentials=/home/kyeotic/smb-secrets"
-      "rw"
-      "uid=1000"
-      "gid=100"
-      "vers=3.0" # adapt
-      "noauto"
-      "x-systemd.automount"
-      "x-systemd.requires=network-online.target"
-      "x-systemd.after=network-online.target"
-      "x-systemd.idle-timeout=60"
-      "x-systemd.device-timeout=5s"
-      "x-systemd.mount-timeout=5s"
-      ]; 
+      options = ["credentials=/home/kyeotic/smb-secrets,rw,uid=1000,gid=100,vers=3.0,x-systemd.automount,nofail,x-systemd.idle-timeout=60,x-systemd.device-timeout=5s,x-systemd.mount-timeout=5s"];
+      
+      # options = [
+      # "credentials=/home/kyeotic/smb-secrets"
+      # "rw"
+      # "uid=1000"
+      # "gid=100"
+      # "vers=3.0" # adapt
+      # "noauto"
+      # "x-systemd.automount"
+      # "x-systemd.requires=network-online.target"
+      # "x-systemd.after=network-online.target"
+      # "x-systemd.idle-timeout=60"
+      # "x-systemd.device-timeout=5s"
+      # "x-systemd.mount-timeout=5s"
+      # ]; 
 
     }; in {
       "/mnt/media" = cfg "media";
