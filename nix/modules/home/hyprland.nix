@@ -1,5 +1,12 @@
 { config, pkgs, lib, inputs, ... }:
 {
+
+  # an alternative setup might be found here
+  # https://github.com/AtaraxiaSjel/nixos-config/blob/a4e0e3919fd56b715a534f46f650efb3627021e0/flake.nix#L46
+  # https://github.com/AtaraxiaSjel/nixos-config/blob/master/profiles/workspace/wayland/hyprland.nix
+  # https://github.com/AtaraxiaSjel/nixos-config/blob/a4e0e3919fd56b715a534f46f650efb3627021e0/profiles/workspace/hyprland/default.nix#L68
+
+
   # Hyperlabd
   programs.hyprland.enable = true;
   programs.hyprlock.enable = true;
