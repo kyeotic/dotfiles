@@ -12,7 +12,7 @@
     };
   };
 
-  outputs = { self, nixpkgs, ... }@inputs: {
+  outputs = { self, nixpkgs, home-manager, ... }@inputs: {
     nixosConfigurations = {
       kye-1 = nixpkgs.lib.nixosSystem {
         specialArgs = { inherit inputs; };
@@ -28,7 +28,7 @@
           {
             home-manager.useGlobalPkgs = true;
             home-manager.useUserPackages = true;
-            home-manager.users.kyeotic = ./modules/home.nix;
+            home-manager.users.kyeotic = ./modules/home;
             home-manager.extraSpecialArgs = {
               inherit inputs;
               self = inputs.self;
