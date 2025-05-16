@@ -9,6 +9,7 @@
     ./grub.nix
     ./nvidia.nix
     ./packages.nix
+    ./samba.nix
     ./shell.nix
     ./syncthing.nix
   ];

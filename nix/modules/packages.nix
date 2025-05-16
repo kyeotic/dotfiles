@@ -5,7 +5,10 @@
   environment.systemPackages = with pkgs; [
     kdePackages.kate
     thunderbird
+    stdenv
+    bind
     vscode-fhs
+    lshw
     discord
     lutris
     bitwarden-desktop
