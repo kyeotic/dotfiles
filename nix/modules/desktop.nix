@@ -14,4 +14,13 @@
   # eventually you need to configure kde to remove the taskbar shortcuts
   # that conflict with autokey window positions
   # https://github.com/nix-community/plasma-manager?tab=readme-ov-file#whats-supported
+
+
+  # Hyperland
+  programs.hyprland.enable = true;
+  programs.hyprlock.enable = true;
+  services.hypridle.enable = true;
+
+
+  
 }

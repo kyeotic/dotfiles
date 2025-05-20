@@ -4,32 +4,33 @@
   # $ nix search wget
   environment.systemPackages = with pkgs; [
     kdePackages.kate
-    thunderbird
-    stdenv
-    bind
-    vscode-fhs
-    lshw
-    lm_sensors
-    discord
-    lutris
-    bitwarden-desktop
     (conky.override { nvidiaSupport = true; })
-    obsidian
-    git
-    networkmanager
     #btrfs-progs
     #pulseaudio
-    sudo
-    wget
-    killall
-    mangohud
-    protonup
-    curl
-    fd
-    nerd-fonts.meslo-lg
-    xdotool
-    wmctrl
     autokey
+    bind
+    bitwarden-desktop
+    curl
+    discord
+    fd
+    git
+    killall
+    kitty
+    lm_sensors
+    lshw
+    lutris
+    mangohud
+    nerd-fonts.meslo-lg
+    networkmanager
+    obsidian
+    protonup
     signal-desktop
+    stdenv
+    sudo
+    thunderbird
+    vscode-fhs
+    wget
+    wmctrl
+    xdotool
   ];
 }

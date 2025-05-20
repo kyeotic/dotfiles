@@ -10,6 +10,7 @@ ln -sf $HOME/dotfiles/configs/.gitconfig $HOME/.gitconfig
 ln -sf $HOME/dotfiles/configs/gitconfig.work $HOME/.gitconfig.local
 ln -sf $HOME/dotfiles/phoenix/phoenix.js $HOME/.phoenix.js
 ln -sf $HOME/dotfiles/configs/conky.conf ~/.config/conky/conky.conf
+ln -sf $HOME/dotfiles/configs/hyprland.conf ~/.config/hypr/hyprland.conf
 # ln -sf $HOME/dotfiles/configs/direnv.toml $HOME/.config/direnv/direnv.toml
 # ln -sf $HOME/dotfiles/configs/config.fish $HOME/.config/fish/config.fish
 # ln -sf $HOME/dotfiles/configs/dot-functions.fish $HOME/.config/fish/functions/dot-functions.fish

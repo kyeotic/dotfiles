@@ -7,22 +7,50 @@
   # https://github.com/AtaraxiaSjel/nixos-config/blob/a4e0e3919fd56b715a534f46f650efb3627021e0/profiles/workspace/hyprland/default.nix#L68
 
 
-  # Hyperlabd
-  programs.hyprland.enable = true;
-  programs.hyprlock.enable = true;
-  # services.hypridle.enable = true;
-
-
   programs.kitty.enable = true; # required for the default Hyprland config
   wayland.windowManager.hyprland.enable = true; # enable Hyprlan
   # environment.sessionVariables.NIXOS_OZONE_WL = "1";
   home.sessionVariables.NIXOS_OZONE_WL = "1";
 
-   wayland.windowManager.hyprland.settings = {
-    bind = [
+  #  wayland.windowManager.hyprland.settings = {
+  #   "monitor" = ",preferred,auto,1";
+    
+  #   "$terminal" = "kityy";
+  #   "$browser" = "firefox";
+  #   "exec-once" = "waybar";
+  #   input = {
+  #     kb_layout = "us";
+  #     touchpad.natural_scroll = true;
+  #     sensitivity = 0;
+  #   };
+  #   general = {
+  #     gaps_in = 0;
+  #     gaps_out = 0;
+  #     border_size = 0;
+      
+  #     layout = "dwindle";
+  #     allow_tearing = false;
+  #   };
+  #   bind = [
+  #     "$mainMod = SUPER"
+  #     "$mainMod, F, fullscreen"
+  #     "$mainMod, Q, exec, $terminal"
+  #     "$mainMod, B, exec, $browser"
+  #     "$mainMod, C, killactive,"
+  #     "$mainMod, M, exit,"
 
-    ];
-   };
+  #     # Bind to reload waybar
+  #     "$mainMod, Z, exec, kill $(pidof waybar) && waybar"
+
+  #     # Scroll through existing workspaces with mainMod + scroll
+  #     "$mainMod, mouse_down, workspace, e+1"
+  #     "$mainMod, mouse_up, workspace, e-1"
+  #   ];
+  #   bindm = [
+  #     "$mainMod, mouse:272, movewindow"
+  #     "$mainMod, mouse:273, resizewindow"
+  #   ];
+  #  };
 
 
   #   wayland.windowManager.hyprland.settings = {

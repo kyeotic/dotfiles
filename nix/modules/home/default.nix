@@ -1,7 +1,7 @@
 { config, pkgs, lib, inputs, ... }:
 {
   imports = [
-    # ./hyprland.nix
+    ./hyprland.nix
   ];
   # The state version is required and should stay at the version you
     # originally installed.
