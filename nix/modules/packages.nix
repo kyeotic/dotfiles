@@ -26,6 +26,7 @@
     protonup
     signal-desktop
     stdenv
+    stow
     sudo
     thunderbird
     vscode-fhs
