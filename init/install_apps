@@ -1,8 +1,8 @@
-#!/usr/bin/env fish
+#!/usr/bin/env bash
 
-brew install awscli gettext git httpie jq \
+brew install gettext git jq \
   openssl pcre pcre2 python readline telnet \
-  watch watchman wget yarn yq findutils bat exa fd
+  watch watchman wget yarn yq findutils bat fd
 brew install warrensbox/tap/tfswitch
 brew install --cask phoenix
 
