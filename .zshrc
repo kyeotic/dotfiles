@@ -69,20 +69,4 @@ export PATH="/usr/local/sbin:$PATH"
 export NVM_DIR="$HOME/.nvm"
 [ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"  # This loads nvm
 [ -s "$NVM_DIR/bash_completion" ] && \. "$NVM_DIR/bash_completion"  # This loads nvm bash_completion
-export GPG_TTY=$(tty)
-
-# Add RVM to PATH for scripting. Make sure this is the last PATH variable change.
-export PATH="$PATH:$HOME/.rvm/bin"
-# pnpm
-export PNPM_HOME="/home/kyeotic/.local/share/pnpm"
-case ":$PATH:" in
-  *":$PNPM_HOME:"*) ;;
-  *) export PATH="$PNPM_HOME:$PATH" ;;
-esac
-# pnpm end
-
-
-# This alias runs the Cursor Setup Wizard, simplifying installation and configuration.
-# For more details, visit: https://github.com/jorcelinojunior/cursor-setup-wizard
-alias cursor-setup="/home/kyeotic/cursor-setup-wizard/cursor_setup.sh"
 

@@ -9,13 +9,13 @@ fi
 
 /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
 
-brew install zsh zsh-completions wget
+brew install zsh zsh-completions wget stow
 
 if [ -d "$HOME/.oh-my-zsh" ] 
 then
     # Install oh-my-zsh
     sh -c "$(curl -fsSL https://raw.github.com/robbyrussell/oh-my-zsh/master/tools/install.sh) --skip-chsh"
-    git clone --depth=1 https://github.com/romkatv/powerlevel10k.git ${ZSH_CUSTOM:-$HOME/.oh-my-zsh/custom}/themes/powerlevel10k
+    git clone --depth=1 https://github.com/romkatv/powerlevel10k.git "${ZSH_CUSTOM:-$HOME/.oh-my-zsh/custom}/themes/powerlevel10k"
 fi
 
 git config --global init.defaultBranch main
@@ -29,5 +29,10 @@ git clone https://github.com/lukechilds/zsh-better-npm-completion ~/.oh-my-zsh/c
 
 
 # update rc
-./dotfiles/link
+# ./dotfiles/link
 touch ~/.localrc
+cd $HOME/dotfiles
+stow . --adopt
+
+if [[ -a $HOME/.hyper.js ]]; then rm $HOME/.hyper.js; fi
+ln $HOME/dotfiles/configs/.hyper.js $HOME/.hyper.js 
