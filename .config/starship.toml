@@ -1,7 +1,7 @@
 "$schema" = 'https://starship.rs/config-schema.json'
 
 format = """
-[](white)\
+[](fg:fg0)\
 $os\
 $username\
 [](bg:bg0 fg:fg0)\
@@ -25,7 +25,7 @@ palette = 'monokai_dark'
 
 [os]
 disabled = false
-style = "bg:white fg:black"
+style = "bg:fg0 fg:black"
 
 [username]
 show_always = true
@@ -35,7 +35,7 @@ format = '[ $user]($style)'
 disabled = true
 
 [directory]
-style = "bg:bg0 fg:#1a1a1a"
+style = "bg:bg0 fg:fg0"
 format = "[ $path ]($style)"
 truncation_length = 3
 truncation_symbol = "…/"
@@ -50,16 +50,16 @@ truncation_symbol = "…/"
 [git_branch]
 symbol = ""
 style = "bg:green"
-format = '[[ $symbol $branch ](fg:fg0 bg:green)]($style)'
+format = '[[ $symbol $branch ](fg:bg0 bg:green)]($style)'
 
 [git_status]
 style = "bg:green"
-format = '[[($all_status$ahead_behind )](fg:fg0 bg:green)]($style)'
+format = '[[($all_status$ahead_behind )](fg:bg0 bg:green)]($style)'
 
 [nodejs]
 symbol = ""
 style = "bg:aqua"
-format = '[[ $symbol( $version) ](fg:fg0 bg:aqua)]($style)'
+format = '[[ $symbol( $version) ](fg:bg0 bg:aqua)]($style)'
 
 [c]
 symbol = " "
@@ -116,7 +116,7 @@ format = '[[ $symbol( $context) ](fg:fg0 bg:aqua)]($style)'
 disabled = false
 time_format = "%r"
 style = "bg:orange"
-format = '[[  $time ](fg:fg0 bg:orange)]($style)'
+format = '[[  $time ](fg:bg0 bg:orange)]($style)'
 
 [line_break]
 disabled = false
