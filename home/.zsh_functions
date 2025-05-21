@@ -1,3 +1,5 @@
+#!/usr/bin/env bash
+
 function colorize-log {
   colorize red ERROR | \
   colorize yellow 'WARN(ING)?' | \

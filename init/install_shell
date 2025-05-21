@@ -8,7 +8,6 @@ fi
 # Install homebrew
 /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
 brew install zsh zsh-completions zsh-autosuggestions wget stow
-brew install zsh-autosuggestions
 
 # Oh my Zsh
 # if [ -d "$HOME/.oh-my-zsh" ] 
