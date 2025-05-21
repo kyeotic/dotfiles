@@ -23,3 +23,28 @@ if type brew &>/dev/null; then
   autoload -Uz compinit
   compinit -u
 fi
+
+# WSL-friendly SSH agent setup
+if [ -z "$SSH_AUTH_SOCK" ] || [ ! -S "$SSH_AUTH_SOCK" ]; then
+  # Kill any existing ssh-agent processes
+  pkill ssh-agent 2>/dev/null
+  
+  # Create a fixed socket location
+  export SSH_AUTH_SOCK=~/.ssh/agent.sock
+  
+  # Remove socket if it exists
+  rm -f $SSH_AUTH_SOCK
+  
+  # Start a new agent with the fixed socket
+  ssh-agent -a $SSH_AUTH_SOCK > /dev/null
+  
+  # Add keys
+  find ~/.ssh -type f -not -name "*.pub" \
+    -not -name "known_hosts" \
+    -not -name "authorized_keys" \
+    -not -name "config" \
+    -exec grep -l "PRIVATE KEY" {} \; 2>/dev/null | while read key; do
+
+      ssh-add "$key"  2>/dev/null
+  done
+fi
