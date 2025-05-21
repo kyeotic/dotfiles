@@ -9,6 +9,11 @@ zle -N down-line-or-beginning-search
 bindkey "^[[A" up-line-or-beginning-search
 bindkey "^[[B" down-line-or-beginning-search
 
+# Fix key bindings
+bindkey "^[[H" beginning-of-line   # Home key
+bindkey "^[[F" end-of-line         # End key
+bindkey "^[[3~" delete-char        # Delete key
+
 # Auto
 source $HOMEBREW_PREFIX/share/zsh-autosuggestions/zsh-autosuggestions.zsh
 

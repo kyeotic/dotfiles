@@ -1,0 +1,8 @@
+#!/usr/bin/env bash
+
+# Link Config and home
+stow -t ~/.config -S .config/ --adopt
+stow -t ~/ -S home
+
+if [[ -a $HOME/.hyper.js ]]; then rm $HOME/.hyper.js; fi
+ln $HOME/dotfiles/configs/.hyper.js $HOME/.hyper.js 
