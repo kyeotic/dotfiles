@@ -31,8 +31,10 @@ git clone https://github.com/lukechilds/zsh-better-npm-completion ~/.oh-my-zsh/c
 # update rc
 # ./dotfiles/link
 touch ~/.localrc
-cd $HOME/dotfiles
-stow . --adopt
+
+# Link Config and home
+stow -t ~/.config -S .config/ --adopt
+stow -n -t ~/ -S home
 
 if [[ -a $HOME/.hyper.js ]]; then rm $HOME/.hyper.js; fi
 ln $HOME/dotfiles/configs/.hyper.js $HOME/.hyper.js 
