@@ -17,7 +17,7 @@ export EDITOR='code'
 # export PATH="$PATH:$DENO_INSTALL/bin"
 # export PATH="$PATH:$HOME/.cargo/bin"
 export AWS_PAGER=""
-. "/Users/tkye/.deno/env" #deno
+. "$HOME/.deno/env" #deno
 . "$HOME/.cargo/env" #rust
 
 # Nvm
