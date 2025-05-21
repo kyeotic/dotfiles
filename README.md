@@ -8,7 +8,7 @@ Open a terminal and run
 
 ```
 git clone git@github.com:kyeotic/dotfiles.git
-./dotfiles/init
+./dotfiles/init/init
 ```
 
 ## Install Mac Apps
