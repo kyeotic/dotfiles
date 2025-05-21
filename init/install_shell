@@ -6,10 +6,9 @@ if [ $(echo $SHELL) != "/bin/zsh" ]; then
 fi
 
 # Install homebrew
-
 /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
-
-brew install zsh zsh-completions wget stow
+brew install zsh zsh-completions zsh-autosuggestions wget stow
+brew install zsh-autosuggestions
 
 # Oh my Zsh
 # if [ -d "$HOME/.oh-my-zsh" ] 
@@ -30,8 +29,7 @@ brew install zsh zsh-completions wget stow
 
 
 # Starship
-git clone https://github.com/zsh-users/zsh-autosuggestions ~/.zsh/zsh-autosuggestions
-
+curl -sS https://starship.rs/install.sh | sh
 
 
 # update rc
