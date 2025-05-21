@@ -20,6 +20,15 @@ export AWS_PAGER=""
 . "$HOME/.deno/env" #deno
 . "$HOME/.cargo/env" #rust
 
+# SSH
+# Start ssh-agent if not already running
+if [ -z "$SSH_AUTH_SOCK" ]; then
+  eval "$(ssh-agent -s >/dev/null)"
+  
+  # Add all private keys in .ssh directory (excluding known_hosts, config, etc)
+  find ~/.ssh -type f -not -name "*.pub" -not -name "known_hosts" -not -name "authorized_keys" -not -name "config" -exec grep -l "PRIVATE KEY" {} \; 2>/dev/null | xargs -r ssh-add 2>/dev/null
+fi
+
 # Nvm
 export NVM_DIR="$HOME/.nvm"
 #[ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"  # This loads nvm
