@@ -2,7 +2,7 @@
 
 brew install gettext git jq \
   openssl pcre pcre2 python readline telnet \
-  watch watchman wget yarn yq findutils bat fd
+  watch watchman wget yarn yq findutils bat fd eza
 brew install warrensbox/tap/tfswitch
 brew install --cask phoenix
 

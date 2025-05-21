@@ -21,6 +21,19 @@ alias edit_hosts="sudo nano /etc/hosts"
 alias reset_dns="sudo killall -HUP mDNSResponder"
 alias aws-me="aws sts get-caller-identity | jq -r '.'"
 alias nix-apply="~/dotfiles/nix/apply-config"
+alias es="eza "
+
+# Easier navigation: .., ..., ...., ....., ~ and -
+alias ..="cd .."
+alias ...="cd ../.."
+alias ....="cd ../../.."
+alias .....="cd ../../../.."
+alias ~="cd ~" # `cd` is probably faster to type though
+
+# Intuitive map function
+# For example, to list all directories that contain a certain file:
+# find . -name .gitattributes | map dirname
+alias map="xargs -n1"
 
 # Git
 alias g="git"
