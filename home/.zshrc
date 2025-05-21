@@ -4,6 +4,15 @@
 
 # Starship
 eval "$(starship init zsh)"
+source ~/.zsh/zsh-autosuggestions/zsh-autosuggestions.zsh
+autoload -U up-line-or-beginning-search
+autoload -U down-line-or-beginning-search
+zle -N up-line-or-beginning-search
+zle -N down-line-or-beginning-search
+bindkey "^[[A" up-line-or-beginning-search
+bindkey "^[[B" down-line-or-beginning-search
+
+# All Prompts
 
 # export PATH="$PATH:/Applications/Visual Studio Code.app/Contents/Resources/app/bin"
 # export EDITOR='code'
@@ -15,10 +24,10 @@ eval "$(starship init zsh)"
 # Load all Aliases
 if [[ -a ~/.zsh_functions ]]; then source ~/.zsh_functions; fi
 if [[ -a ~/.zsh_aliases ]]; then source ~/.zsh_aliases; fi
+if [[ -a ~/.zsh_git ]]; then source ~/.zsh_git; fi
 
 # Allow local-machine-only configuration
 if [[ -a ~/.localrc ]]; then source ~/.localrc; fi
-
 
 export PATH="/usr/local/sbin:$PATH"
 

@@ -11,21 +11,27 @@ fi
 
 brew install zsh zsh-completions wget stow
 
-if [ -d "$HOME/.oh-my-zsh" ] 
-then
-    # Install oh-my-zsh
-    sh -c "$(curl -fsSL https://raw.github.com/robbyrussell/oh-my-zsh/master/tools/install.sh) --skip-chsh"
-    git clone --depth=1 https://github.com/romkatv/powerlevel10k.git "${ZSH_CUSTOM:-$HOME/.oh-my-zsh/custom}/themes/powerlevel10k"
-fi
+# Oh my Zsh
+# if [ -d "$HOME/.oh-my-zsh" ] 
+# then
+#     # Install oh-my-zsh
+#     sh -c "$(curl -fsSL https://raw.github.com/robbyrussell/oh-my-zsh/master/tools/install.sh) --skip-chsh"
+#     git clone --depth=1 https://github.com/romkatv/powerlevel10k.git "${ZSH_CUSTOM:-$HOME/.oh-my-zsh/custom}/themes/powerlevel10k"
+# fi
 
-git config --global init.defaultBranch main
+# git config --global init.defaultBranch main
 
-# Fix "insecure directories" warning
-sudo chmod -R 755 ~/.oh-my-zsh
+# # Fix "insecure directories" warning
+# sudo chmod -R 755 ~/.oh-my-zsh
 
-# Install Plugins
-git clone https://github.com/zsh-users/zsh-autosuggestions ${ZSH_CUSTOM:-~/.oh-my-zsh/custom}/plugins/zsh-autosuggestions || return 0
-git clone https://github.com/lukechilds/zsh-better-npm-completion ~/.oh-my-zsh/custom/plugins/zsh-better-npm-completion
+# # Install Plugins
+# git clone https://github.com/zsh-users/zsh-autosuggestions ${ZSH_CUSTOM:-~/.oh-my-zsh/custom}/plugins/zsh-autosuggestions || return 0
+# git clone https://github.com/lukechilds/zsh-better-npm-completion ~/.oh-my-zsh/custom/plugins/zsh-better-npm-completion
+
+
+# Starship
+git clone https://github.com/zsh-users/zsh-autosuggestions ~/.zsh/zsh-autosuggestions
+
 
 
 # update rc
