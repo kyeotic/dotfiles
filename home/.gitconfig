@@ -17,7 +17,7 @@
 	parent = "!git show-branch | grep '*' | grep -v \"$(git rev-parse --abbrev-ref HEAD)\" | head -n1 | sed 's/.*\\[\\(.*\\)\\].*/\\1/' | sed 's/[\\^~].*//' #"
 	squash-branch = "!f(){ PARENT=$(git parent); git reset --soft $(git merge-base $PARENT HEAD); git commit -m \"$1\"; };f"
 	prunl = !git branch --format '%(refname:short)<->%(upstream)' | grep '<->$' | sed 's/<->//g' > /tmp/local-only-branches && ${EDITOR:-vi} /tmp/local-only-branches && xargs git branch --delete --force < /tmp/local-only-branches
-	up = !~/dotfiles/git-prune-squashed.sh
+	up = !~/dotfiles/home/git-prune-squashed.sh
 	co = checkout
 	cob = checkout -b
 	push-all = !git push && git push --tags
