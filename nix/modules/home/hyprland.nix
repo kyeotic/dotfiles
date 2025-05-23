@@ -8,9 +8,17 @@
 
 
   programs.kitty.enable = true; # required for the default Hyprland config
-  wayland.windowManager.hyprland.enable = true; # enable Hyprlan
+  # wayland.windowManager.hyprland.enable = true; # enable Hyprlan
   # environment.sessionVariables.NIXOS_OZONE_WL = "1";
   home.sessionVariables.NIXOS_OZONE_WL = "1";
+
+  # wayland.windowManager.hyprland = {
+  #   enable = true;
+  #   extraConfig = ''
+  #     # Hyprland config
+  #     source = ~/.config/hypr/hypr-local.conf
+  #     '';
+  # };
 
   #  wayland.windowManager.hyprland.settings = {
   #   "monitor" = ",preferred,auto,1";
