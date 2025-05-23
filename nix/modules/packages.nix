@@ -25,10 +25,12 @@
     obsidian
     protonup
     signal-desktop
+    starship
     stdenv
     stow
     sudo
     thunderbird
+    unzip
     vscode-fhs
     wget
     wmctrl

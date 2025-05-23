@@ -14,7 +14,9 @@ bindkey "^[[F" end-of-line         # End key
 bindkey "^[[3~" delete-char        # Delete key
 
 # Auto
-source $HOMEBREW_PREFIX/share/zsh-autosuggestions/zsh-autosuggestions.zsh
+if [ ! -f "/etc/NIXOS" ]; then
+  source $HOMEBREW_PREFIX/share/zsh-autosuggestions/zsh-autosuggestions.zsh
+fi
 
 # zsh-completions
 if type brew &>/dev/null; then

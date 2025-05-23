@@ -5,6 +5,15 @@ if [ $(echo $SHELL) != "/bin/zsh" ]; then
     chsh -s `which zsh`;
 fi
 
+if [ -f "/etc/NIXOS" ]; then
+  # Link dotfiles
+    touch ~/.localrc
+    ./init/stow
+    exit
+# else
+#   echo "Not running on NixOS"
+fi
+
 # Install homebrew
 if ! command -v brew >/dev/null 2>&1; then
     /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
