@@ -81,4 +81,13 @@
   # Enable CUPS to print documents.
   services.printing.enable = true;
 
+  # services.printing.drivers = [ pkgs.cups-dymo ];
+  #   users.users.${config.userDefinedGlobalVariables.username} = {
+  #   extraGroups = [ "lp" ];
+  # };
+
+  services.avahi.enable = true;
+  services.avahi.nssmdns = true;
+  services.avahi.openFirewall = true; 
+
 }
