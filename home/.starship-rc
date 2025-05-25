@@ -1,5 +1,13 @@
 eval "$(starship init zsh)"
 
+# Homebrew
+if [ "$(uname)" = "Darwin" ]; then
+  # source the homebrew files, 
+  echo "FNISH HOMEBREW CONFIG IN STARSHIP"
+elif [ "$(expr substr $(uname -s) 1 5)" = "Linux" ]; then
+  eval "$(/home/linuxbrew/.linuxbrew/bin/brew shellenv)"
+fi
+
 # History suggestions
 autoload -U up-line-or-beginning-search
 autoload -U down-line-or-beginning-search
@@ -12,6 +20,14 @@ bindkey "^[[B" down-line-or-beginning-search
 bindkey "^[[H" beginning-of-line   # Home key
 bindkey "^[[F" end-of-line         # End key
 bindkey "^[[3~" delete-char        # Delete key
+
+# History in cache directory:
+HISTFILE="$HOME/.zsh_history"
+HISTSIZE=500000
+SAVEHIST=500000
+setopt appendhistory
+setopt INC_APPEND_HISTORY
+setopt SHARE_HISTORY
 
 # Auto
 if [ ! -f "/etc/NIXOS" ]; then

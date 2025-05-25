@@ -1,10 +1,5 @@
 #!/usr/bin/env bash
 
-# Use Zsh
-if [ $(echo $SHELL) != "/bin/zsh" ]; then
-    chsh -s `which zsh`;
-fi
-
 if [ -f "/etc/NIXOS" ]; then
   # Link dotfiles
     touch ~/.localrc
@@ -17,11 +12,23 @@ fi
 # Install homebrew
 if ! command -v brew >/dev/null 2>&1; then
     /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
+
+    if [ "$(uname)" = "Darwin" ]; then
+        # source the homebrew files, 
+    elif [ "$(expr substr $(uname -s) 1 5)" = "Linux" ]; then
+        eval "$(/home/linuxbrew/.linuxbrew/bin/brew shellenv)"
+    fi
+
 fi
 
 # Install shell packages
 brew install zsh zsh-completions zsh-autosuggestions wget stow
 
+# Use Zsh
+if [ $(echo $SHELL) != "/bin/zsh" ]; then
+    command -v zsh | sudo tee -a /etc/shells
+    sudo chsh -s "$(command -v zsh)" "${USER}"
+fi
 
 # Oh my Zsh
 # if [ -d "$HOME/.oh-my-zsh" ] 
@@ -45,5 +52,5 @@ brew install zsh zsh-completions zsh-autosuggestions wget stow
 [ ! -f ~/.starship-rc ] && curl -sS https://starship.rs/install.sh | sh
 
 # Link dotfiles
-touch ~/.localrc
-./init/stow
+touch $HOME/.localrc
+$HOME/dotfiles/init/stow
