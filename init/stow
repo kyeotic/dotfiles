@@ -3,6 +3,7 @@
 # Link Config and home
 stow -d $HOME/dotfiles -t ~/.config -S .config/ --adopt 
 stow -d $HOME/dotfiles -t ~/ -S home
+stow -d $HOME/dotfiles -t ~/.config/autokey/data -S autokey
 
 # if [[ -a $HOME/.hyper.js ]]; then rm $HOME/.hyper.js; fi
 # ln $HOME/dotfiles/configs/.hyper.js $HOME/.hyper.js 

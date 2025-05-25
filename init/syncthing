@@ -1,0 +1,16 @@
+#!/usr/bin/env bash
+
+curl -s https://syncthing.net/release-key.txt | sudo apt-key add -
+
+# Add the "stable" channel to your APT sources
+echo "deb https://apt.syncthing.net/ syncthing stable" | sudo tee /etc/apt/sources.list.d/syncthing.list
+
+# Update and install
+sudo apt update
+sudo apt install syncthing
+
+# Enable and start the user service
+systemctl --user enable syncthing.service
+systemctl --user start syncthing.service
+
+sudo loginctl enable-linger $USER
