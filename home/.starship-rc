@@ -1,3 +1,4 @@
+# Init Starship
 eval "$(starship init zsh)"
 
 # Homebrew
@@ -32,6 +33,7 @@ setopt SHARE_HISTORY
 # Auto
 if [ ! -f "/etc/NIXOS" ]; then
   source $HOMEBREW_PREFIX/share/zsh-autosuggestions/zsh-autosuggestions.zsh
+  eval "$(direnv hook zsh)"
 fi
 
 # zsh-completions

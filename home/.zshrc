@@ -1,3 +1,5 @@
+# Add deno completions to search path
+if [[ ":$FPATH:" != *":/home/kyeotic/completions:"* ]]; then export FPATH="/home/kyeotic/completions:$FPATH"; fi
 # Starship
 [[ ! -f ~/.starship-rc ]] || source ~/.starship-rc
 
@@ -10,7 +12,7 @@ if [[ -a ~/.zsh_git ]]; then source ~/.zsh_git; fi
 if [[ -a ~/.localrc ]]; then source ~/.localrc; fi
 
 # Path
-export PATH="/usr/local/sbin:$PATH"
+export PATH="/usr/local/sbin:$HOME/bin:$PATH"
 export EDITOR='code'
 # export DENO_INSTALL=$HOME/.deno
 # export PATH="$PATH:$DENO_INSTALL/bin"
