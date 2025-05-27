@@ -1,10 +1,28 @@
 #!/usr/bin/env bash
 
-brew install gettext git jq \
-  openssl pcre pcre2 python readline telnet \
-  watch watchman wget yarn yq findutils bat fd eza direnv \
-  awscli
-brew install warrensbox/tap/tfswitch
+brew install \
+  awscli \
+  bat \
+  direnv \
+  eza \
+  fd \
+  findutils \
+  gettext \
+  git \
+  jq \
+  openssl \
+  pcre \
+  pcre2 \
+  python \
+  readline \
+  telnet \
+  warrensbox/tap/tfswitch \
+  watch \
+  watchman \
+  wget \
+  yarn \
+  yq
+
 brew install --cask phoenix
 
 # deno
@@ -15,6 +33,6 @@ fi
 # Rust
 if ! command -v cargo >/dev/null 2>&1; then
     curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh
-  cargo install cargo-watch eza wasm-bindgen-cli cargo-generate cargo-make
+    cargo install cargo-watch eza wasm-bindgen-cli cargo-generate cargo-make
 fi
 
