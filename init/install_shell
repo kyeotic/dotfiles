@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 
-set -u
+set -eu
 
 if [ -f "/etc/NIXOS" ]; then
   # Link dotfiles
@@ -16,7 +16,8 @@ if ! command -v brew >/dev/null 2>&1; then
     NONINTERACTIVE=1 /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
 
     if [ "$(uname)" = "Darwin" ]; then
-        # source the homebrew files, 
+        # TODO: check that this is correct for MAC
+        eval "\$(${HOMEBREW_PREFIX}/bin/brew shellenv)"
     else [ "$(expr substr $(uname -s) 1 5)" = "Linux" ]; then
         eval "$(/home/linuxbrew/.linuxbrew/bin/brew shellenv)"
     fi
