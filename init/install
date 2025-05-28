@@ -1,0 +1,9 @@
+#!/bin/bash
+
+set -u
+
+cd $HOME
+git clone git@github.com:kyeotic/dotfiles.git
+
+cd dotfiles
+./init/init
