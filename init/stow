@@ -1,6 +1,8 @@
 #!/usr/bin/env bash
 
 # Link Config and home
+mkdir -p ~/.config
+
 stow -d $HOME/dotfiles -t ~/.config -S .config/ --adopt 
 stow -d $HOME/dotfiles -t ~/ -S home
 mkdir -p ~/.config/autokey/data
