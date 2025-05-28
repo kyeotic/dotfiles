@@ -1,5 +1,14 @@
 #!/usr/bin/env bash
 
+
+# This might come after brew is installed but before a new terminal
+if [ "$(uname)" = "Darwin" ]; then
+    # TODO: check that this is correct for MAC
+    eval "\$(${HOMEBREW_PREFIX}/bin/brew shellenv)"
+elif [ "$(expr substr $(uname -s) 1 5)" = "Linux" ]; then
+    eval "$(/home/linuxbrew/.linuxbrew/bin/brew shellenv)"
+fi
+
 if [ ! -f "$NVM_DIR/nvm.sh" ]; then
     echo "Installing nvm"
     PROFILE=/dev/null bash -c 'curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.40.3/install.sh | bash'

@@ -3,6 +3,7 @@
 set -eu
 
 $HOME/dotfiles/init/install_shell
+$HOME/dotfiles/init/install_apps
 $HOME/dotfiles/init/install_nvm
 $HOME/dotfiles/init/install_fonts
 

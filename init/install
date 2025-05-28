@@ -2,11 +2,14 @@
 
 # Run with
 # /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/kyeotic/dotfiles/refs/heads/main/init/install)"
+# Test with
+# wsl --install Ubuntu --name utest
 
 set -u
 
 if [ "$(expr substr $(uname -s) 1 5)" = "Linux" ]; then
     # linux or wsl
+    sudo apt update
     sudo apt install build-essential
 fi
 
