@@ -1,7 +1,7 @@
 #!/bin/bash
 
 # Run with
-# /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/kyeotic/dotfiles/refs/heads/main/init/install)"
+# /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/kyeotic/dotfiles/HEAD/init/install)"
 # Test with
 # wsl --install Ubuntu --name utest
 
