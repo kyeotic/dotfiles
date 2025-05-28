@@ -17,4 +17,8 @@ cd $HOME
 git clone https://github.com/kyeotic/dotfiles.git
 
 cd dotfiles
+
+git remote origin set-url git@github.com:kyeotic/dotfiles.git
+
+./init/setup-ssh
 ./init/init
