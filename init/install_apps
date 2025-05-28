@@ -47,6 +47,5 @@ fi
 # Rust
 if ! command -v cargo >/dev/null 2>&1; then
     curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh
-    zsh -lic "cargo install cargo-watch eza wasm-bindgen-cli cargo-generate cargo-make"
 fi
 
