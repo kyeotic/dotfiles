@@ -28,6 +28,7 @@ brew install zsh zsh-completions zsh-autosuggestions wget stow
 
 # Use Zsh
 if [ $(echo $SHELL) != "/bin/zsh" ]; then
+    echo "Switching to Zsh"
     command -v zsh | sudo tee -a /etc/shells
     sudo chsh -s "$(command -v zsh)" "${USER}"
 fi

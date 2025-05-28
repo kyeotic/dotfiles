@@ -15,15 +15,21 @@ brew install \
   pcre2 \
   python \
   readline \
-  telnet \
-  warrensbox/tap/tfswitch \
+  unzip \
   watch \
   watchman \
   wget \
-  yarn \
   yq
 
-brew install --cask phoenix
+if [ "$(uname)" = "Darwin" ]; then
+    # Mac
+    brew install telnet \
+      warrensbox/tap/tfswitch
+    brew install --cask phoenix
+elif [ "$(expr substr $(uname -s) 1 5)" = "Linux" ]; then
+    # linux or wsl
+    curl -L https://raw.githubusercontent.com/warrensbox/terraform-switcher/master/install.sh | bash
+fi
 
 # deno
 if ! command -v deno >/dev/null 2>&1; then
@@ -33,6 +39,6 @@ fi
 # Rust
 if ! command -v cargo >/dev/null 2>&1; then
     curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh
-    cargo install cargo-watch eza wasm-bindgen-cli cargo-generate cargo-make
+    zsh -lic "cargo install cargo-watch eza wasm-bindgen-cli cargo-generate cargo-make"
 fi
 

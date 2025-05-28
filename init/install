@@ -5,6 +5,11 @@
 
 set -u
 
+if [ "$(expr substr $(uname -s) 1 5)" = "Linux" ]; then
+    # linux or wsl
+    sudo apt install build-essential
+fi
+
 cd $HOME
 git clone https://github.com/kyeotic/dotfiles.git
 
