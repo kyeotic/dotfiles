@@ -7,4 +7,4 @@ $HOME/dotfiles/init/install_apps
 $HOME/dotfiles/init/install_nvm
 $HOME/dotfiles/init/install_fonts
 
-echo "\n\nInstall Complete\nStart a new terminal for all changes to take effect"
+printf "\n\nInstall Complete\nStart a new terminal for all changes to take effect"
