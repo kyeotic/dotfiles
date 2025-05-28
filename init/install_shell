@@ -1,5 +1,7 @@
 #!/usr/bin/env bash
 
+set -u
+
 if [ -f "/etc/NIXOS" ]; then
   # Link dotfiles
     touch ~/.localrc
@@ -15,7 +17,7 @@ if ! command -v brew >/dev/null 2>&1; then
 
     if [ "$(uname)" = "Darwin" ]; then
         # source the homebrew files, 
-    elif [ "$(expr substr $(uname -s) 1 5)" = "Linux" ]; then
+    else [ "$(expr substr $(uname -s) 1 5)" = "Linux" ]; then
         eval "$(/home/linuxbrew/.linuxbrew/bin/brew shellenv)"
     fi
 
