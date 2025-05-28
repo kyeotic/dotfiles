@@ -12,16 +12,15 @@ if [ -f "/etc/NIXOS" ]; then
 fi
 
 # Install homebrew
-if ! command -v brew >/dev/null 2>&1; then
-    NONINTERACTIVE=1 /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
+if ! [[ -x "$(command -v brew)" ]]; then
+    /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
 
     if [ "$(uname)" = "Darwin" ]; then
         # TODO: check that this is correct for MAC
         eval "\$(${HOMEBREW_PREFIX}/bin/brew shellenv)"
-    else [ "$(expr substr $(uname -s) 1 5)" = "Linux" ]; then
+    elif [ "$(expr substr $(uname -s) 1 5)" = "Linux" ]; then
         eval "$(/home/linuxbrew/.linuxbrew/bin/brew shellenv)"
     fi
-
 fi
 
 # Install shell packages
@@ -32,6 +31,15 @@ if [ $(echo $SHELL) != "/bin/zsh" ]; then
     command -v zsh | sudo tee -a /etc/shells
     sudo chsh -s "$(command -v zsh)" "${USER}"
 fi
+
+# if type brew &>/dev/null; then
+#     FPATH=$(brew --prefix)/share/zsh-completions:$FPATH
+
+#     autoload -Uz compinit
+#     compinit
+# fi
+
+# rm -f ~/.zcompdump; compinit
 
 # Oh my Zsh
 # if [ -d "$HOME/.oh-my-zsh" ] 
@@ -55,5 +63,5 @@ fi
 [ ! -f ~/.starship-rc ] && curl -sS https://starship.rs/install.sh | sh
 
 # Link dotfiles
-touch $HOME/.localrc
-$HOME/dotfiles/init/stow
+touch "$HOME"/.localrc
+"$HOME"/dotfiles/init/stow
