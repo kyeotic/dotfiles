@@ -1,6 +1,5 @@
 #!/usr/bin/env bash
 
-
 # This might come after brew is installed but before a new terminal
 if [ "$(uname)" = "Darwin" ]; then
     # TODO: check that this is correct for MAC
