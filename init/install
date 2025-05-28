@@ -8,9 +8,17 @@
 set -u
 
 if [ "$(expr substr $(uname -s) 1 5)" = "Linux" ]; then
-    # linux or wsl
-    sudo apt update
-    sudo apt install build-essential
+    if command -v apt >/dev/null 2>&1; then
+        # Debian/Ubuntu systems
+        sudo apt update
+        sudo apt install build-essential
+    elif command -v dnf >/dev/null 2>&1; then
+        # Fedora/RHEL systems (like Nobara)
+        sudo dnf install gcc gcc-c++ make
+    elif command -v pacman >/dev/null 2>&1; then
+        # Arch systems
+        sudo pacman -S base-devel
+    fi
 fi
 
 cd $HOME
