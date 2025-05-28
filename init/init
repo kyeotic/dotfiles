@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
 
-$HOME/dotfiles/install_shell
-$HOME/dotfiles/install_nvm
-$HOME/dotfiles/install_fonts
+$HOME/dotfiles/init/install_shell
+$HOME/dotfiles/init/install_nvm
+$HOME/dotfiles/init/install_fonts

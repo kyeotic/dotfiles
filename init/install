@@ -1,9 +1,12 @@
 #!/bin/bash
 
+# Run with
+# /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/kyeotic/dotfiles/refs/heads/main/init/install)"
+
 set -u
 
 cd $HOME
-git clone git@github.com:kyeotic/dotfiles.git
+git clone https://github.com/kyeotic/dotfiles.git
 
 cd dotfiles
 ./init/init
