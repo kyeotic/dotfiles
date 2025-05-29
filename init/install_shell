@@ -19,7 +19,7 @@ if ! [[ -x "$(command -v brew)" ]]; then
     if [ "$(uname)" = "Darwin" ]; then
         # TODO: check that this is correct for MAC
         echo "\nActiving Homebrew Env Mac"
-        eval "\$(${HOMEBREW_PREFIX}/bin/brew shellenv)"
+        eval "$(${HOMEBREW_PREFIX}/bin/brew shellenv)"
     elif [ "$(expr substr $(uname -s) 1 5)" = "Linux" ]; then
         echo "\nActiving Homebrew Env Linux"
         eval "$(/home/linuxbrew/.linuxbrew/bin/brew shellenv)"

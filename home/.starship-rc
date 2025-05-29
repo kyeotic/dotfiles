@@ -4,7 +4,9 @@ eval "$(starship init zsh)"
 # Homebrew
 if [ "$(uname)" = "Darwin" ]; then
   # source the homebrew files, 
-  echo "FNISH HOMEBREW CONFIG IN STARSHIP"
+  # echo "FNISH HOMEBREW CONFIG IN STARSHIP"
+  # echo $HOMEBREW_PREFIX
+  eval "$(${HOMEBREW_PREFIX}/bin/brew shellenv)"
 elif [ "$(expr substr $(uname -s) 1 5)" = "Linux" ]; then
   eval "$(/home/linuxbrew/.linuxbrew/bin/brew shellenv)"
 fi
@@ -32,7 +34,7 @@ setopt SHARE_HISTORY
 
 # Auto
 if [ ! -f "/etc/NIXOS" ]; then
-  source $HOMEBREW_PREFIX/share/zsh-autosuggestions/zsh-autosuggestions.zsh
+  source "$HOMEBREW_PREFIX"/share/zsh-autosuggestions/zsh-autosuggestions.zsh
   eval "$(direnv hook zsh)"
 fi
 
@@ -41,7 +43,11 @@ if type brew &>/dev/null; then
   FPATH=$(brew --prefix)/share/zsh-completions:$FPATH
 
   autoload -Uz compinit
-  compinit -u
+  if [ $(date +'%j') != $(stat -f '%Sm' -t '%j' ~/.zcompdump 2>/dev/null) ]; then
+    compinit
+  else
+    compinit -C
+  fi
 fi
 
 # WSL-friendly SSH agent setup
