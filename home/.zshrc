@@ -1,5 +1,3 @@
-# Add deno completions to search path
-if [[ ":$FPATH:" != *":/home/kyeotic/completions:"* ]]; then export FPATH="/home/kyeotic/completions:$FPATH"; fi
 # Starship
 [[ ! -f ~/.starship-rc ]] || source ~/.starship-rc
 

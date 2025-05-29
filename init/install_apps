@@ -3,7 +3,7 @@
 # This might come after brew is installed but before a new terminal
 if [ "$(uname)" = "Darwin" ]; then
     # TODO: check that this is correct for MAC
-    eval "$(${HOMEBREW_PREFIX}/bin/brew shellenv)"
+    eval "$(/opt/homebrew/bin/brew shellenv)"
 elif [ "$(expr substr $(uname -s) 1 5)" = "Linux" ]; then
     eval "$(/home/linuxbrew/.linuxbrew/bin/brew shellenv)"
 fi
