@@ -10,7 +10,7 @@ if [[ -a ~/.zsh_git ]]; then source ~/.zsh_git; fi
 if [[ -a ~/.localrc ]]; then source ~/.localrc; fi
 
 # Path
-export PATH="/usr/local/sbin:$HOME/bin:$PATH"
+export PATH="/usr/local/bin:/usr/local/sbin:$HOME/bin:$PATH"
 export EDITOR='code'
 # export DENO_INSTALL=$HOME/.deno
 # export PATH="$PATH:$DENO_INSTALL/bin"
