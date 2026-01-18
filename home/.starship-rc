@@ -41,10 +41,11 @@ fi
 # zsh-completions
 if type brew &>/dev/null; then
   FPATH=$(brew --prefix)/share/zsh-completions:$FPATH
+  fpath=($^fpath(N)) # Remove non-existent directories
 
   autoload -Uz compinit
   if [ $(date +'%j') != $(stat -f '%Sm' -t '%j' ~/.zcompdump 2>/dev/null) ]; then
-    compinit
+    compinit -u
   else
     compinit -C
   fi
