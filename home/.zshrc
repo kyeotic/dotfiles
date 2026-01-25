@@ -11,6 +11,11 @@ if [[ -a ~/.localrc ]]; then source ~/.localrc; fi
 
 # Path
 export PATH="/usr/local/bin:/usr/local/sbin:$HOME/bin:$PATH"
+if [ -d "$HOME/.local/bin" ] ; then
+    PATH="$HOME/.local/bin:$PATH"
+fi
+
+# Tools
 export EDITOR='code'
 # export DENO_INSTALL=$HOME/.deno
 # export PATH="$PATH:$DENO_INSTALL/bin"
