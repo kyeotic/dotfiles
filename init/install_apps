@@ -27,7 +27,8 @@ brew install \
   watch \
   watchman \
   wget \
-  yq
+  yq \
+  bitwarden-cli
 
 if [ "$(uname)" = "Darwin" ]; then
     # Mac
