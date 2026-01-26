@@ -44,7 +44,13 @@ if type brew &>/dev/null; then
   fpath=($^fpath(N)) # Remove non-existent directories
 
   autoload -Uz compinit
-  if [ $(date +'%j') != $(stat -f '%Sm' -t '%j' ~/.zcompdump 2>/dev/null) ]; then
+  # Get zcompdump modification day (handles macOS vs Linux stat differences)
+  if [ "$(uname)" = "Darwin" ]; then
+    zcompdump_day=$(stat -f '%Sm' -t '%j' ~/.zcompdump 2>/dev/null)
+  else
+    zcompdump_day=$(date -d @$(stat -c '%Y' ~/.zcompdump 2>/dev/null) +'%j' 2>/dev/null)
+  fi
+  if [ "$(date +'%j')" != "$zcompdump_day" ]; then
     compinit -u
   else
     compinit -C
