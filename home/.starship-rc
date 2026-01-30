@@ -11,18 +11,6 @@ fi
 # Init Starship
 eval "$(starship init zsh)"
 
-# History suggestions
-autoload -U up-line-or-beginning-search
-autoload -U down-line-or-beginning-search
-zle -N up-line-or-beginning-search
-zle -N down-line-or-beginning-search
-bindkey "^[[A" up-line-or-beginning-search
-bindkey "^[[B" down-line-or-beginning-search
-
-# Fix key bindings
-bindkey "^[[H" beginning-of-line   # Home key
-bindkey "^[[F" end-of-line         # End key
-bindkey "^[[3~" delete-char        # Delete key
 
 # History in cache directory:
 HISTFILE="$HOME/.zsh_history"
@@ -56,6 +44,18 @@ if type brew &>/dev/null; then
     compinit -C
   fi
 fi
+
+# History suggestions - Prefix-based history search with up/down
+autoload -U up-line-or-beginning-search down-line-or-beginning-search
+zle -N up-line-or-beginning-search
+zle -N down-line-or-beginning-search
+bindkey "${terminfo[kcuu1]}" up-line-or-beginning-search  # Up arrow
+bindkey "${terminfo[kcud1]}" down-line-or-beginning-search  # Down arrow
+
+# Fix key bindings
+bindkey "^[[H" beginning-of-line   # Home key
+bindkey "^[[F" end-of-line         # End key
+bindkey "^[[3~" delete-char        # Delete key
 
 # WSL-friendly SSH agent setup
 if [ -z "$SSH_AUTH_SOCK" ] || [ ! -S "$SSH_AUTH_SOCK" ]; then
