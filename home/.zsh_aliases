@@ -42,5 +42,5 @@ alias map="xargs -n1"
 
 # Git
 alias g="git"
-alias g-clean="git remote prune origin && git branch --merged | grep -v \"\*\" | grep -v main | grep -v dev | xargs -n 1 git branch -d"
+alias g-clean="git remote prune origin && git branch --merged main | grep -v 'main' | xargs git branch -d"
 alias g-clean-remote="git branch -r --merged | grep -v main | sed 's/origin\///' | xargs -n 1 git push --delete origin"
