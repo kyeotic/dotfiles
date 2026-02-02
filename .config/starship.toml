@@ -135,8 +135,9 @@ show_milliseconds = true
 format = " in $duration "
 style = "bg:orange"
 disabled = false
-show_notifications = true
-min_time_to_notify = 45000
+show_notifications = false
+# show_notifications = true
+# min_time_to_notify = 45000
 
 [palettes.monokai_dark]
 fg0 = '#f8f8f2'
