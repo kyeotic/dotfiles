@@ -1,45 +1,7 @@
 #!/usr/bin/env bash
 
-# This might come after brew is installed but before a new terminal
-if [ "$(uname)" = "Darwin" ]; then
-    # TODO: check that this is correct for MAC
-    eval "$(/opt/homebrew/bin/brew shellenv)"
-elif [ "$(expr substr $(uname -s) 1 5)" = "Linux" ]; then
-    eval "$(/home/linuxbrew/.linuxbrew/bin/brew shellenv)"
-fi
-
-brew install \
-  awscli \
-  bat \
-  direnv \
-  eza \
-  fd \
-  fzf \
-  findutils \
-  gettext \
-  git \
-  jq \
-  openssl \
-  pcre \
-  pcre2 \
-  python \
-  readline \
-  unzip \
-  watch \
-  watchman \
-  wget \
-  yq \
-  podman
-
-if [ "$(uname)" = "Darwin" ]; then
-    # Mac
-    brew install telnet \
-      warrensbox/tap/tfswitch
-    brew install --cask phoenix
-elif [ "$(expr substr $(uname -s) 1 5)" = "Linux" ]; then
-    # linux or wsl
-    curl -L https://raw.githubusercontent.com/warrensbox/terraform-switcher/master/install.sh | bash
-fi
+# All packages have moved to nix/home.nix (managed by home-manager).
+# This file only contains installers for tools not available in nixpkgs.
 
 # deno
 if ! command -v deno >/dev/null 2>&1; then
@@ -51,3 +13,12 @@ if ! command -v cargo >/dev/null 2>&1; then
     curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh
 fi
 
+# tfswitch (not in nixpkgs)
+if [ "$(uname)" = "Darwin" ]; then
+    # macOS: use Homebrew tap if available, otherwise curl
+    curl -L https://raw.githubusercontent.com/warrensbox/terraform-switcher/master/install.sh | bash
+elif [ "$(expr substr $(uname -s) 1 5)" = "Linux" ]; then
+    curl -L https://raw.githubusercontent.com/warrensbox/terraform-switcher/master/install.sh | bash
+fi
+
+# Phoenix (macOS only) — install manually from https://github.com/kasper/phoenix

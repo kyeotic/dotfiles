@@ -7,18 +7,27 @@
 
 set -u
 
+# Install minimal dependencies (git + curl)
 if [ "$(expr substr $(uname -s) 1 5)" = "Linux" ]; then
     if command -v apt >/dev/null 2>&1; then
-        # Debian/Ubuntu systems
         sudo apt update
-        sudo apt install build-essential
+        sudo apt install -y git curl
     elif command -v dnf >/dev/null 2>&1; then
-        # Fedora/RHEL systems (like Nobara)
-        sudo dnf install gcc gcc-c++ make
+        sudo dnf install -y git curl
     elif command -v pacman >/dev/null 2>&1; then
-        # Arch systems
-        sudo pacman -S base-devel
+        sudo pacman -S --noconfirm git curl
     fi
+fi
+
+# Install Nix (Determinate Systems installer)
+if ! command -v nix >/dev/null 2>&1; then
+    echo "Installing Nix..."
+    curl --proto '=https' --tlsv1.2 -sSf -L https://install.determinate.systems/nix | sh -s -- install --no-confirm
+fi
+
+# Source nix for the current session
+if [ -f "/nix/var/nix/profiles/default/etc/profile.d/nix-daemon.sh" ]; then
+    . "/nix/var/nix/profiles/default/etc/profile.d/nix-daemon.sh"
 fi
 
 cd $HOME

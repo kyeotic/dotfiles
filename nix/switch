@@ -1,0 +1,19 @@
+#!/usr/bin/env bash
+
+set -eu
+
+# Detect platform and user
+USERNAME="$(whoami)"
+
+if [ "$(uname)" = "Darwin" ]; then
+  if [ "$(uname -m)" = "arm64" ]; then
+    PROFILE="${USERNAME}@macos"
+  else
+    PROFILE="${USERNAME}@macos-x86"
+  fi
+else
+  PROFILE="${USERNAME}@linux"
+fi
+
+echo "Switching to profile: $PROFILE"
+home-manager switch --flake ~/dotfiles/nix#"$PROFILE"

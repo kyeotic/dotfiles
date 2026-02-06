@@ -7,64 +7,54 @@ if [ -f "/etc/NIXOS" ]; then
     touch ~/.localrc
     ./init/stow
     exit
-# else
-#   echo "Not running on NixOS"
 fi
 
-# Install homebrew
-if ! [[ -x "$(command -v brew)" ]]; then
-    echo "\nInstalling Homebrew\n"
-    /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
+# Source nix for the current session
+if [ -f "/nix/var/nix/profiles/default/etc/profile.d/nix-daemon.sh" ]; then
+    . "/nix/var/nix/profiles/default/etc/profile.d/nix-daemon.sh"
+fi
 
+# Install zsh via system package manager if not present
+# (needed for chsh — nix-profile paths can't go in /etc/shells)
+if ! command -v zsh >/dev/null 2>&1; then
+    echo "Installing zsh via system package manager..."
     if [ "$(uname)" = "Darwin" ]; then
-        # TODO: check that this is correct for MAC
-        echo "\nActiving Homebrew Env Mac"
-        eval "$(/opt/homebrew/bin/brew shellenv)"
-    elif [ "$(expr substr $(uname -s) 1 5)" = "Linux" ]; then
-        echo "\nActiving Homebrew Env Linux"
-        eval "$(/home/linuxbrew/.linuxbrew/bin/brew shellenv)"
+        echo "zsh ships with macOS"
+    elif command -v apt >/dev/null 2>&1; then
+        sudo apt install -y zsh
+    elif command -v dnf >/dev/null 2>&1; then
+        sudo dnf install -y zsh
+    elif command -v pacman >/dev/null 2>&1; then
+        sudo pacman -S --noconfirm zsh
     fi
 fi
 
-# Install shell packages
-brew install zsh zsh-completions zsh-autosuggestions wget stow
-
 # Use Zsh
-if [ $(echo $SHELL) != "/bin/zsh" ]; then
+if [ "$(echo $SHELL)" != "$(command -v zsh)" ]; then
     echo "Switching to Zsh"
-    command -v zsh | sudo tee -a /etc/shells
-    sudo chsh -s "$(command -v zsh)" "${USER}"
+    ZSH_PATH="$(command -v zsh)"
+    # Add to /etc/shells if not already there
+    if ! grep -qx "$ZSH_PATH" /etc/shells; then
+        echo "$ZSH_PATH" | sudo tee -a /etc/shells
+    fi
+    sudo chsh -s "$ZSH_PATH" "${USER}"
 fi
 
-# if type brew &>/dev/null; then
-#     FPATH=$(brew --prefix)/share/zsh-completions:$FPATH
+# Detect platform for home-manager profile
+USERNAME="$(whoami)"
+if [ "$(uname)" = "Darwin" ]; then
+    if [ "$(uname -m)" = "arm64" ]; then
+        PROFILE="${USERNAME}@macos"
+    else
+        PROFILE="${USERNAME}@macos-x86"
+    fi
+else
+    PROFILE="${USERNAME}@linux"
+fi
 
-#     autoload -Uz compinit
-#     compinit
-# fi
-
-# rm -f ~/.zcompdump; compinit
-
-# Oh my Zsh
-# if [ -d "$HOME/.oh-my-zsh" ] 
-# then
-#     # Install oh-my-zsh
-#     sh -c "$(curl -fsSL https://raw.github.com/robbyrussell/oh-my-zsh/master/tools/install.sh) --skip-chsh"
-#     git clone --depth=1 https://github.com/romkatv/powerlevel10k.git "${ZSH_CUSTOM:-$HOME/.oh-my-zsh/custom}/themes/powerlevel10k"
-# fi
-
-# git config --global init.defaultBranch main
-
-# # Fix "insecure directories" warning
-# sudo chmod -R 755 ~/.oh-my-zsh
-
-# # Install Plugins
-# git clone https://github.com/zsh-users/zsh-autosuggestions ${ZSH_CUSTOM:-~/.oh-my-zsh/custom}/plugins/zsh-autosuggestions || return 0
-# git clone https://github.com/lukechilds/zsh-better-npm-completion ~/.oh-my-zsh/custom/plugins/zsh-better-npm-completion
-
-
-# Starship
-[ ! -f ~/.starship-rc ] && curl -sS https://starship.rs/install.sh | sh
+# Bootstrap home-manager and install all packages
+echo "Running home-manager switch for profile: $PROFILE"
+nix run home-manager -- switch --flake ~/dotfiles/nix#"$PROFILE"
 
 # Link dotfiles
 touch "$HOME"/.localrc

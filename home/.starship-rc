@@ -1,11 +1,12 @@
-# Homebrew
-if [ "$(uname)" = "Darwin" ]; then
-  # source the homebrew files, 
-  # echo "FNISH HOMEBREW CONFIG IN STARSHIP"
-  # echo $HOMEBREW_PREFIX
-  eval "$(/opt/homebrew/bin/brew shellenv)"
-elif [ "$(expr substr $(uname -s) 1 5)" = "Linux" ]; then
-  eval "$(/home/linuxbrew/.linuxbrew/bin/brew shellenv)"
+# Nix
+if [ ! -f "/etc/NIXOS" ]; then
+  # Determinate Systems installer path
+  if [ -f "/nix/var/nix/profiles/default/etc/profile.d/nix-daemon.sh" ]; then
+    . "/nix/var/nix/profiles/default/etc/profile.d/nix-daemon.sh"
+  # Official installer path
+  elif [ -f "/nix/var/nix/profiles/default/etc/profile.d/nix.sh" ]; then
+    . "/nix/var/nix/profiles/default/etc/profile.d/nix.sh"
+  fi
 fi
 
 # Init Starship
@@ -22,13 +23,13 @@ setopt SHARE_HISTORY
 
 # Auto
 if [ ! -f "/etc/NIXOS" ]; then
-  source "$HOMEBREW_PREFIX"/share/zsh-autosuggestions/zsh-autosuggestions.zsh
+  source "$HOME/.nix-profile/share/zsh-autosuggestions/zsh-autosuggestions.zsh"
   eval "$(direnv hook zsh)"
 fi
 
 # zsh-completions
-if type brew &>/dev/null; then
-  FPATH=$(brew --prefix)/share/zsh-completions:$FPATH
+if [ ! -f "/etc/NIXOS" ]; then
+  FPATH="$HOME/.nix-profile/share/zsh/site-functions:$HOME/.nix-profile/share/zsh-completions:$FPATH"
   fpath=($^fpath(N)) # Remove non-existent directories
 
   autoload -Uz compinit
