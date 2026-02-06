@@ -8,6 +8,7 @@ typeset -U path
 if [[ -a ~/.zsh_functions ]]; then source ~/.zsh_functions; fi
 if [[ -a ~/.zsh_aliases ]]; then source ~/.zsh_aliases; fi
 if [[ -a ~/.zsh_git ]]; then source ~/.zsh_git; fi
+if [[ -a ~/.zsh_just_completions ]]; then source ~/.zsh_just_completions; fi
 
 # Allow local-machine-only configuration
 if [[ -a ~/.localrc ]]; then source ~/.localrc; fi
