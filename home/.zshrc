@@ -1,3 +1,6 @@
+# Deduplicate PATH entries
+typeset -U path
+
 # Starship
 [[ ! -f ~/.starship-rc ]] || source ~/.starship-rc
 
@@ -34,3 +37,6 @@ if [ ! -f "/etc/NIXOS" ]; then
   [ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"  # This loads nvm
   [ -s "$NVM_DIR/bash_completion" ] && \. "$NVM_DIR/bash_completion"  # This loads nvm bash_completion
 fi
+
+# Force PATH dedup (export PATH=... in sourced scripts bypasses typeset -U)
+path=("${path[@]}")
