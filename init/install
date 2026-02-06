@@ -4,6 +4,8 @@
 # /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/kyeotic/dotfiles/HEAD/init/install)"
 # Test with
 # wsl --install Ubuntu --name utest
+#
+# Safe to run multiple times — each step is idempotent.
 
 set -u
 
@@ -30,12 +32,13 @@ if [ -f "/nix/var/nix/profiles/default/etc/profile.d/nix-daemon.sh" ]; then
     . "/nix/var/nix/profiles/default/etc/profile.d/nix-daemon.sh"
 fi
 
-cd $HOME
-git clone https://github.com/kyeotic/dotfiles.git
+# Clone repo if not present
+if [ ! -d "$HOME/dotfiles/.git" ]; then
+    cd $HOME
+    git clone https://github.com/kyeotic/dotfiles.git
+    cd dotfiles
+    git remote set-url origin git@github.com:kyeotic/dotfiles.git
+    ./init/setup-ssh
+fi
 
-cd dotfiles
-
-git remote set-url origin git@github.com:kyeotic/dotfiles.git
-
-./init/setup-ssh
-./init/init
+$HOME/dotfiles/init/init

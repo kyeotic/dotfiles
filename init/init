@@ -4,6 +4,5 @@ set -eu
 
 $HOME/dotfiles/init/install_shell
 $HOME/dotfiles/init/install_apps
-$HOME/dotfiles/init/install_nvm
 
 printf "\n\nInstall Complete\nStart a new terminal for all changes to take effect"

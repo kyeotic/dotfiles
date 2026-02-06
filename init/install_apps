@@ -14,11 +14,14 @@ if ! command -v cargo >/dev/null 2>&1; then
 fi
 
 # tfswitch (not in nixpkgs)
-if [ "$(uname)" = "Darwin" ]; then
-    # macOS: use Homebrew tap if available, otherwise curl
-    curl -L https://raw.githubusercontent.com/warrensbox/terraform-switcher/master/install.sh | bash
-elif [ "$(expr substr $(uname -s) 1 5)" = "Linux" ]; then
+if ! command -v tfswitch >/dev/null 2>&1; then
     curl -L https://raw.githubusercontent.com/warrensbox/terraform-switcher/master/install.sh | bash
 fi
 
-# Phoenix (macOS only) — install manually from https://github.com/kasper/phoenix
+if [ ! -f "$NVM_DIR/nvm.sh" ]; then
+    echo "Installing nvm"
+    PROFILE=/dev/null bash -c 'curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.40.3/install.sh | bash'
+    zsh -lic "nvm install 20" # node 20
+    zsh -lic "nvm use 20"
+    zsh -lic "nvm alias default 20"
+fi

@@ -6,11 +6,7 @@ set -eu
 USERNAME="$(whoami)"
 
 if [ "$(uname)" = "Darwin" ]; then
-  if [ "$(uname -m)" = "arm64" ]; then
-    PROFILE="${USERNAME}@macos"
-  else
-    PROFILE="${USERNAME}@macos-x86"
-  fi
+  PROFILE="${USERNAME}@macos"
 else
   PROFILE="${USERNAME}@linux"
 fi
