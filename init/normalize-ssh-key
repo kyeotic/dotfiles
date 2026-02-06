@@ -1,0 +1,11 @@
+#!/bin/bash
+
+# Rename ~/.ssh/id to ~/.ssh/id_ed25519 if needed
+
+if [ -e ~/.ssh/id ] && [ ! -e ~/.ssh/id_ed25519 ]; then
+    mv ~/.ssh/id ~/.ssh/id_ed25519
+    mv ~/.ssh/id.pub ~/.ssh/id_ed25519.pub
+    echo "Renamed ~/.ssh/id to ~/.ssh/id_ed25519"
+else
+    echo "Nothing to do"
+fi
