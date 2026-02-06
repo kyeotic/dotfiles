@@ -14,9 +14,13 @@ if [ -f "/nix/var/nix/profiles/default/etc/profile.d/nix-daemon.sh" ]; then
     . "/nix/var/nix/profiles/default/etc/profile.d/nix-daemon.sh"
 fi
 
-# Install zsh via system package manager if not present
-# (needed for chsh — nix-profile paths can't go in /etc/shells)
-if ! command -v zsh >/dev/null 2>&1; then
+# Find system zsh (prefer /bin/zsh or /usr/bin/zsh over brew/nix)
+if [ -x /bin/zsh ]; then
+    ZSH_PATH=/bin/zsh
+elif [ -x /usr/bin/zsh ]; then
+    ZSH_PATH=/usr/bin/zsh
+else
+    # Install zsh via system package manager
     echo "Installing zsh via system package manager..."
     if [ "$(uname)" = "Darwin" ]; then
         echo "zsh ships with macOS"
@@ -27,13 +31,12 @@ if ! command -v zsh >/dev/null 2>&1; then
     elif command -v pacman >/dev/null 2>&1; then
         sudo pacman -S --noconfirm zsh
     fi
+    ZSH_PATH="$(command -v zsh)"
 fi
 
 # Use Zsh
-if [ "$(echo $SHELL)" != "$(command -v zsh)" ]; then
-    echo "Switching to Zsh"
-    ZSH_PATH="$(command -v zsh)"
-    # Add to /etc/shells if not already there
+if [ "$SHELL" != "$ZSH_PATH" ]; then
+    echo "Switching to Zsh ($ZSH_PATH)"
     if ! grep -qx "$ZSH_PATH" /etc/shells; then
         echo "$ZSH_PATH" | sudo tee -a /etc/shells
     fi
