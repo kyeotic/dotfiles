@@ -18,6 +18,14 @@ if [ -d "$HOME/.local/bin" ] ; then
     PATH="$HOME/.local/bin:$PATH"
 fi
 
+# Disable flow control (frees Ctrl-S for fzf forward history search)
+stty -ixon
+
+# fzf
+if command -v fzf >/dev/null 2>&1; then
+  source <(fzf --zsh)
+fi
+
 # Tools
 export EDITOR='code'
 # export DENO_INSTALL=$HOME/.deno

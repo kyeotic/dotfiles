@@ -4,7 +4,9 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ## Overview
 
-Personal dotfiles repository managing development environment configs across macOS, Linux, and NixOS. Uses **GNU Stow** for symlink management and **Homebrew** as the cross-platform package manager.
+Personal dotfiles repository managing development environment configs across macOS, Linux, WSL, and NixOS. Uses **GNU Stow** for symlink management and **Homebrew** as the cross-platform package manager.
+
+ALL CHANGES MUST WORK IN: Macos, Linux, WSL (windows linux)
 
 ## Setup & Installation
 
