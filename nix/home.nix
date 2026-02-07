@@ -19,6 +19,7 @@ in
     gettext
     git
     jq
+    just
     openssl
     pcre
     pcre2
