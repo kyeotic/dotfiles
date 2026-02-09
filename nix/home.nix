@@ -9,6 +9,7 @@ in
   programs.home-manager.enable = true;
 
   home.packages = with pkgs; [
+    ansible
     awscli2
     bat
     direnv
