@@ -13,6 +13,7 @@ in
     awscli2
     bat
     direnv
+    dive
     eza
     fd
     findutils
