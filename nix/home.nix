@@ -36,6 +36,7 @@ in
     yq-go
     podman
     pnpm
+    tmux
     zsh-completions
     zsh-autosuggestions
   ] ++ lib.optionals isDarwin [
