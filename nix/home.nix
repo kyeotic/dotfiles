@@ -22,6 +22,7 @@ in
     git
     jq
     just
+    ncdu
     openssl
     pcre
     pcre2
