@@ -41,7 +41,9 @@ git for-each-ref refs/heads/ "--format=%(refname:short)" |
 while read branch;
 do mergeBase=$(git merge-base "$BASE_BRANCH" $branch) &&
 	[[ $(git cherry "$BASE_BRANCH" $(git commit-tree $(git rev-parse "$branch^{tree}") -p $mergeBase -m _)) == "-"* ]] &&
-	if [[ $DRY_RUN -eq 1 ]]
+	if git worktree list --porcelain | grep -q "branch refs/heads/$branch$"; then
+		echo "Skipping $branch - checked out in a worktree";
+	elif [[ $DRY_RUN -eq 1 ]]
 	then
 		echo "$branch is merged into $BASE_BRANCH and can be deleted";
 	else
