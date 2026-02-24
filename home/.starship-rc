@@ -50,8 +50,19 @@ fi
 autoload -U up-line-or-beginning-search down-line-or-beginning-search
 zle -N up-line-or-beginning-search
 zle -N down-line-or-beginning-search
-bindkey "${terminfo[kcuu1]}" up-line-or-beginning-search  # Up arrow
-bindkey "${terminfo[kcud1]}" down-line-or-beginning-search  # Down arrow
+zmodload zsh/terminfo 2>/dev/null
+
+# Different terminals/modes can send either CSI (
+# ^[[A/^[[B) or SS3 (^[OA/^[OB) cursor-key sequences.
+# Bind both forms so prefix history search works in Kitty, VS Code, and others.
+for keymap in emacs viins; do
+  [[ -n "${terminfo[kcuu1]}" ]] && bindkey -M "$keymap" "${terminfo[kcuu1]}" up-line-or-beginning-search
+  [[ -n "${terminfo[kcud1]}" ]] && bindkey -M "$keymap" "${terminfo[kcud1]}" down-line-or-beginning-search
+  bindkey -M "$keymap" '^[[A' up-line-or-beginning-search
+  bindkey -M "$keymap" '^[[B' down-line-or-beginning-search
+  bindkey -M "$keymap" '^[OA' up-line-or-beginning-search
+  bindkey -M "$keymap" '^[OB' down-line-or-beginning-search
+done
 
 # Fix key bindings
 bindkey "^[[H" beginning-of-line   # Home key
