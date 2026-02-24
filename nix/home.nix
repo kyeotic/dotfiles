@@ -37,6 +37,11 @@ in
     yq-go
     podman
     pnpm
+    neovim
+    ripgrep
+    gcc
+    nodejs
+    luarocks
     tmux
     zsh-completions
     zsh-autosuggestions
