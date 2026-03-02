@@ -1,4 +1,4 @@
-{ pkgs, lib, ... }:
+{ pkgs, lib, isWork ? false, ... }:
 
 let
   isDarwin = pkgs.stdenv.isDarwin;
@@ -58,4 +58,6 @@ in
   ];
 
   fonts.fontconfig.enable = !isWSL;
+
+  services.syncthing.enable = !isWork;
 }

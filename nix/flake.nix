@@ -11,9 +11,10 @@
 
   outputs = { nixpkgs, home-manager, ... }:
     let
-      mkHome = { system, username, homeDirectory }:
+      mkHome = { system, username, homeDirectory, isWork ? false }:
         home-manager.lib.homeManagerConfiguration {
           pkgs = nixpkgs.legacyPackages.${system};
+          extraSpecialArgs = { inherit isWork; };
           modules = [
             ./home.nix
             {
@@ -41,6 +42,7 @@
           system = "aarch64-darwin";
           username = "tkye";
           homeDirectory = "/Users/tkye";
+          isWork = true;
         };
       };
     };
