@@ -10,11 +10,14 @@
 
   # Dock
   system.defaults.dock = {
-    tilesize = 36;          # icon size (pixels)
-    orientation = "left"; # left | bottom | right
+    # icon size (pixels)
+    tilesize = 36;
+    # left | bottom | right
+    orientation = "left";
     autohide = true;
     show-recents = false;
-    mru-spaces = false;     # disable "Automatically rearrange Spaces based on most recent use"
+    # disable "Automatically rearrange Spaces based on most recent use"
+    mru-spaces = false;
   };
 
   # Keyboard
