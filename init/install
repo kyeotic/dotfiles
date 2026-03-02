@@ -10,7 +10,7 @@
 set -u
 
 # Install minimal dependencies (git + curl)
-if [ "$(expr substr $(uname -s) 1 5)" = "Linux" ]; then
+if [ "$(uname -s)" = "Linux" ]; then
     if command -v apt >/dev/null 2>&1; then
         sudo apt update
         sudo apt install -y git curl

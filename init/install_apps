@@ -25,3 +25,19 @@ if [ ! -f "$NVM_DIR/nvm.sh" ]; then
     zsh -lic "nvm use 20"
     zsh -lic "nvm alias default 20"
 fi
+
+# Kitty (doesnt work well from nix)
+if ! command -v kitty >/dev/null 2>&1 ; then
+    curl -L https://sw.kovidgoyal.net/kitty/installer.sh | sh /dev/stdin
+fi
+
+# Claude (not in nixpkgs)
+if ! command -v claude >/dev/null 2>&1 ; then
+    curl -fsSL https://claude.ai/install.sh | bash
+fi
+
+# Homebrew, sometimes still the best option
+if ! command -v brew >/dev/null 2>&1 ; then
+    echo "Installing Homebrew..."
+    /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
+fi

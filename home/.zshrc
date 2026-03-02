@@ -1,3 +1,5 @@
+# Add deno completions to search path
+if [[ ":$FPATH:" != *":/Users/kyeotic/.zsh/completions:"* ]]; then export FPATH="/Users/kyeotic/.zsh/completions:$FPATH"; fi
 # Deduplicate PATH entries
 typeset -U path
 
@@ -49,3 +51,6 @@ fi
 
 # Force PATH dedup (export PATH=... in sourced scripts bypasses typeset -U)
 path=("${path[@]}")
+# Initialize zsh completions (added by deno install script)
+autoload -Uz compinit
+compinit
