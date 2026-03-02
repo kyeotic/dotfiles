@@ -53,6 +53,19 @@ if ! command -v vault-sync >/dev/null 2>&1; then
     curl -fsSL https://raw.githubusercontent.com/kyeotic/vault-sync/main/install | bash
 fi
 
+# vault-sync: save BWS machine access token if not already set
+if ! grep -q "BWS_ACCESS_TOKEN=." "$HOME/.bws" 2>/dev/null; then
+    echo ""
+    echo "vault-sync requires a Bitwarden Secrets machine access token."
+    echo "Generate one here:"
+    echo "  https://vault.bitwarden.com/#/sm/28ab20e5-7f26-4962-85fc-b3dd00011d9e/machine-accounts/ff76e921-089d-4af9-b7cf-b3dd0038af59/projects"
+    echo ""
+    printf "Paste your machine access token: "
+    read -r BWS_TOKEN
+    echo "BWS_ACCESS_TOKEN=$BWS_TOKEN" > "$HOME/.bws"
+    echo "Token saved to ~/.bws"
+fi
+
 # Homebrew, sometimes still the best option
 if ! command -v brew >/dev/null 2>&1 ; then
     echo "Installing Homebrew..."
