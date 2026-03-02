@@ -8,11 +8,11 @@ USERNAME="$(whoami)"
 if [ "$(uname)" = "Darwin" ]; then
   echo "Switching darwin config for: $USERNAME"
   if command -v darwin-rebuild >/dev/null 2>&1; then
-    sudo darwin-rebuild switch --flake ~/dotfiles/nix#"$USERNAME"
+    sudo -H darwin-rebuild switch --flake ~/dotfiles/nix#"$USERNAME"
   else
     # Bootstrap nix-darwin on first run
     echo "darwin-rebuild not found, bootstrapping nix-darwin..."
-    sudo nix run nix-darwin -- switch --flake ~/dotfiles/nix#"$USERNAME"
+    sudo -H nix run nix-darwin -- switch --flake ~/dotfiles/nix#"$USERNAME"
   fi
 else
   PROFILE="${USERNAME}@linux"
