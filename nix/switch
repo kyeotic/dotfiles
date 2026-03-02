@@ -6,10 +6,16 @@ set -eu
 USERNAME="$(whoami)"
 
 if [ "$(uname)" = "Darwin" ]; then
-  PROFILE="${USERNAME}@macos"
+  echo "Switching darwin config for: $USERNAME"
+  if command -v darwin-rebuild >/dev/null 2>&1; then
+    sudo darwin-rebuild switch --flake ~/dotfiles/nix#"$USERNAME"
+  else
+    # Bootstrap nix-darwin on first run
+    echo "darwin-rebuild not found, bootstrapping nix-darwin..."
+    sudo nix run nix-darwin -- switch --flake ~/dotfiles/nix#"$USERNAME"
+  fi
 else
   PROFILE="${USERNAME}@linux"
+  echo "Switching home-manager profile: $PROFILE"
+  home-manager switch --flake ~/dotfiles/nix#"$PROFILE"
 fi
-
-echo "Switching to profile: $PROFILE"
-home-manager switch --flake ~/dotfiles/nix#"$PROFILE"
