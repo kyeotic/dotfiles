@@ -13,6 +13,11 @@ if ! command -v cargo >/dev/null 2>&1; then
     curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh
 fi
 
+# bws (Bitwarden Secrets CLI, not in nixpkgs)
+if ! command -v bws >/dev/null 2>&1; then
+    cargo install bws --locked
+fi
+
 # tfswitch (not in nixpkgs)
 if ! command -v tfswitch >/dev/null 2>&1; then
     mkdir -p "$HOME/.local/bin"
@@ -36,6 +41,16 @@ fi
 # Claude (not in nixpkgs)
 if ! command -v claude >/dev/null 2>&1 ; then
     curl -fsSL https://claude.ai/install.sh | bash
+fi
+
+# stack-sync
+if ! command -v stack-sync >/dev/null 2>&1; then
+    curl -fsSL https://raw.githubusercontent.com/kyeotic/stack-sync/main/install | bash
+fi
+
+# vault-sync
+if ! command -v vault-sync >/dev/null 2>&1; then
+    curl -fsSL https://raw.githubusercontent.com/kyeotic/vault-sync/main/install | bash
 fi
 
 # Homebrew, sometimes still the best option
