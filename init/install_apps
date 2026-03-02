@@ -15,7 +15,8 @@ fi
 
 # tfswitch (not in nixpkgs)
 if ! command -v tfswitch >/dev/null 2>&1; then
-    curl -L https://raw.githubusercontent.com/warrensbox/terraform-switcher/master/install.sh | bash
+    mkdir -p "$HOME/.local/bin"
+    curl -L https://raw.githubusercontent.com/warrensbox/terraform-switcher/master/install.sh | bash -s -- -b "$HOME/.local/bin"
 fi
 
 if [ ! -f "$NVM_DIR/nvm.sh" ]; then
@@ -27,7 +28,8 @@ if [ ! -f "$NVM_DIR/nvm.sh" ]; then
 fi
 
 # Kitty (doesnt work well from nix)
-if ! command -v kitty >/dev/null 2>&1 ; then
+# On macOS, kitty installs as an app bundle not in PATH — check the bundle directly
+if ! command -v kitty >/dev/null 2>&1 && [ ! -d "/Applications/kitty.app" ]; then
     curl -L https://sw.kovidgoyal.net/kitty/installer.sh | sh /dev/stdin
 fi
 

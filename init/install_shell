@@ -53,7 +53,11 @@ fi
 
 # Bootstrap home-manager and install all packages
 echo "Running home-manager switch for profile: $PROFILE"
-nix run home-manager -- switch --flake ~/dotfiles/nix#"$PROFILE"
+if command -v home-manager >/dev/null 2>&1; then
+    home-manager switch --flake ~/dotfiles/nix#"$PROFILE"
+else
+    nix run home-manager -- switch --flake ~/dotfiles/nix#"$PROFILE"
+fi
 
 # Link dotfiles
 touch "$HOME"/.localrc
