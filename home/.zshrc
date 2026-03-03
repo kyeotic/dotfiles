@@ -39,7 +39,12 @@ export AWS_PAGER=""
 
 if [ ! -f "/etc/NIXOS" ]; then
   export PATH="$PATH:/Applications/Visual Studio Code.app/Contents/Resources/app/bin"
-  
+
+  # Homebrew
+  if [[ -f "/opt/homebrew/bin/brew" ]]; then
+    eval "$(/opt/homebrew/bin/brew shellenv zsh)"
+  fi
+
   . "$HOME/.deno/env" #deno
   . "$HOME/.cargo/env" #rust
 

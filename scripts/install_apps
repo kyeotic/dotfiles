@@ -70,4 +70,23 @@ fi
 if ! command -v brew >/dev/null 2>&1 ; then
     echo "Installing Homebrew..."
     /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
+    eval "$(/opt/homebrew/bin/brew shellenv bash)"
+fi
+
+# macOS GUI apps via Brewfile (casks only, no lock file)
+if [[ "$(uname)" == "Darwin" ]] && command -v brew >/dev/null 2>&1; then
+    DOTFILES_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
+
+    # Cache sudo credentials once and keep them alive so each cask install
+    # doesn't prompt separately (each `brew install --cask` calls sudo independently).
+    sudo -v
+    while true; do sudo -n true; sleep 60; kill -0 "$$" || exit; done 2>/dev/null &
+    SUDO_KEEPALIVE_PID=$!
+
+
+
+    echo "Installing Brewfile apps..."
+    brew bundle --file="$DOTFILES_DIR/Brewfile" --no-upgrade --force
+
+    kill "$SUDO_KEEPALIVE_PID" 2>/dev/null
 fi

@@ -5,7 +5,7 @@ set -eu
 if [ -f "/etc/NIXOS" ]; then
   # Link dotfiles
     touch ~/.localrc
-    ./init/stow
+    ./scripts/stow
     exit
 fi
 
@@ -61,4 +61,4 @@ fi
 
 # Link dotfiles
 touch "$HOME"/.localrc
-"$HOME"/dotfiles/init/stow
+"$HOME"/dotfiles/scripts/stow

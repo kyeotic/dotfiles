@@ -1,7 +1,7 @@
 #!/bin/bash
 
 # Run with
-# /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/kyeotic/dotfiles/HEAD/init/install)"
+# /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/kyeotic/dotfiles/HEAD/scripts/install)"
 # Test with
 # wsl --install Ubuntu --name utest
 #
@@ -38,7 +38,7 @@ if [ ! -d "$HOME/dotfiles/.git" ]; then
     git clone https://github.com/kyeotic/dotfiles.git
     cd dotfiles
     git remote set-url origin git@github.com:kyeotic/dotfiles.git
-    ./init/setup-ssh
+    ./scripts/setup-ssh
 fi
 
-$HOME/dotfiles/init/init
+$HOME/dotfiles/scripts/init

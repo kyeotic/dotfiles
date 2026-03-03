@@ -7,7 +7,7 @@ This is my personal dotfiles repository. It is for bootstrapping new machines.
 On a brand new machine, run:
 
 ```bash
-/bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/kyeotic/dotfiles/HEAD/init/install)"
+/bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/kyeotic/dotfiles/HEAD/scripts/install)"
 ```
 
 This will:
@@ -19,7 +19,7 @@ This will:
 If the repo is already cloned, run the init pipeline directly:
 
 ```bash
-~/dotfiles/init/init
+~/dotfiles/scripts/init
 ```
 
 ## Package Management (Nix + Home Manager)
@@ -40,22 +40,21 @@ The switch script auto-detects your platform and username to select the right pr
 
 ### Available profiles
 
-| Profile             | Platform                     | Username |
-| ------------------- | ---------------------------- | -------- |
-| `kyeotic@macos`     | macOS (Apple Silicon)        | kyeotic  |
-| `kyeotic@linux`     | Linux / WSL                  | kyeotic  |
-| `tkye@macos`        | macOS (Apple Silicon) — work | tkye     |
+| Profile         | Platform                     | Username |
+| --------------- | ---------------------------- | -------- |
+| `kyeotic@macos` | macOS (Apple Silicon)        | kyeotic  |
+| `kyeotic@linux` | Linux / WSL                  | kyeotic  |
+| `tkye@macos`    | macOS (Apple Silicon) — work | tkye     |
 
 Profiles are defined in `nix/flake.nix`. To add a new profile, add an entry to `homeConfigurations` with the appropriate system, username, and home directory.
 
 ### Packages not in Nix
 
-These tools use their own installers (managed in `init/install_apps`):
+These tools use their own installers (managed in `scripts/install_apps`):
 - **deno** — curl installer
 - **rust** — rustup
 - **tfswitch** — curl installer
-- **nvm** — curl installer (in `init/install_nvm`)
-- **Phoenix** (macOS window manager) — manual install from [github.com/kasper/phoenix](https://github.com/kasper/phoenix)
+- **nvm** — curl installer (in `scripts/install_nvm`)
 
 ## Dotfile Symlinks (Stow)
 
@@ -66,7 +65,7 @@ These tools use their own installers (managed in `init/install_apps`):
 Re-link after adding new dotfiles:
 
 ```bash
-~/dotfiles/init/stow
+~/dotfiles/scripts/stow
 ```
 
 
