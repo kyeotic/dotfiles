@@ -14,6 +14,7 @@ if [ "$(uname)" = "Darwin" ]; then
     echo "darwin-rebuild not found, bootstrapping nix-darwin..."
     sudo -H nix run nix-darwin -- switch --flake ~/dotfiles/nix#"$USERNAME"
   fi
+  /System/Library/PrivateFrameworks/SystemAdministration.framework/Resources/activateSettings -u
 else
   PROFILE="${USERNAME}@linux"
   echo "Switching home-manager profile: $PROFILE"

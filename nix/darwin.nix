@@ -22,8 +22,8 @@
 
   # Keyboard
   system.defaults.NSGlobalDomain = {
-    KeyRepeat = 1;
-    InitialKeyRepeat = 10;
+    KeyRepeat = 2; # 15 = 0.15s, 2 = 0.02s
+    InitialKeyRepeat = 15;
   };
 
   # Trackpad: tap to click + three-finger drag (Accessibility > Pointer Control > Trackpad Options)
@@ -52,5 +52,10 @@
       TrackpadFourFingerVertSwipeGesture = 2;
       TrackpadFourFingerHorizSwipeGesture = 2;
     };
+    "com.apple.screensaver" = {
+        # Require password immediately after sleep or screen saver begins
+        askForPassword = 1;
+        askForPasswordDelay = 0;
+      };
   };
 }
