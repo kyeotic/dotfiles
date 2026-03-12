@@ -30,6 +30,7 @@ in
     readline
     stow
     starship
+    tree
     unzip
     watch
     watchman

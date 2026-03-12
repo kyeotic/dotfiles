@@ -56,6 +56,13 @@ fi
 
 # Force PATH dedup (export PATH=... in sourced scripts bypasses typeset -U)
 path=("${path[@]}")
+
+# bun completions
+[ -s "/home/kyeotic/.bun/_bun" ] && source "/home/kyeotic/.bun/_bun"
+
+# bun
+export BUN_INSTALL="$HOME/.bun"
+export PATH="$BUN_INSTALL/bin:$PATH"
 # Initialize zsh completions (added by deno install script)
 autoload -Uz compinit
 compinit
