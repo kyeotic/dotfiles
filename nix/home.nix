@@ -12,6 +12,7 @@ in
     ansible
     awscli2
     bat
+    cloudflared
     direnv
     dive
     eza
