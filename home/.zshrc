@@ -15,6 +15,9 @@ if [[ -a ~/.zsh_just_completions ]]; then source ~/.zsh_just_completions; fi
 # Allow local-machine-only configuration
 if [[ -a ~/.localrc ]]; then source ~/.localrc; fi
 
+# Vault secrets
+if [[ -f ~/.vault-env ]]; then source ~/.vault-env; fi
+
 # Path
 export PATH="/usr/local/bin:/usr/local/sbin:$HOME/bin:$PATH"
 if [ -d "$HOME/.local/bin" ] ; then
