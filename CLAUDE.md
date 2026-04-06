@@ -8,6 +8,16 @@ Personal dotfiles repository managing development environment configs across mac
 
 ALL CHANGES MUST WORK IN: Macos, Linux, WSL (windows linux)
 
+## Working
+
+When working ALWAYS start by making a markdown plan in thoughts/ unless the user says "skip plan"
+
+- If a plan markdown already exists, or is provided by the user, work from the existing document instead of making a new one
+- As you work update the thought markdown with changes and progress
+- If you change the system or architecture documented in THIS DOCUMENT, UPDATE IT
+
+DO NOT READ the .env file, it contains secrets that should NEVER be in the claude context They are part of the ENV VARs, so you can use them (WITHOUT READING THEM INTO CONTEXT)
+
 ## Setup & Installation
 
 Bootstrap: `curl -fsSL https://raw.githubusercontent.com/kyeotic/dotfiles/HEAD/scripts/install | bash`
