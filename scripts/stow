@@ -8,5 +8,9 @@ stow -d $HOME/dotfiles -t ~/ -S home
 mkdir -p ~/.config/autokey/data
 stow -d $HOME/dotfiles -t ~/.config/autokey/data -S autokey
 
+# kwin scripts live in ~/.local/share, not ~/.config
+mkdir -p ~/.local/share/kwin
+stow -d $HOME/dotfiles/.config/kwin -t ~/.local/share/kwin -S scripts --adopt
+
 # if [[ -a $HOME/.hyper.js ]]; then rm $HOME/.hyper.js; fi
 # ln $HOME/dotfiles/configs/.hyper.js $HOME/.hyper.js 
