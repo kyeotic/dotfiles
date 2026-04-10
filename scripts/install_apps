@@ -1,7 +1,6 @@
 #!/usr/bin/env bash
 
-# All packages have moved to nix/home.nix (managed by home-manager).
-# This file only contains installers for tools not available in nixpkgs.
+# This file installs tools not available in Homebrew (or not well-served by it).
 
 # deno
 if ! command -v deno >/dev/null 2>&1; then
@@ -66,14 +65,39 @@ if ! grep -q "BWS_ACCESS_TOKEN=." "$HOME/.bws" 2>/dev/null; then
     echo "Token saved to ~/.bws"
 fi
 
-# Homebrew, sometimes still the best option
-if ! command -v brew >/dev/null 2>&1 ; then
+# Linux: install Nerd Fonts (Linuxbrew doesn't support casks)
+if [[ "$(uname)" == "Linux" ]]; then
+    if ! fc-list 2>/dev/null | grep -qi "Hack Nerd Font"; then
+        echo "Installing Nerd Fonts (Hack, Meslo, FiraCode)..."
+        FONTS_DIR="$HOME/.local/share/fonts"
+        mkdir -p "$FONTS_DIR"
+        for font in Hack Meslo FiraCode; do
+            tmp=$(mktemp -d)
+            curl -fsSL "https://github.com/ryanoasis/nerd-fonts/releases/latest/download/${font}.zip" \
+                -o "$tmp/${font}.zip"
+            unzip -q "$tmp/${font}.zip" -d "$tmp/${font}"
+            find "$tmp/${font}" -name "*.ttf" -o -name "*.otf" | xargs -I{} cp {} "$FONTS_DIR/"
+            rm -rf "$tmp"
+        done
+        fc-cache -fv >/dev/null 2>&1
+    fi
+
+    # Start syncthing as a systemd user service (installed via Brewfile.linux)
+    if command -v brew >/dev/null 2>&1 && command -v syncthing >/dev/null 2>&1; then
+        if ! systemctl --user is-enabled homebrew.syncthing.service >/dev/null 2>&1; then
+            brew services start syncthing
+        fi
+    fi
+fi
+
+# Homebrew for macOS (Linux gets brew from install_shell)
+if [[ "$(uname)" == "Darwin" ]] && ! command -v brew >/dev/null 2>&1; then
     echo "Installing Homebrew..."
     /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
     eval "$(/opt/homebrew/bin/brew shellenv bash)"
 fi
 
-# macOS GUI apps via Brewfile (casks only, no lock file)
+# macOS: install CLI tools and GUI apps via Homebrew
 if [[ "$(uname)" == "Darwin" ]] && command -v brew >/dev/null 2>&1; then
     DOTFILES_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
 
@@ -83,9 +107,10 @@ if [[ "$(uname)" == "Darwin" ]] && command -v brew >/dev/null 2>&1; then
     while true; do sudo -n true; sleep 60; kill -0 "$$" || exit; done 2>/dev/null &
     SUDO_KEEPALIVE_PID=$!
 
+    echo "Installing CLI tools (Brewfile.linux)..."
+    brew bundle --file="$DOTFILES_DIR/Brewfile.linux" --no-upgrade
 
-
-    echo "Installing Brewfile apps..."
+    echo "Installing GUI apps (Brewfile)..."
     brew bundle --file="$DOTFILES_DIR/Brewfile" --no-upgrade --force
 
     kill "$SUDO_KEEPALIVE_PID" 2>/dev/null

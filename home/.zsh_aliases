@@ -20,8 +20,8 @@ alias c="cargo"
 alias edit_hosts="sudo nano /etc/hosts"
 alias reset_dns="sudo killall -HUP mDNSResponder"
 alias aws-me="aws sts get-caller-identity | jq -r '.'"
-alias nix-apply="~/dotfiles/nixos/apply-config"
 alias nix-switch="~/dotfiles/nix/switch"
+alias brew-up="brew bundle --file=~/dotfiles/Brewfile.linux --no-upgrade"
 alias es="eza "
 
 # Easier navigation: .., ..., ...., ....., ~ and -

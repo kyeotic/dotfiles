@@ -4,7 +4,7 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ## Overview
 
-Personal dotfiles repository managing development environment configs across macOS, Linux, WSL, and NixOS. Uses **GNU Stow** for symlink management and **Nix + home-manager** for declarative package management.
+Personal dotfiles repository managing development environment configs across macOS, Linux, and WSL. Uses **GNU Stow** for symlink management. Linux uses **Homebrew** (`Brewfile.linux`) for CLI packages; macOS uses **nix-darwin** (`nix/`) for both packages and system defaults.
 
 ALL CHANGES MUST WORK IN: Macos, Linux, WSL (windows linux)
 
@@ -23,37 +23,42 @@ DO NOT READ the .env file, it contains secrets that should NEVER be in the claud
 Bootstrap: `curl -fsSL https://raw.githubusercontent.com/kyeotic/dotfiles/HEAD/scripts/install | bash`
 
 The `scripts/` directory contains the installation pipeline (all steps are idempotent):
-- `install` - Bootstrap script (installs git/curl, installs Nix, clones repo, runs init)
+- `install` - Bootstrap script (installs git/curl on Linux, installs Nix on macOS, clones repo, runs init)
 - `init` - Main orchestrator, runs: `install_shell` → `install_apps`
-- `install_shell` - Installs zsh, runs `home-manager switch`, runs stow
-- `install_apps` - Installs tools not in nixpkgs (deno, rust, tfswitch, nvm)
+- `install_shell` - Installs zsh; on Linux runs `brew bundle --file=Brewfile.linux`; on macOS runs `darwin-rebuild switch`
+- `install_apps` - Installs tools not in Homebrew (deno, rust, tfswitch, nvm, kitty, claude, fonts on Linux)
 - `stow` - Creates symlinks via GNU Stow mapping `home/` → `~/` and `.config/` → `~/.config/`
 
 To re-link after changes: `~/dotfiles/scripts/stow`
 
 ## Package Management
 
-CLI packages are declared in `nix/home.nix` and installed via home-manager. To add/remove packages, edit `nix/home.nix` and run `nix-switch` (alias for `~/dotfiles/nix/switch`).
+### Linux
+CLI packages are declared in `Brewfile.linux` (Linuxbrew). To add/remove packages, edit `Brewfile.linux` and run `brew-up` (alias for `brew bundle --file=~/dotfiles/Brewfile.linux --no-upgrade`).
 
-Profiles are defined in `nix/flake.nix` with a `mkHome` helper. The `nix/switch` script auto-detects platform and username via `whoami` to select the right profile.
+### macOS
+CLI packages and system defaults are managed via nix-darwin. Packages are in `nix/home.nix`, system defaults (dock, keyboard, trackpad) in `nix/darwin.nix`. To apply, run `nix-switch` (alias for `~/dotfiles/nix/switch`).
 
-Tools not in nixpkgs (deno, rust, tfswitch, nvm) use their own curl installers in `scripts/install_apps`.
+### Both platforms
+Tools not in Homebrew/nixpkgs (deno, rust, tfswitch, nvm, kitty, claude) use their own curl installers in `scripts/install_apps`.
+
+macOS GUI apps are in `Brewfile` (casks only), applied by `scripts/install_apps`.
 
 ## Repository Structure
 
 - **`home/`** - Files symlinked to `~/` (`.zshrc`, `.zsh_aliases`, `.zsh_functions`, `.zsh_git`, `.gitconfig`, `.starship-rc`)
 - **`.config/`** - Files symlinked to `~/.config/` (starship, kitty, fish, direnv, hypr, conky, pipewire)
 - **`scripts/`** - Installation and setup scripts (all bash, idempotent)
-- **`nix/`** - Standalone home-manager flake (`flake.nix`, `home.nix`, `switch`)
-- **`nixos/`** - NixOS flake-based system config (separate, desktop only; `apply-config` to apply)
+- **`nix/`** - nix-darwin flake for macOS (`flake.nix`, `home.nix`, `darwin.nix`, `switch`)
+- **`Brewfile.linux`** - Homebrew CLI packages for Linux (and macOS via install_apps)
+- **`Brewfile`** - Homebrew casks for macOS GUI apps
 - **`autokey/`** - Linux text expansion phrases and scripts
 
 ## Key Conventions
 
 - Shell config is split across `.zshrc` (main), `.zsh_aliases` (aliases), `.zsh_functions` (functions), `.zsh_git` (git helpers), and `.starship-rc` (prompt env setup)
-- `.starship-rc` sources nix-daemon.sh (not on NixOS), initializes starship, sets up zsh-autosuggestions and completions from `~/.nix-profile/share/`
-- Platform detection happens at install time and in `.zshrc` (checks for NixOS via `/etc/NIXOS`, macOS via `uname`)
-- Username detection via `whoami` selects between personal (`kyeotic`) and work (`tkye`) profiles
+- `.starship-rc` sources nix-daemon.sh on macOS, initializes starship, sets up zsh-autosuggestions and completions from `$(brew --prefix)/share/`
+- Platform detection via `uname` (Darwin vs Linux); no NixOS-specific branches remain
+- Username detection via `whoami` selects between personal (`kyeotic`) and work (`tkye`) profiles on macOS
 - Machine-local overrides go in `~/.localrc` (sourced by `.zshrc` if present)
 - Git config includes a conditional include for `.gitconfig.work` based on workspace path
-- NixOS system changes are applied via `nixos/apply-config`, old generations cleaned with `nixos/trim-generations`

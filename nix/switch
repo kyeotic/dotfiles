@@ -16,7 +16,7 @@ if [ "$(uname)" = "Darwin" ]; then
   fi
   /System/Library/PrivateFrameworks/SystemAdministration.framework/Resources/activateSettings -u
 else
-  PROFILE="${USERNAME}@linux"
-  echo "Switching home-manager profile: $PROFILE"
-  home-manager switch --flake ~/dotfiles/nix#"$PROFILE"
+  echo "nix/switch is only supported on macOS. Linux packages are managed by Homebrew."
+  echo "Run: brew bundle --file=~/dotfiles/Brewfile.linux"
+  exit 1
 fi

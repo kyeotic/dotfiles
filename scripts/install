@@ -9,8 +9,18 @@
 
 set -u
 
+# Detect Fedora Atomic / immutable ostree systems (Bazzite, Silverblue, etc.)
+is_fedora_atomic() {
+    [ -f /run/ostree-booted ]
+}
+
+# Cache sudo credentials once upfront so repeated sudo calls don't each prompt.
+# On Bazzite/KDE this triggers the ksshaskpass GUI dialog once.
+sudo true
+
 # Install minimal dependencies (git + curl)
-if [ "$(uname -s)" = "Linux" ]; then
+# Skip on Fedora Atomic — git/curl are pre-installed and dnf is shimmed to rpm-ostree
+if [ "$(uname -s)" = "Linux" ] && ! is_fedora_atomic; then
     if command -v apt >/dev/null 2>&1; then
         sudo apt update
         sudo apt install -y git curl
@@ -21,15 +31,18 @@ if [ "$(uname -s)" = "Linux" ]; then
     fi
 fi
 
-# Install Nix (Determinate Systems installer)
-if ! command -v nix >/dev/null 2>&1; then
-    echo "Installing Nix..."
-    curl --proto '=https' --tlsv1.2 -sSf -L https://install.determinate.systems/nix | sh -s -- install --no-confirm
-fi
+# Install Nix on macOS only (used for nix-darwin system management)
+if [ "$(uname -s)" = "Darwin" ]; then
+    # Source nix for the current session (must happen before the install check so
+    # that `command -v nix` works on systems where nix is installed but not in PATH)
+    if [ -f "/nix/var/nix/profiles/default/etc/profile.d/nix-daemon.sh" ]; then
+        . "/nix/var/nix/profiles/default/etc/profile.d/nix-daemon.sh"
+    fi
 
-# Source nix for the current session
-if [ -f "/nix/var/nix/profiles/default/etc/profile.d/nix-daemon.sh" ]; then
-    . "/nix/var/nix/profiles/default/etc/profile.d/nix-daemon.sh"
+    if ! command -v nix >/dev/null 2>&1; then
+        echo "Installing Nix..."
+        curl --proto '=https' --tlsv1.2 -sSf -L https://install.determinate.systems/nix | sh -s -- install --no-confirm
+    fi
 fi
 
 # Clone repo if not present

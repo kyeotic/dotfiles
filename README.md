@@ -11,10 +11,10 @@ On a brand new machine, run:
 ```
 
 This will:
-1. Install git and curl via the system package manager
-2. Install [Nix](https://determinate.systems/nix/) (Determinate Systems installer)
+1. Install git and curl (Linux only — pre-installed on macOS)
+2. Install [Nix](https://determinate.systems/nix/) (macOS only, for nix-darwin system management)
 3. Clone this repo to `~/dotfiles`
-4. Run the full init pipeline: install zsh, bootstrap home-manager, install apps, install nvm
+4. Run the full init pipeline: install zsh, install packages, install apps
 
 If the repo is already cloned, run the init pipeline directly:
 
@@ -22,39 +22,37 @@ If the repo is already cloned, run the init pipeline directly:
 ~/dotfiles/scripts/init
 ```
 
-## Package Management (Nix + Home Manager)
+## Package Management
 
-All CLI tools are managed declaratively via [home-manager](https://github.com/nix-community/home-manager) in `nix/home.nix`. Fonts are also managed here (except on WSL).
+### Linux — Homebrew (`Brewfile.linux`)
 
-### Adding or removing packages
+All CLI tools on Linux are managed via [Linuxbrew](https://brew.sh/) in `Brewfile.linux`.
 
-Edit `nix/home.nix` and add/remove packages from the `home.packages` list, then apply:
+To add/remove packages, edit `Brewfile.linux` and apply:
+
+```bash
+brew-up
+```
+
+### macOS — nix-darwin (`nix/home.nix`)
+
+CLI tools on macOS are managed via [nix-darwin](https://github.com/LnL7/nix-darwin) + home-manager in `nix/home.nix`. System defaults (dock, keyboard, trackpad) are in `nix/darwin.nix`.
+
+To apply changes:
 
 ```bash
 nix-switch
 ```
 
-Or equivalently: `~/dotfiles/nix/switch`
+### Packages not in Homebrew
 
-The switch script auto-detects your platform and username to select the right profile.
-
-### Available profiles
-
-| Profile         | Platform                     | Username |
-| --------------- | ---------------------------- | -------- |
-| `kyeotic@macos` | macOS (Apple Silicon)        | kyeotic  |
-| `kyeotic@linux` | Linux / WSL                  | kyeotic  |
-| `tkye@macos`    | macOS (Apple Silicon) — work | tkye     |
-
-Profiles are defined in `nix/flake.nix`. To add a new profile, add an entry to `homeConfigurations` with the appropriate system, username, and home directory.
-
-### Packages not in Nix
-
-These tools use their own installers (managed in `scripts/install_apps`):
+These tools use their own curl installers (managed in `scripts/install_apps`):
 - **deno** — curl installer
 - **rust** — rustup
 - **tfswitch** — curl installer
-- **nvm** — curl installer (in `scripts/install_nvm`)
+- **nvm** — curl installer
+- **kitty** — curl installer
+- **claude** — curl installer
 
 ## Dotfile Symlinks (Stow)
 
@@ -68,12 +66,10 @@ Re-link after adding new dotfiles:
 ~/dotfiles/scripts/stow
 ```
 
+## macOS GUI Apps
 
-## Install Mac Apps
+macOS GUI apps are installed via `Brewfile` (casks only):
 
+```bash
+brew bundle --file=~/dotfiles/Brewfile
 ```
-curl -s 'https://api.macapps.link/en/discord-drive-vscode-docker-spotify-slack' | sh
-```
-
-* [Rectangle](https://rectangleapp.com/) - Window Manager
-* [Clipy](https://github.com/Clipy/Clipy) - Multiple Clipboards

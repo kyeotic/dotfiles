@@ -19,6 +19,8 @@ eval "$(ssh-agent -s)"
 ssh-add ~/.ssh/id_ed25519
 
 printf "Add the key below to https://github.com/settings/keys \n"
+printf "And to https://github.com/kyeotic/ssh-keys/tree/main/keys \n"
+
 cat ~/.ssh/id_ed25519.pub
 
 read -p "Press enter to continue"

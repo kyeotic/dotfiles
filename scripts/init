@@ -7,7 +7,7 @@ $HOME/dotfiles/scripts/install_apps
 
 # Sync vault secrets if config exists
 if command -v vault-sync >/dev/null 2>&1 && [[ -f "$HOME/dotfiles/.vault-sync.toml" ]]; then
-  vault-sync sync --config "$HOME/dotfiles/.vault-sync.toml"
+  (cd "$HOME/dotfiles" && vault-sync sync)
 fi
 
 printf "\n\nInstall Complete\nStart a new terminal for all changes to take effect"

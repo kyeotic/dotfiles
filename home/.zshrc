@@ -1,4 +1,6 @@
 # Add deno completions to search path
+if [[ ":$FPATH:" != *":/home/kyeotic/.zsh/completions:"* ]]; then export FPATH="/home/kyeotic/.zsh/completions:$FPATH"; fi
+# Add deno completions to search path
 if [[ ":$FPATH:" != *":/Users/kyeotic/.zsh/completions:"* ]]; then export FPATH="/Users/kyeotic/.zsh/completions:$FPATH"; fi
 # Deduplicate PATH entries
 typeset -U path
@@ -40,22 +42,22 @@ export EDITOR='code'
 export AWS_PAGER=""
 
 
-if [ ! -f "/etc/NIXOS" ]; then
-  export PATH="$PATH:/Applications/Visual Studio Code.app/Contents/Resources/app/bin"
+export PATH="$PATH:/Applications/Visual Studio Code.app/Contents/Resources/app/bin"
 
-  # Homebrew
-  if [[ -f "/opt/homebrew/bin/brew" ]]; then
-    eval "$(/opt/homebrew/bin/brew shellenv zsh)"
-  fi
-
-  . "$HOME/.deno/env" #deno
-  . "$HOME/.cargo/env" #rust
-
-  # Nvm
-  export NVM_DIR="$HOME/.nvm"
-  [ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"  # This loads nvm
-  [ -s "$NVM_DIR/bash_completion" ] && \. "$NVM_DIR/bash_completion"  # This loads nvm bash_completion
+# Homebrew
+if [[ -f "/opt/homebrew/bin/brew" ]]; then
+  eval "$(/opt/homebrew/bin/brew shellenv zsh)"
+elif [[ -f "/home/linuxbrew/.linuxbrew/bin/brew" ]]; then
+  eval "$(/home/linuxbrew/.linuxbrew/bin/brew shellenv zsh)"
 fi
+
+[ -f "$HOME/.deno/env" ] && . "$HOME/.deno/env" #deno
+[ -f "$HOME/.cargo/env" ] && . "$HOME/.cargo/env" #rust
+
+# Nvm
+export NVM_DIR="$HOME/.nvm"
+[ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"
+[ -s "$NVM_DIR/bash_completion" ] && \. "$NVM_DIR/bash_completion"
 
 # Force PATH dedup (export PATH=... in sourced scripts bypasses typeset -U)
 path=("${path[@]}")

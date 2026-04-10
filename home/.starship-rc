@@ -1,9 +1,7 @@
-# Nix
-if [ ! -f "/etc/NIXOS" ]; then
-  # Determinate Systems installer path
+# Nix (macOS only)
+if [ "$(uname)" = "Darwin" ]; then
   if [ -f "/nix/var/nix/profiles/default/etc/profile.d/nix-daemon.sh" ]; then
     . "/nix/var/nix/profiles/default/etc/profile.d/nix-daemon.sh"
-  # Official installer path
   elif [ -f "/nix/var/nix/profiles/default/etc/profile.d/nix.sh" ]; then
     . "/nix/var/nix/profiles/default/etc/profile.d/nix.sh"
   fi
@@ -21,15 +19,14 @@ setopt appendhistory
 setopt INC_APPEND_HISTORY
 setopt SHARE_HISTORY
 
-# Auto
-if [ ! -f "/etc/NIXOS" ]; then
-  source "$HOME/.nix-profile/share/zsh-autosuggestions/zsh-autosuggestions.zsh"
+# Auto (zsh plugins + direnv — sourced from brew prefix)
+if command -v brew >/dev/null 2>&1; then
+  BREW_PREFIX="$(brew --prefix)"
+  [ -f "$BREW_PREFIX/share/zsh-autosuggestions/zsh-autosuggestions.zsh" ] && \
+    source "$BREW_PREFIX/share/zsh-autosuggestions/zsh-autosuggestions.zsh"
   eval "$(direnv hook zsh)"
-fi
 
-# zsh-completions
-if [ ! -f "/etc/NIXOS" ]; then
-  FPATH="$HOME/.nix-profile/share/zsh/site-functions:$HOME/.nix-profile/share/zsh-completions:$FPATH"
+  FPATH="$BREW_PREFIX/share/zsh/site-functions:$BREW_PREFIX/share/zsh-completions:$FPATH"
   fpath=($^fpath(N)) # Remove non-existent directories
 
   autoload -Uz compinit

@@ -15,21 +15,6 @@
 
   outputs = { nixpkgs, home-manager, nix-darwin, ... }:
     let
-      mkHome = { system, username, homeDirectory, isWork ? false }:
-        home-manager.lib.homeManagerConfiguration {
-          pkgs = nixpkgs.legacyPackages.${system};
-          extraSpecialArgs = { inherit isWork; };
-          modules = [
-            ./home.nix
-            {
-              home = {
-                inherit username homeDirectory;
-                stateVersion = "24.05";
-              };
-            }
-          ];
-        };
-
       mkDarwin = { username, isWork ? false }:
         nix-darwin.lib.darwinSystem {
           system = "aarch64-darwin";
@@ -54,14 +39,6 @@
         };
     in
     {
-      homeConfigurations = {
-        "kyeotic@linux" = mkHome {
-          system = "x86_64-linux";
-          username = "kyeotic";
-          homeDirectory = "/home/kyeotic";
-        };
-      };
-
       darwinConfigurations = {
         "kyeotic" = mkDarwin {
           username = "kyeotic";

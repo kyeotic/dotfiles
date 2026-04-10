@@ -2,17 +2,10 @@
 
 set -eu
 
-if [ -f "/etc/NIXOS" ]; then
-  # Link dotfiles
-    touch ~/.localrc
-    ./scripts/stow
-    exit
-fi
-
-# Source nix for the current session
-if [ -f "/nix/var/nix/profiles/default/etc/profile.d/nix-daemon.sh" ]; then
-    . "/nix/var/nix/profiles/default/etc/profile.d/nix-daemon.sh"
-fi
+# Detect Fedora Atomic / immutable ostree systems (Bazzite, Silverblue, etc.)
+is_fedora_atomic() {
+    [ -f /run/ostree-booted ]
+}
 
 # Find system zsh (prefer /bin/zsh or /usr/bin/zsh over brew/nix)
 if [ -x /bin/zsh ]; then
@@ -20,16 +13,16 @@ if [ -x /bin/zsh ]; then
 elif [ -x /usr/bin/zsh ]; then
     ZSH_PATH=/usr/bin/zsh
 else
-    # Install zsh via system package manager
-    echo "Installing zsh via system package manager..."
+    echo "Installing zsh..."
     if [ "$(uname)" = "Darwin" ]; then
         echo "zsh ships with macOS"
-    elif command -v apt >/dev/null 2>&1; then
-        sudo apt install -y zsh
-    elif command -v dnf >/dev/null 2>&1; then
-        sudo dnf install -y zsh
-    elif command -v pacman >/dev/null 2>&1; then
-        sudo pacman -S --noconfirm zsh
+    else
+        # Ensure Linuxbrew is available then use it for zsh (avoids rpm-ostree on Bazzite)
+        if ! command -v brew >/dev/null 2>&1; then
+            /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
+            eval "$(/home/linuxbrew/.linuxbrew/bin/brew shellenv bash)"
+        fi
+        brew install zsh
     fi
     ZSH_PATH="$(command -v zsh)"
 fi
@@ -40,23 +33,37 @@ if [ "$SHELL" != "$ZSH_PATH" ]; then
     if ! grep -qx "$ZSH_PATH" /etc/shells; then
         echo "$ZSH_PATH" | sudo tee -a /etc/shells
     fi
-    sudo chsh -s "$ZSH_PATH" "${USER}"
+    if command -v chsh >/dev/null 2>&1; then
+        sudo chsh -s "$ZSH_PATH" "${USER}"
+    elif command -v usermod >/dev/null 2>&1; then
+        sudo usermod -s "$ZSH_PATH" "${USER}"
+    else
+        echo "WARNING: Could not change shell automatically. Run: sudo usermod -s $ZSH_PATH $USER"
+    fi
 fi
 
-# Detect platform for home-manager profile
-USERNAME="$(whoami)"
 if [ "$(uname)" = "Darwin" ]; then
-    PROFILE="${USERNAME}@macos"
+    # macOS: Source nix and run nix-darwin
+    if [ -f "/nix/var/nix/profiles/default/etc/profile.d/nix-daemon.sh" ]; then
+        . "/nix/var/nix/profiles/default/etc/profile.d/nix-daemon.sh"
+    fi
+    USERNAME="$(whoami)"
+    echo "Running nix-darwin switch for: $USERNAME"
+    if command -v darwin-rebuild >/dev/null 2>&1; then
+        sudo -H darwin-rebuild switch --flake ~/dotfiles/nix#"$USERNAME"
+    else
+        sudo -H nix run nix-darwin -- switch --flake ~/dotfiles/nix#"$USERNAME"
+    fi
 else
-    PROFILE="${USERNAME}@linux"
-fi
-
-# Bootstrap home-manager and install all packages
-echo "Running home-manager switch for profile: $PROFILE"
-if command -v home-manager >/dev/null 2>&1; then
-    home-manager switch --flake ~/dotfiles/nix#"$PROFILE"
-else
-    nix run home-manager -- switch --flake ~/dotfiles/nix#"$PROFILE"
+    # Linux: install CLI packages via Homebrew
+    if ! command -v brew >/dev/null 2>&1; then
+        echo "Installing Homebrew..."
+        /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
+        eval "$(/home/linuxbrew/.linuxbrew/bin/brew shellenv bash)"
+    fi
+    DOTFILES_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
+    echo "Installing Linux packages via Brewfile.linux..."
+    brew bundle --file="$DOTFILES_DIR/Brewfile.linux" --no-upgrade
 fi
 
 # Link dotfiles
