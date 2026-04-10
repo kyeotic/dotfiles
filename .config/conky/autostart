@@ -1,8 +1,0 @@
-[Desktop Entry]
-Type=Application
-Name=Conky
-Exec=bash -c 'distrobox-enter --name conky-box -- conky -c ~/.config/conky/conky-clock.conf & distrobox-enter --name conky-box -- conky -c ~/.config/conky/conky-stats.conf'
-X-GNOME-Autostart-enabled=true
-Hidden=false
-NoDisplay=false
-Comment=System monitor

@@ -1,9 +1,16 @@
-# Add deno completions to search path
-if [[ ":$FPATH:" != *":/home/kyeotic/.zsh/completions:"* ]]; then export FPATH="/home/kyeotic/.zsh/completions:$FPATH"; fi
-# Add deno completions to search path
-if [[ ":$FPATH:" != *":/Users/kyeotic/.zsh/completions:"* ]]; then export FPATH="/Users/kyeotic/.zsh/completions:$FPATH"; fi
 # Deduplicate PATH entries
 typeset -U path
+
+# Homebrew (must be early — adds starship, direnv, completions to PATH)
+if [[ -f "/opt/homebrew/bin/brew" ]]; then
+  eval "$(/opt/homebrew/bin/brew shellenv zsh)"
+elif [[ -f "/home/linuxbrew/.linuxbrew/bin/brew" ]]; then
+  eval "$(/home/linuxbrew/.linuxbrew/bin/brew shellenv zsh)"
+fi
+
+# Add deno completions to search path
+if [[ ":$FPATH:" != *":/home/kyeotic/.zsh/completions:"* ]]; then export FPATH="/home/kyeotic/.zsh/completions:$FPATH"; fi
+if [[ ":$FPATH:" != *":/Users/kyeotic/.zsh/completions:"* ]]; then export FPATH="/Users/kyeotic/.zsh/completions:$FPATH"; fi
 
 # Starship
 [[ ! -f ~/.starship-rc ]] || source ~/.starship-rc
@@ -25,6 +32,9 @@ export PATH="/usr/local/bin:/usr/local/sbin:$HOME/bin:$PATH"
 if [ -d "$HOME/.local/bin" ] ; then
     PATH="$HOME/.local/bin:$PATH"
 fi
+if [ -d "$HOME/.local/kitty.app/bin" ] ; then
+    PATH="$HOME/.local/kitty.app/bin:$PATH"
+fi
 
 # Disable flow control (frees Ctrl-S for fzf forward history search)
 stty -ixon
@@ -44,13 +54,6 @@ export AWS_PAGER=""
 
 export PATH="$PATH:/Applications/Visual Studio Code.app/Contents/Resources/app/bin"
 
-# Homebrew
-if [[ -f "/opt/homebrew/bin/brew" ]]; then
-  eval "$(/opt/homebrew/bin/brew shellenv zsh)"
-elif [[ -f "/home/linuxbrew/.linuxbrew/bin/brew" ]]; then
-  eval "$(/home/linuxbrew/.linuxbrew/bin/brew shellenv zsh)"
-fi
-
 [ -f "$HOME/.deno/env" ] && . "$HOME/.deno/env" #deno
 [ -f "$HOME/.cargo/env" ] && . "$HOME/.cargo/env" #rust
 
@@ -68,6 +71,3 @@ path=("${path[@]}")
 # bun
 export BUN_INSTALL="$HOME/.bun"
 export PATH="$BUN_INSTALL/bin:$PATH"
-# Initialize zsh completions (added by deno install script)
-autoload -Uz compinit
-compinit

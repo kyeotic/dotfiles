@@ -27,8 +27,12 @@ else
     ZSH_PATH="$(command -v zsh)"
 fi
 
-# Use Zsh
-if [ "$SHELL" != "$ZSH_PATH" ]; then
+# Use Zsh as default shell — skip on Fedora Atomic (Bazzite, Silverblue, etc.)
+# where we want zsh available for terminals (kitty, VS Code) but keep bash as the
+# system login shell so XDG_DATA_DIRS, Flatpak, and other system integrations work.
+if is_fedora_atomic; then
+    echo "Fedora Atomic detected: zsh installed but default shell left unchanged (bash handles system integration)"
+elif [ "$SHELL" != "$ZSH_PATH" ]; then
     echo "Switching to Zsh ($ZSH_PATH)"
     if ! grep -qx "$ZSH_PATH" /etc/shells; then
         echo "$ZSH_PATH" | sudo tee -a /etc/shells

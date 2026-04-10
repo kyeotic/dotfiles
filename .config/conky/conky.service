@@ -1,0 +1,12 @@
+[Unit]
+Description=Conky System Monitor
+After=graphical-session.target
+
+[Service]
+Type=simple
+ExecStart=bash -c 'distrobox-enter --name conky-box -- conky -c ~/.config/conky/conky-clock.conf & distrobox-enter --name conky-box -- conky -c ~/.config/conky/conky-stats.conf'
+Restart=on-failure
+RestartSec=5
+
+[Install]
+WantedBy=graphical-session.target

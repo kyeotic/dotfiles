@@ -8,7 +8,7 @@ if [ "$(uname)" = "Darwin" ]; then
 fi
 
 # Init Starship
-eval "$(starship init zsh)"
+command -v starship >/dev/null 2>&1 && eval "$(starship init zsh)"
 
 
 # History in cache directory:
@@ -28,19 +28,20 @@ if command -v brew >/dev/null 2>&1; then
 
   FPATH="$BREW_PREFIX/share/zsh/site-functions:$BREW_PREFIX/share/zsh-completions:$FPATH"
   fpath=($^fpath(N)) # Remove non-existent directories
+fi
 
-  autoload -Uz compinit
-  # Get zcompdump modification day (handles macOS vs Linux stat differences)
-  if [ "$(uname)" = "Darwin" ]; then
-    zcompdump_day=$(stat -f '%Sm' -t '%j' ~/.zcompdump 2>/dev/null)
-  else
-    zcompdump_day=$(date -d @$(stat -c '%Y' ~/.zcompdump 2>/dev/null) +'%j' 2>/dev/null)
-  fi
-  if [ "$(date +'%j')" != "$zcompdump_day" ]; then
-    compinit -u
-  else
-    compinit -C
-  fi
+# Completions — must run unconditionally so compdef works in .zsh_git/.zsh_just_completions
+autoload -Uz compinit
+# Get zcompdump modification day (handles macOS vs Linux stat differences)
+if [ "$(uname)" = "Darwin" ]; then
+  zcompdump_day=$(stat -f '%Sm' -t '%j' ~/.zcompdump 2>/dev/null)
+else
+  zcompdump_day=$(date -d @$(stat -c '%Y' ~/.zcompdump 2>/dev/null) +'%j' 2>/dev/null)
+fi
+if [ "$(date +'%j')" != "$zcompdump_day" ]; then
+  compinit -u
+else
+  compinit -C
 fi
 
 # History suggestions - Prefix-based history search with up/down
