@@ -1,0 +1,9 @@
+{
+  "KPackageStructure": "KWin/Script",
+  "KPlugin": {
+    "Name": "Window Snap",
+    "Description": "Snap active window to secondary monitor regions",
+    "Version": "1.0",
+    "License": "MIT"
+  }
+}
