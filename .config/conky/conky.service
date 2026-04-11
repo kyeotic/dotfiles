@@ -4,7 +4,7 @@ After=graphical-session.target
 
 [Service]
 Type=simple
-ExecStart=bash -c 'distrobox-enter --name conky-box -- conky -c ~/.config/conky/conky-clock.conf & distrobox-enter --name conky-box -- conky -c ~/.config/conky/conky-stats.conf'
+ExecStart=bash -c 'distrobox-enter --name conky-box -- bash -c "conky -c ~/.config/conky/conky-clock.conf >/dev/null 2>&1 & conky -c ~/.config/conky/conky-stats.conf >/dev/null 2>&1 & wait"'
 Restart=on-failure
 RestartSec=5
 
