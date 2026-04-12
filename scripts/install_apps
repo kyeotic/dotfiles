@@ -88,6 +88,11 @@ if [[ "$(uname)" == "Linux" ]]; then
             brew services start syncthing
         fi
     fi
+
+    # Discord flatpak: grant access to the secret service so login tokens survive reboots
+    if flatpak list --app 2>/dev/null | grep -q com.discordapp.Discord; then
+        flatpak override --user --talk-name=org.freedesktop.secrets com.discordapp.Discord
+    fi
 fi
 
 # Homebrew for macOS (Linux gets brew from install_shell)
