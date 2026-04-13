@@ -4,7 +4,11 @@
     "Id": "window-snap",
     "Name": "Window Snap",
     "Description": "Snap active window to secondary monitor regions",
-    "Version": "1.0",
-    "License": "MIT"
-  }
+    "Version": "2.0",
+    "License": "MIT",
+    "ServiceTypes": ["KWin/Script"]
+  },
+  "X-Plasma-API": "declarativescript",
+  "X-Plasma-API-Minimum-Version": "6.0",
+  "X-Plasma-MainScript": "ui/main.qml"
 }
