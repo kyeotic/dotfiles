@@ -37,3 +37,35 @@ function g-prune-sqaushed-dry {
 function install-xinput {
   sudo bash ~/dotfiles/bazzite/controller/install.sh
 }
+
+function setup-nas-mounts {
+  local CREDENTIALS="/var/home/kyeotic/.smb-share"
+  local UID_GID="uid=1000,gid=1000"
+  local OPTS="credentials=${CREDENTIALS},${UID_GID},_netdev,nofail,vers=3.0"
+  local -A SHARES=(
+    [nas]="//kye-nas/nas"
+    [media]="//kye-nas/media"
+    [apps]="//kye-nas/apps"
+  )
+
+  for name in "${(@k)SHARES}"; do
+    local share="${SHARES[$name]}"
+    local mnt="/mnt/${name}"
+
+    # Create mount point
+    if [[ ! -d "$mnt" ]]; then
+      echo "Creating mount point $mnt"
+      sudo mkdir -p "$mnt"
+    fi
+
+    # Add fstab entry if not already present
+    if ! grep -qsF "$share" /etc/fstab; then
+      echo "Adding fstab entry for $share -> $mnt"
+      echo "${share}  ${mnt}  cifs  ${OPTS}  0  0" | sudo tee -a /etc/fstab > /dev/null
+    else
+      echo "fstab entry for $share already exists, skipping"
+    fi
+  done
+
+  echo "Done. Run 'sudo mount -a' to mount all shares."
+}

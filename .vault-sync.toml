@@ -1,3 +1,7 @@
 [secrets.vault-env]
 id = "130257d1-ac51-4f34-ac15-b419015e9fa7"
 path = "{{ env.HOME }}/.vault-env"
+
+[secrets.smb-share]
+id = "31d9e840-56ee-4c7c-ac56-b42c000a91bc"
+path = "{{ env.HOME }}/.smb-share"
