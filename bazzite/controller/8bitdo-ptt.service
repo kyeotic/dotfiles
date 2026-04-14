@@ -1,0 +1,15 @@
+[Unit]
+Description=8BitDo Ultimate 2C PTT pass-through
+# Wait for udev to settle before trying to find the device
+After=systemd-udevd.service
+
+[Service]
+Type=simple
+Environment=PYTHONUNBUFFERED=1
+ExecStart=/usr/bin/python3 /usr/local/bin/8bitdo-ptt.py
+Restart=on-failure
+# Give the controller time to re-enumerate after disconnect/reconnect
+RestartSec=3
+
+[Install]
+WantedBy=multi-user.target
