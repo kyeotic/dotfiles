@@ -1,0 +1,14 @@
+# Personal text expansion shortcuts
+# Converted from Windows AutoHotkey hotstrings (:*: prefix = immediate expansion)
+matches:
+  - trigger: "tyg"
+    replace: "tyrsius@gmail.com"
+
+  - trigger: "tkd"
+    replace: "tim@kye.dev"
+
+  - trigger: "addrs"
+    replace: "3350 SW Lundgren Ter"
+
+  - trigger: "addrf"
+    replace: "3350 SW Lundgren Terrace, Beaverton OR 97005"

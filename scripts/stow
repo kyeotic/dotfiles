@@ -8,6 +8,12 @@ stow -d $HOME/dotfiles -t ~/ -S home
 mkdir -p ~/.config/autokey/data
 stow -d $HOME/dotfiles -t ~/.config/autokey/data -S autokey
 
+# Services co-located with their configs, need to live in systemd/user
+mkdir -p ~/.config/systemd/user
+ln -sf ~/dotfiles/.config/espanso/espanso.service ~/.config/systemd/user/espanso.service
+ln -sf ~/dotfiles/.config/conky/conky.service ~/.config/systemd/user/conky.service
+systemctl --user daemon-reload 2>/dev/null || true
+
 # kwin scripts live in ~/.local/share, not ~/.config
 mkdir -p ~/.local/share/kwin/scripts
 # stow -d $HOME/dotfiles/.config/kwin -t ~/.local/share/kwin -S scripts --adopt

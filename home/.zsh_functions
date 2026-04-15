@@ -66,6 +66,6 @@ function setup-nas-mounts {
       echo "fstab entry for $share already exists, skipping"
     fi
   done
-
+  
   echo "Done. Run 'sudo mount -a' to mount all shares."
 }

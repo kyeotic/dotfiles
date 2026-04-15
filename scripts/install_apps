@@ -93,6 +93,11 @@ if [[ "$(uname)" == "Linux" ]]; then
     if flatpak list --app 2>/dev/null | grep -q com.discordapp.Discord; then
         flatpak override --user --talk-name=org.freedesktop.secrets com.discordapp.Discord
     fi
+
+    # app-ctl distrobox: espanso (text expander) + conky (system monitor)
+    DOTFILES_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
+    "$DOTFILES_DIR/bazzite/distrobox/app-ctl/setup"
+    systemctl --user enable --now espanso.service conky.service
 fi
 
 # Homebrew for macOS (Linux gets brew from install_shell)

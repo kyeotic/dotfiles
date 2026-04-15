@@ -1,0 +1,63 @@
+#!/usr/bin/env bash
+# Creates and configures the app-ctl distrobox container.
+# This box hosts GUI-adjacent tools that need native X11/Wayland access
+# but can't be installed on the immutable host OS (Bazzite).
+#
+# Current apps:
+#   - espanso  (text expander, native Wayland)
+#   - conky    (system monitor, X11 via XWayland)
+#
+# Idempotent — safe to re-run.
+
+set -euo pipefail
+
+BOX_NAME="app-ctl"
+IMAGE="docker.io/library/ubuntu:24.04"
+
+# Create the box if it doesn't exist
+if ! distrobox list 2>/dev/null | grep -q "$BOX_NAME"; then
+    echo "Creating $BOX_NAME distrobox..."
+    distrobox create --name "$BOX_NAME" --image "$IMAGE" --yes
+fi
+
+echo "Configuring $BOX_NAME..."
+
+distrobox enter "$BOX_NAME" -- bash -c '
+    set -euo pipefail
+
+    sudo apt-get update -qq
+
+    # espanso wayland deps (Ubuntu 24.04 renames wxgtk packages with t64 suffix)
+    # conky-all includes X11 support needed for XWayland rendering
+    sudo apt-get install -y -qq curl libwxbase3.2-1t64 libwxgtk3.2-1t64 wl-clipboard conky-all
+
+    # Install espanso (wayland build) if not already present
+    if ! command -v espanso >/dev/null 2>&1; then
+        echo "Installing espanso..."
+        ESPANSO_VERSION=$(curl -s https://api.github.com/repos/espanso/espanso/releases/latest \
+            | grep "\"tag_name\"" | cut -d"\"" -f4)
+        curl -fsSL "https://github.com/espanso/espanso/releases/download/${ESPANSO_VERSION}/espanso-debian-wayland-amd64.deb" \
+            -o /tmp/espanso.deb
+        sudo dpkg -i /tmp/espanso.deb
+        rm /tmp/espanso.deb
+        echo "espanso ${ESPANSO_VERSION} installed"
+    else
+        echo "espanso already installed: $(espanso --version 2>/dev/null || true)"
+    fi
+'
+
+# Espanso EVDEVSource needs read access to /dev/input/event* for keyboard monitoring.
+# We use a udev ACL rule instead of the input group so it works inside the podman container.
+UDEV_RULE='/etc/udev/rules.d/99-espanso-input.rules'
+UDEV_CONTENT="# Grant $USER read access to keyboard input devices for espanso text expansion
+SUBSYSTEM==\"input\", KERNEL==\"event*\", ACTION==\"add\", RUN+=\"/usr/bin/setfacl -m u:$USER:r /dev/input/%k\""
+
+if [ ! -f "$UDEV_RULE" ] || ! grep -q "$USER" "$UDEV_RULE" 2>/dev/null; then
+    echo "Installing udev rule for input device access..."
+    echo "$UDEV_CONTENT" | sudo tee "$UDEV_RULE" > /dev/null
+    sudo udevadm control --reload-rules
+    sudo setfacl -m "u:$USER:r" /dev/input/event* 2>/dev/null || true
+fi
+
+echo "$BOX_NAME setup complete."
+echo "Run 'systemctl --user enable --now espanso.service conky.service' to start services."

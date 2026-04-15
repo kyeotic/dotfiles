@@ -6,9 +6,9 @@ StartLimitBurst=10
 
 [Service]
 Type=simple
-ExecStartPre=/bin/bash -c 'podman start conky-box 2>/dev/null; count=0; while ! podman exec conky-box true 2>/dev/null; do sleep 1; count=$((count+1)); [ $count -ge 30 ] && exit 1; done'
-ExecStart=/bin/bash -c 'podman exec --user kyeotic --env DISPLAY=$DISPLAY --env XAUTHORITY=$XAUTHORITY --env LANG=en_US.UTF-8 conky-box conky -c /home/kyeotic/.config/conky/conky-clock.conf >/dev/null 2>&1 & podman exec --user kyeotic --env DISPLAY=$DISPLAY --env XAUTHORITY=$XAUTHORITY --env LANG=en_US.UTF-8 conky-box conky -c /home/kyeotic/.config/conky/conky-stats.conf >/dev/null 2>&1 & wait'
-ExecStop=/bin/bash -c 'podman exec conky-box pkill conky 2>/dev/null; true'
+ExecStartPre=/bin/bash -c 'podman start app-ctl 2>/dev/null; count=0; while ! podman exec app-ctl true 2>/dev/null; do sleep 1; count=$((count+1)); [ $count -ge 30 ] && exit 1; done'
+ExecStart=/bin/bash -c 'podman exec --user kyeotic --env DISPLAY=$DISPLAY --env XAUTHORITY=$XAUTHORITY --env LANG=en_US.UTF-8 app-ctl conky -c /home/kyeotic/.config/conky/conky-clock.conf >/dev/null 2>&1 & podman exec --user kyeotic --env DISPLAY=$DISPLAY --env XAUTHORITY=$XAUTHORITY --env LANG=en_US.UTF-8 app-ctl conky -c /home/kyeotic/.config/conky/conky-stats.conf >/dev/null 2>&1 & wait'
+ExecStop=/bin/bash -c 'podman exec app-ctl pkill conky 2>/dev/null; true'
 Restart=on-failure
 RestartSec=5
 

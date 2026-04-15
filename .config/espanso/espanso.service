@@ -1,0 +1,20 @@
+[Unit]
+Description=Espanso Text Expander (app-ctl distrobox)
+After=graphical-session.target
+StartLimitIntervalSec=120
+StartLimitBurst=10
+
+[Service]
+Type=simple
+ExecStartPre=/bin/bash -c 'podman start app-ctl 2>/dev/null; count=0; while ! podman exec app-ctl true 2>/dev/null; do sleep 1; count=$((count+1)); [ $count -ge 30 ] && exit 1; done'
+ExecStart=/bin/bash -c 'podman exec --user kyeotic \
+    --env WAYLAND_DISPLAY=$WAYLAND_DISPLAY \
+    --env XDG_RUNTIME_DIR=$XDG_RUNTIME_DIR \
+    --env LANG=en_US.UTF-8 \
+    app-ctl espanso worker'
+ExecStop=/bin/bash -c 'podman exec app-ctl pkill espanso 2>/dev/null; true'
+Restart=on-failure
+RestartSec=5
+
+[Install]
+WantedBy=graphical-session.target
