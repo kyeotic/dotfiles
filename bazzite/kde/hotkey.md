@@ -1,7 +1,7 @@
 # KDE Panel Visibility Hotkey
 
 **Hotkey:** `Meta+F8`  
-**Action:** Toggles panel between Always Show (`none`) and Dodge Windows (`dodgewindows`)
+**Action:** Toggles panel between Always Show (`none`) and Auto Hide (`2`)
 
 ## How it works
 
