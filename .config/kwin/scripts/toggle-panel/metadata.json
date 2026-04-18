@@ -1,0 +1,13 @@
+{
+  "KPackageStructure": "KWin/Script",
+  "KPlugin": {
+    "Id": "toggle-panel",
+    "Name": "Toggle Panel",
+    "Description": "Toggle KDE panel between Always Show and Dodge Windows",
+    "Version": "1.0",
+    "License": "MIT",
+    "ServiceTypes": ["KWin/Script"]
+  },
+  "X-Plasma-API": "javascript",
+  "X-Plasma-MainScript": "code/main.js"
+}

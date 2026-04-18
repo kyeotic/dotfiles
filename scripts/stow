@@ -19,7 +19,8 @@ mkdir -p ~/.local/share/kwin/scripts
 # stow -d $HOME/dotfiles/.config/kwin -t ~/.local/share/kwin -S scripts --adopt
 # stow -d $HOME/dotfiles/.config/kwin/scripts -t $HOME/.local/share/kwin/scripts -S window-snap
 # stow -d $HOME/dotfiles/.config/kwin -t $HOME/.local/share/kwin/scripts -S window-snap
-ln -s ~/dotfiles/.config/kwin/scripts/window-snap ~/.local/share/kwin/scripts/window-snap
+ln -sf ~/dotfiles/.config/kwin/scripts/window-snap ~/.local/share/kwin/scripts/window-snap
+ln -sf ~/dotfiles/.config/kwin/scripts/toggle-panel ~/.local/share/kwin/scripts/toggle-panel
 
 
 
