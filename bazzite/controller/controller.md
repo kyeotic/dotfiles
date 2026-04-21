@@ -26,6 +26,12 @@ SDL_GAMECONTROLLER_IGNORE_DEVICES=0x26CE/0x01A2,0x1A86/0xE026 %command%
 
 This tells SDL to ignore the ASRock and HID devices as game controllers regardless of their capabilities. It works inside Proton's container because it's an environment variable, not a udev property lookup.
 
+**If the PTT script causes the controller to appear as player 2** (Steam Input sees the real device via hidraw AND the virtual gamepad via evdev simultaneously), enable `USE_DISTINCT_VIRTUAL_ID = True` in `8bitdo-ptt.py` and add the real 8BitDo to the ignore list:
+
+```
+SDL_GAMECONTROLLER_IGNORE_DEVICES=0x26CE/0x01A2,0x1A86/0xE026,0x2DC8/0x310A %command%
+```
+
 ### udev rules (cleanup — keeps jsN slots tidy)
 
 `/etc/udev/rules.d/99-no-fake-joysticks.rules` — removes jsN nodes and marks devices as non-joystick for system SDL apps:

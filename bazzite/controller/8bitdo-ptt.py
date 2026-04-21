@@ -19,6 +19,15 @@ from evdev import InputDevice, UInput, ecodes
 VENDOR_ID  = 0x2dc8
 PRODUCT_ID = 0x310a
 
+# Set to True if Steam Input presents the real device (via hidraw) AND the virtual
+# gamepad simultaneously, making the controller appear as player 2 in-game.
+# When True: virtual pad uses product 0x310b so SDL_GAMECONTROLLER_IGNORE_DEVICES
+# can exclude the real device (0x310a) without also excluding the virtual one.
+# Also update the Steam launch option to add 0x2DC8/0x310A to the ignore list.
+# Set to False to use the real device's product ID (original behavior).
+USE_DISTINCT_VIRTUAL_ID = False
+VIRTUAL_PRODUCT_ID = 0x310b
+
 # Buttons that also emit F13 on the virtual keyboard (for Discord PTT).
 # BTN_TR = right bumper, BTN_THUMBL = left stick click.
 # Run `evtest` on the real device to find codes for other buttons.
@@ -54,7 +63,8 @@ def main():
     for skip in (ecodes.EV_SYN, ecodes.EV_FF, ecodes.EV_MSC):
         pad_caps.pop(skip, None)
 
-    virtual_pad = UInput(pad_caps, name="8BitDo Ultimate 2C (PTT)", vendor=VENDOR_ID, product=PRODUCT_ID)
+    vpad_product = VIRTUAL_PRODUCT_ID if USE_DISTINCT_VIRTUAL_ID else PRODUCT_ID
+    virtual_pad = UInput(pad_caps, name="8BitDo Ultimate 2C (PTT)", vendor=VENDOR_ID, product=vpad_product)
     print(f"Created virtual gamepad: 8BitDo Ultimate 2C (PTT)")
 
     # Virtual keyboard: only KEY_F13, looks like a keyboard to Discord.
@@ -91,7 +101,7 @@ def main():
                 virtual_pad.write_event(event)
     except OSError as e:
         print(f"Device lost: {e}", file=sys.stderr)
-        cleanup()
+        sys.exit(1)
 
 
 if __name__ == "__main__":

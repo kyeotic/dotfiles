@@ -7,7 +7,7 @@ After=systemd-udevd.service
 Type=simple
 Environment=PYTHONUNBUFFERED=1
 ExecStart=/usr/bin/python3 /usr/local/bin/8bitdo-ptt.py
-Restart=on-failure
+Restart=always
 # Give the controller time to re-enumerate after disconnect/reconnect
 RestartSec=3
 

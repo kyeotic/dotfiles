@@ -94,6 +94,50 @@ if [[ "$(uname)" == "Linux" ]]; then
         flatpak override --user --talk-name=org.freedesktop.secrets com.discordapp.Discord
     fi
 
+    # Docker Engine + Compose plugin
+    if ! command -v docker >/dev/null 2>&1; then
+        if command -v rpm-ostree >/dev/null 2>&1; then
+            # Immutable Fedora (Bazzite, Silverblue) — staged install, requires reboot
+            # docker-compose-plugin requires Docker's official CE repo
+            if [ ! -f /etc/yum.repos.d/docker-ce.repo ]; then
+                sudo curl -fsSL https://download.docker.com/linux/fedora/docker-ce.repo \
+                    -o /etc/yum.repos.d/docker-ce.repo
+            fi
+            echo "Installing Docker CE via rpm-ostree (reboot required to complete)..."
+            rpm-ostree install --idempotent \
+                docker-ce docker-ce-cli containerd.io \
+                docker-buildx-plugin docker-compose-plugin
+            echo "Reboot, then re-run install_apps to finish Docker setup."
+        elif command -v dnf >/dev/null 2>&1; then
+            sudo dnf config-manager --add-repo https://download.docker.com/linux/fedora/docker-ce.repo
+            sudo dnf install -y docker-ce docker-ce-cli containerd.io docker-buildx-plugin docker-compose-plugin
+            sudo systemctl enable --now docker
+            sudo usermod -aG docker "$USER"
+            echo "Docker installed. Log out and back in for group membership to take effect."
+        elif command -v apt-get >/dev/null 2>&1; then
+            curl -fsSL https://get.docker.com | sh
+            sudo usermod -aG docker "$USER"
+            echo "Docker installed. Log out and back in for group membership to take effect."
+        fi
+    else
+        # docker is present — ensure service is enabled and user is in the group
+        # (handles the post-reboot case on immutable Fedora)
+        if command -v systemctl >/dev/null 2>&1 && ! systemctl is-enabled docker >/dev/null 2>&1; then
+            sudo systemctl enable --now docker
+        fi
+        if ! getent group docker | grep -qw "$USER"; then
+            # usermod silently fails when group is in /usr/lib/group (rpm-ostree base image)
+            # so append directly to /etc/group instead
+            DOCKER_GID=$(getent group docker | cut -d: -f3)
+            if grep -q "^docker:" /etc/group; then
+                sudo sed -i "/^docker:/s/$/,$USER/" /etc/group
+            else
+                echo "docker:x:${DOCKER_GID}:${USER}" | sudo tee -a /etc/group >/dev/null
+            fi
+            echo "Added $USER to docker group. Log out and back in for it to take effect."
+        fi
+    fi
+
     # app-ctl distrobox: espanso (text expander) + conky (system monitor)
     DOTFILES_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
     "$DOTFILES_DIR/bazzite/distrobox/app-ctl/setup"
