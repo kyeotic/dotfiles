@@ -52,11 +52,13 @@ if [ "$(uname)" = "Darwin" ]; then
         . "/nix/var/nix/profiles/default/etc/profile.d/nix-daemon.sh"
     fi
     USERNAME="$(whoami)"
-    echo "Running nix-darwin switch for: $USERNAME"
+    # Nix attribute names can't contain dots — replace with hyphens for the flake key
+    FLAKE_NAME="${USERNAME//./-}"
+    echo "Running nix-darwin switch for: $USERNAME (flake key: $FLAKE_NAME)"
     if command -v darwin-rebuild >/dev/null 2>&1; then
-        sudo -H darwin-rebuild switch --flake ~/dotfiles/nix#"$USERNAME"
+        sudo -H darwin-rebuild switch --flake ~/dotfiles/nix#"$FLAKE_NAME"
     else
-        sudo -H nix run nix-darwin -- switch --flake ~/dotfiles/nix#"$USERNAME"
+        sudo -H nix run nix-darwin -- switch --flake ~/dotfiles/nix#"$FLAKE_NAME"
     fi
 else
     # Linux: install CLI packages via Homebrew

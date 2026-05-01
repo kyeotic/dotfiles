@@ -47,7 +47,7 @@
           username = "tkye";
           isWork = true;
         };
-        "tim.kye" = mkDarwin {
+        "tim-kye" = mkDarwin {
           username = "tim.kye";
           isWork = true;
         };
