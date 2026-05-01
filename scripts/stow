@@ -3,10 +3,23 @@
 # Link Config and home
 mkdir -p ~/.config
 
-stow -d $HOME/dotfiles -t ~/.config -S .config/ --adopt 
-stow -d $HOME/dotfiles -t ~/ -S home
+# stow_pkg: remove real-file conflicts so the repo version always wins.
+# --adopt was removed because it moves local files INTO the repo, overwriting it.
+stow_pkg() {
+  local src=$1 tgt=$2 pkg=$3
+  stow -n -d "$src" -t "$tgt" -S "$pkg" 2>&1 \
+    | grep -oP '(?<=existing target is not owned by stow: )\S+' \
+    | while IFS= read -r f; do
+        echo "Removing conflict: $tgt/$f"
+        rm -rf "$tgt/$f"
+      done
+  stow -d "$src" -t "$tgt" -S "$pkg"
+}
+
+stow_pkg "$HOME/dotfiles" ~/.config .config/
+stow_pkg "$HOME/dotfiles" ~/ home
 mkdir -p ~/.config/autokey/data
-stow -d $HOME/dotfiles -t ~/.config/autokey/data -S autokey
+stow_pkg "$HOME/dotfiles" ~/.config/autokey/data autokey
 
 # Services co-located with their configs, need to live in systemd/user
 mkdir -p ~/.config/systemd/user

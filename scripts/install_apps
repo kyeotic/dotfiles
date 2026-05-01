@@ -7,13 +7,15 @@ if ! command -v deno >/dev/null 2>&1; then
     curl -fsSL https://deno.land/x/install/install.sh | sh
 fi
 
-# Rust
-if ! command -v cargo >/dev/null 2>&1; then
-    curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh
+# Rust — check binary directly; command -v cargo fails if ~/.cargo/bin not yet in PATH
+if [ ! -f "$HOME/.cargo/bin/cargo" ]; then
+    curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh -s -- -y --no-modify-path
 fi
+# Source cargo env so subsequent steps can use cargo
+[ -f "$HOME/.cargo/env" ] && . "$HOME/.cargo/env"
 
 # bws (Bitwarden Secrets CLI, not in nixpkgs)
-if ! command -v bws >/dev/null 2>&1; then
+if [ ! -f "$HOME/.cargo/bin/bws" ]; then
     cargo install bws --locked
 fi
 
@@ -23,6 +25,7 @@ if ! command -v tfswitch >/dev/null 2>&1; then
     curl -L https://raw.githubusercontent.com/warrensbox/terraform-switcher/master/install.sh | bash -s -- -b "$HOME/.local/bin"
 fi
 
+NVM_DIR="${NVM_DIR:-$HOME/.nvm}"
 if [ ! -f "$NVM_DIR/nvm.sh" ]; then
     echo "Installing nvm"
     PROFILE=/dev/null bash -c 'curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.40.3/install.sh | bash'
