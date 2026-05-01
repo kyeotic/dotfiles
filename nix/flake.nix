@@ -47,6 +47,10 @@
           username = "tkye";
           isWork = true;
         };
+        "tim.kye" = mkDarwin {
+          username = "tim.kye";
+          isWork = true;
+        };
       };
     };
 }

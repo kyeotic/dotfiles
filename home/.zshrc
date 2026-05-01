@@ -9,8 +9,7 @@ elif [[ -f "/home/linuxbrew/.linuxbrew/bin/brew" ]]; then
 fi
 
 # Add deno completions to search path
-if [[ ":$FPATH:" != *":/home/kyeotic/.zsh/completions:"* ]]; then export FPATH="/home/kyeotic/.zsh/completions:$FPATH"; fi
-if [[ ":$FPATH:" != *":/Users/kyeotic/.zsh/completions:"* ]]; then export FPATH="/Users/kyeotic/.zsh/completions:$FPATH"; fi
+if [[ ":$FPATH:" != *":$HOME/.zsh/completions:"* ]]; then export FPATH="$HOME/.zsh/completions:$FPATH"; fi
 
 # Starship
 [[ ! -f ~/.starship-rc ]] || source ~/.starship-rc
@@ -66,7 +65,7 @@ export NVM_DIR="$HOME/.nvm"
 path=("${path[@]}")
 
 # bun completions
-[ -s "/home/kyeotic/.bun/_bun" ] && source "/home/kyeotic/.bun/_bun"
+[ -s "$HOME/.bun/_bun" ] && source "$HOME/.bun/_bun"
 
 # bun
 export BUN_INSTALL="$HOME/.bun"

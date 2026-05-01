@@ -44,8 +44,6 @@
 	rebase = merges
 [init]
 	defaultBranch = main
-[maintenance]
-	repo = /Users/tkye/dev/cash-server
 [color]
 	ui = auto
 	diff = auto

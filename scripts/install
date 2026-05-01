@@ -31,6 +31,17 @@ if [ "$(uname -s)" = "Linux" ] && ! is_fedora_atomic; then
     fi
 fi
 
+# Install Xcode Command Line Tools on macOS (required by git, Homebrew, and Nix)
+if [ "$(uname -s)" = "Darwin" ]; then
+    if ! xcode-select -p >/dev/null 2>&1; then
+        echo "Installing Xcode Command Line Tools..."
+        xcode-select --install
+        echo "Waiting for Xcode Command Line Tools installation to complete..."
+        until xcode-select -p >/dev/null 2>&1; do sleep 5; done
+        echo "Xcode Command Line Tools installed."
+    fi
+fi
+
 # Install Nix on macOS only (used for nix-darwin system management)
 if [ "$(uname -s)" = "Darwin" ]; then
     # Source nix for the current session (must happen before the install check so
