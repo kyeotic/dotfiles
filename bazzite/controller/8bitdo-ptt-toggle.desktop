@@ -1,0 +1,7 @@
+[Desktop Entry]
+Name=8BitDo PTT Toggle
+Comment=Toggle 8BitDo pass-through service on/off
+Exec=/usr/local/bin/8bitdo-ptt-toggle.sh
+Icon=input-gaming
+Type=Application
+NoDisplay=true

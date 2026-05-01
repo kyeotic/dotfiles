@@ -118,6 +118,27 @@ grep -A 3 "PTT" /proc/bus/input/devices
 
 ---
 
+# 8BitDo Controller – PTT Toggle Hotkey (KDE)
+
+Press **Meta+F9** to start or stop the `8bitdo-ptt` service. A desktop notification confirms the new state. Use this before launching games that conflict with the pass-through script.
+
+## Components
+
+| File | Installed to | Purpose |
+|------|-------------|---------|
+| `8bitdo-ptt-toggle.sh` | `/usr/local/bin/` | Toggle script |
+| `8bitdo-ptt-sudoers` | `/etc/sudoers.d/8bitdo-ptt` | Passwordless stop/start |
+| `8bitdo-ptt-toggle.desktop` | `~/.local/share/applications/` | KDE shortcut target |
+| `install.sh` | — | Wires Meta+F9 in `kglobalshortcutsrc`, removes it from kwin Expose |
+
+Note: Meta+F9 was previously bound to kwin's "Present Windows (Expose)" — that binding has been removed entirely.
+
+## Installed by `install-xinput` / `install.sh`
+
+The install script handles everything: script, sudoers, .desktop file, and KDE shortcut registration (via `kwriteconfig6`/`kwriteconfig5` + kglobalaccel reload). Re-run after any file change.
+
+---
+
 ## Re-applying After a Reinstall
 
 1. Copy the two udev rules files to `/etc/udev/rules.d/` and run:

@@ -22,7 +22,15 @@ Stream the Bambu printer camera into OBS as a virtual camera source for Discord.
 
 ## Setup
 
-### 1. Sudoers rule (passwordless modprobe)
+### 1. modprobe defaults (prevents wrong-params load)
+
+Ensures v4l2loopback always gets the correct options regardless of what loads it (OBS, the script, manual).
+
+```bash
+echo 'options v4l2loopback devices=2 video_nr=10,11 card_label="Bambu Cam,OBS Virtual Camera" exclusive_caps=1' | TERMINFO= sudo tee /etc/modprobe.d/v4l2loopback.conf
+```
+
+### 2. Sudoers rule (passwordless modprobe)
 
 Allows the wrapper script to load v4l2loopback without a password prompt.
 
@@ -131,9 +139,13 @@ Check that `/dev/video10` exists: `v4l2-ctl --list-devices`. If "Bambu Cam" is m
 **Virtual camera fails to start in OBS**
 Both `/dev/video10` and `/dev/video11` must exist before OBS opens. If only one device was created, the module options didn't apply — remove and reload:
 ```bash
-sudo modprobe -r v4l2loopback
-sudo modprobe v4l2loopback devices=2 video_nr=10,11 card_label="Bambu Cam,OBS Virtual Camera" exclusive_caps=1
+TERMINFO= sudo modprobe -r v4l2loopback
+TERMINFO= sudo modprobe v4l2loopback devices=2 video_nr=10,11 card_label="Bambu Cam,OBS Virtual Camera" exclusive_caps=1
 ```
+Note: `TERMINFO=` is required — sudo on this system blocks that env var otherwise.
+
+**`sudo: sorry, you are not allowed to set the following environment variables: TERMINFO`**
+Prefix all `sudo modprobe` calls with `TERMINFO=` to unset it before sudo sees it.
 
 **Stream connects but shows black screen**
 The printer IP may have changed. Find the new IP in Bambu Studio and update `RTSP_URL` in `~/.local/bin/obs-bambu`.

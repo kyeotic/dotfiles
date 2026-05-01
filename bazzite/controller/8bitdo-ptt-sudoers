@@ -1,0 +1,3 @@
+# Allow the local user to start/stop the 8bitdo-ptt service without a password.
+# Used by the 8bitdo-ptt-toggle.sh hotkey script.
+kyeotic ALL=(ALL) NOPASSWD: /usr/bin/systemctl start 8bitdo-ptt, /usr/bin/systemctl stop 8bitdo-ptt
