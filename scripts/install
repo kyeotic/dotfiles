@@ -23,7 +23,7 @@ sudo true
 if [ "$(uname -s)" = "Linux" ] && ! is_fedora_atomic; then
     if command -v apt >/dev/null 2>&1; then
         sudo apt update
-        sudo apt install -y git curl
+        sudo apt install -y git curl unzip build-essential
     elif command -v dnf >/dev/null 2>&1; then
         sudo dnf install -y git curl
     elif command -v pacman >/dev/null 2>&1; then

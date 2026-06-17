@@ -29,6 +29,12 @@ NVM_DIR="${NVM_DIR:-$HOME/.nvm}"
 if [ ! -f "$NVM_DIR/nvm.sh" ]; then
     echo "Installing nvm"
     PROFILE=/dev/null bash -c 'curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.40.3/install.sh | bash'
+fi
+# Install node 20 independently of the nvm install above: nvm may be present while
+# no node version is installed (e.g. an earlier interrupted run). Without this split,
+# a re-run skips node entirely and npm resolves to the Windows binary on PATH.
+if [ -f "$NVM_DIR/nvm.sh" ] && [ ! -d "$NVM_DIR/versions/node" ]; then
+    echo "Installing node 20"
     zsh -lic "nvm install 20" # node 20
     zsh -lic "nvm use 20"
     zsh -lic "nvm alias default 20"
@@ -47,12 +53,14 @@ fi
 
 # stack-sync
 if ! command -v stack-sync >/dev/null 2>&1; then
-    curl -fsSL https://raw.githubusercontent.com/kyeotic/stack-sync/main/install | bash
+    mkdir -p "$HOME/.local/bin"
+    curl -fsSL https://raw.githubusercontent.com/kyeotic/stack-sync/main/install | INSTALL_DIR="$HOME/.local/bin" bash
 fi
 
 # vault-sync
 if ! command -v vault-sync >/dev/null 2>&1; then
-    curl -fsSL https://raw.githubusercontent.com/kyeotic/vault-sync/main/install | bash
+    mkdir -p "$HOME/.local/bin"
+    curl -fsSL https://raw.githubusercontent.com/kyeotic/vault-sync/main/install | INSTALL_DIR="$HOME/.local/bin" bash
 fi
 
 # vault-sync: save BWS machine access token if not already set
@@ -85,10 +93,12 @@ if [[ "$(uname)" == "Linux" ]]; then
         fc-cache -fv >/dev/null 2>&1
     fi
 
-    # Start syncthing as a systemd user service (installed via Brewfile.linux)
-    if command -v brew >/dev/null 2>&1 && command -v syncthing >/dev/null 2>&1; then
-        if ! systemctl --user is-enabled homebrew.syncthing.service >/dev/null 2>&1; then
-            brew services start syncthing
+    # Start syncthing as a systemd user service (installed via Brewfile.linux) — skip on WSL
+    if ! grep -qi microsoft /proc/version 2>/dev/null; then
+        if command -v brew >/dev/null 2>&1 && command -v syncthing >/dev/null 2>&1; then
+            if ! systemctl --user is-enabled homebrew.syncthing.service >/dev/null 2>&1; then
+                brew services start syncthing
+            fi
         fi
     fi
 
@@ -97,8 +107,10 @@ if [[ "$(uname)" == "Linux" ]]; then
         flatpak override --user --talk-name=org.freedesktop.secrets com.discordapp.Discord
     fi
 
-    # Docker Engine + Compose plugin
-    if ! command -v docker >/dev/null 2>&1; then
+    # Docker Engine + Compose plugin — skip on WSL (Docker Desktop for Windows provides the socket)
+    if grep -qi microsoft /proc/version 2>/dev/null; then
+        echo "WSL detected: skipping Docker Engine install (use Docker Desktop for Windows)"
+    elif ! command -v docker >/dev/null 2>&1; then
         if command -v rpm-ostree >/dev/null 2>&1; then
             # Immutable Fedora (Bazzite, Silverblue) — staged install, requires reboot
             # docker-compose-plugin requires Docker's official CE repo
@@ -122,7 +134,7 @@ if [[ "$(uname)" == "Linux" ]]; then
             sudo usermod -aG docker "$USER"
             echo "Docker installed. Log out and back in for group membership to take effect."
         fi
-    else
+    elif command -v docker >/dev/null 2>&1; then
         # docker is present — ensure service is enabled and user is in the group
         # (handles the post-reboot case on immutable Fedora)
         if command -v systemctl >/dev/null 2>&1 && ! systemctl is-enabled docker >/dev/null 2>&1; then
@@ -141,10 +153,12 @@ if [[ "$(uname)" == "Linux" ]]; then
         fi
     fi
 
-    # app-ctl distrobox: espanso (text expander) + conky (system monitor)
-    DOTFILES_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
-    "$DOTFILES_DIR/bazzite/distrobox/app-ctl/setup"
-    systemctl --user enable --now espanso.service conky.service
+    # app-ctl distrobox: espanso (text expander) + conky (system monitor) — Bazzite/ostree only
+    if [ -f /run/ostree-booted ]; then
+        DOTFILES_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
+        "$DOTFILES_DIR/bazzite/distrobox/app-ctl/setup"
+        systemctl --user enable --now espanso.service conky.service
+    fi
 fi
 
 # Homebrew for macOS (Linux gets brew from install_shell)
