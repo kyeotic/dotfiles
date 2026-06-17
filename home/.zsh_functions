@@ -22,6 +22,39 @@ function aws-me {
   aws sts get-caller-identity | jq -r '.Account'
 }
 
+# Write ~/.aws/config for Terraform use via IAM console login.
+# Usage: aws-configure-tf [account-id] [iam-username] [region]
+#   account-id:   AWS account ID (default: 902498034412)
+#   iam-username: IAM username   (default: kyeotic)
+#   region:       AWS region     (default: us-west-2)
+# Example:
+#   aws-configure-tf
+#   aws-configure-tf 111122223333 tkye us-east-1
+function aws-configure-tf {
+  local account_id="${1:-902498034412}"
+  local username="${2:-kyeotic}"
+  local region="${3:-us-west-2}"
+
+  mkdir -p ~/.aws
+  cat > ~/.aws/config <<EOF
+[profile login]
+login_session = arn:aws:iam::${account_id}:user/${username}
+region = ${region}
+
+[profile default]
+credential_process = aws configure export-credentials --profile login --format process
+region = ${region}
+EOF
+  echo "AWS config written to ~/.aws/config (account: ${account_id}, user: ${username}, region: ${region})"
+}
+
+# Log in to AWS via browser using the 'login' profile configured by aws-configure-tf.
+# Run aws-configure-tf first if ~/.aws/config does not exist.
+# Usage: aws-login
+function aws-login {
+  aws login --profile login
+}
+
 function passgen {
   openssl rand -base64 $1
 }
