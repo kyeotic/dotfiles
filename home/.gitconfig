@@ -23,12 +23,23 @@
 	push-all = !git push && git push --tags
 	pr = !git push --set-upstream origin `git symbolic-ref --short HEAD`
 	pv = !git push --no-verify
+	com = "!f() { \
+    branch=\"$1\"; \
+    if test -z \"$branch\"; then \
+      echo \"usage: git new-from-main <new-branch>\" >&2; \
+      return 2; \
+    fi; \
+    git fetch origin main && git switch --no-track -c \"$branch\" origin/main; \
+  }; f"
+	wip = "!f() { git add -A && git commit -m \"wip $(date +%F)\"; }; f"
+	unwip = "!f() { git reset --mixed HEAD~1; }; f"
 [push]
 	default = simple
 [core]
 	editor = nano
 	preloadindex = true
 	pager = less -FRX
+	excludesfile = /Users/tim.kye/.gitignore_global
 [merge]
 	tool = diffmerge
 [mergetool "diffmerge"]
