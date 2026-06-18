@@ -4,15 +4,16 @@ set -eu
 
 # Detect platform and user
 USERNAME="$(whoami)"
+FLAKE_NAME="${USERNAME//./-}"
 
 if [ "$(uname)" = "Darwin" ]; then
-  echo "Switching darwin config for: $USERNAME"
+  echo "Switching darwin config for: $USERNAME (flake key: $FLAKE_NAME)"
   if command -v darwin-rebuild >/dev/null 2>&1; then
-    sudo -H darwin-rebuild switch --flake ~/dotfiles/nix#"$USERNAME"
+    sudo -H darwin-rebuild switch --flake ~/dotfiles/nix#"$FLAKE_NAME"
   else
     # Bootstrap nix-darwin on first run
     echo "darwin-rebuild not found, bootstrapping nix-darwin..."
-    sudo -H nix run nix-darwin -- switch --flake ~/dotfiles/nix#"$USERNAME"
+    sudo -H nix run nix-darwin -- switch --flake ~/dotfiles/nix#"$FLAKE_NAME"
   fi
   /System/Library/PrivateFrameworks/SystemAdministration.framework/Resources/activateSettings -u
 else
