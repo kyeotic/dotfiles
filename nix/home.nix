@@ -34,7 +34,6 @@ in
     tree
     unzip
     watch
-    watchman
     wget
     yq-go
     podman
