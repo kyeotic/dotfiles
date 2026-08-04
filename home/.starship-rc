@@ -66,6 +66,8 @@ done
 bindkey "^[[H" beginning-of-line   # Home key
 bindkey "^[[F" end-of-line         # End key
 bindkey "^[[3~" delete-char        # Delete key
+bindkey "\e[1;3C" forward-word     # Forward word
+bindkey "\e[1;3D" backward-word    # Backward word
 
 # WSL-friendly SSH agent setup
 if [ -z "$SSH_AUTH_SOCK" ] || [ ! -S "$SSH_AUTH_SOCK" ]; then

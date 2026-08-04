@@ -73,8 +73,13 @@ function gt-fresh {
 }
 
 function gt-new {
+  if [[ -z "$1" ]]; then
+    echo "Usage: gt-new <branch> [parent]"
+    return 1
+  fi
+
   local parent="${2:-main}"
-  gt create "$1" --onto "$parent"
+  git switch -c "$1" "$parent" && gt track "$1" --parent "$parent"
 }
 
 function install-xinput {
