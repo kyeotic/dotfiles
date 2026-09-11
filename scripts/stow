@@ -4,11 +4,14 @@
 mkdir -p ~/.config
 
 # stow_pkg: remove real-file conflicts so the repo version always wins.
+# stow reports conflicts two ways (foreign symlink, and real file/dir), hence both
+# sed patterns. sed, not grep -oP, because BSD grep has no -P.
 # --adopt was removed because it moves local files INTO the repo, overwriting it.
 stow_pkg() {
   local src=$1 tgt=$2 pkg=$3
   stow -n -d "$src" -t "$tgt" -S "$pkg" 2>&1 \
-    | grep -oP '(?<=existing target is not owned by stow: )\S+' \
+    | sed -n -e 's/.*existing target is not owned by stow: //p' \
+              -e 's/.*over existing target \(.*\) since neither a link nor a directory.*/\1/p' \
     | while IFS= read -r f; do
         echo "Removing conflict: $tgt/$f"
         rm -rf "$tgt/$f"
@@ -21,6 +24,9 @@ stow_pkg "$HOME/dotfiles" ~/ home
 mkdir -p ~/.config/autokey/data
 stow_pkg "$HOME/dotfiles" ~/.config/autokey/data autokey
 
+# Agent skills: one canonical copy in .agents/skills, linked per-agent
+"$HOME/dotfiles/scripts/agent-skill" link
+
 # Services co-located with their configs, need to live in systemd/user
 mkdir -p ~/.config/systemd/user
 ln -sf ~/dotfiles/.config/espanso/espanso.service ~/.config/systemd/user/espanso.service
@@ -32,8 +38,8 @@ mkdir -p ~/.local/share/kwin/scripts
 # stow -d $HOME/dotfiles/.config/kwin -t ~/.local/share/kwin -S scripts --adopt
 # stow -d $HOME/dotfiles/.config/kwin/scripts -t $HOME/.local/share/kwin/scripts -S window-snap
 # stow -d $HOME/dotfiles/.config/kwin -t $HOME/.local/share/kwin/scripts -S window-snap
-ln -sf ~/dotfiles/.config/kwin/scripts/window-snap ~/.local/share/kwin/scripts/window-snap
-ln -sf ~/dotfiles/.config/kwin/scripts/toggle-panel ~/.local/share/kwin/scripts/toggle-panel
+ln -sfn ~/dotfiles/.config/kwin/scripts/window-snap ~/.local/share/kwin/scripts/window-snap
+ln -sfn ~/dotfiles/.config/kwin/scripts/toggle-panel ~/.local/share/kwin/scripts/toggle-panel
 
 
 

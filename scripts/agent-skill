@@ -1,0 +1,117 @@
+#!/usr/bin/env bash
+
+# Manage agent-agnostic skills in .agents/.
+#
+#   agent-skill link                    link every enabled skill into its agent's config dir
+#   agent-skill add <name> [agent...]   create the skill if missing, enable it, link it
+#
+# Skills live once in .agents/skills/<name>/. Each agent opts in via a symlink in
+# .agents/<agent>/skills/. Default agents: claude codex.
+
+set -eu
+
+DOTFILES="${DOTFILES:-$HOME/dotfiles}"
+AGENTS_DIR="$DOTFILES/.agents"
+DEFAULT_AGENTS=(claude codex)
+
+usage() {
+  sed -n '3,10p' "$0" | sed 's/^# \{0,1\}//'
+  exit "${1:-0}"
+}
+
+# Where an agent reads its skills from.
+skills_dir_for() {
+  case $1 in
+    claude) echo "$HOME/.claude/skills" ;;
+    codex) echo "$HOME/.codex/skills" ;;
+    *) echo "$HOME/.$1/skills" ;;
+  esac
+}
+
+# Link .agents/<agent>/skills/* into the agent's real skills dir. Per-skill rather than
+# the whole directory, because those dirs also hold skills installed by other tools.
+link_agent() {
+  local agent=$1
+  local src="$AGENTS_DIR/$agent/skills"
+  local tgt
+  tgt=$(skills_dir_for "$agent")
+
+  [[ -d $src ]] || return 0
+  mkdir -p "$tgt"
+
+  local skill dest
+  for skill in "$src"/*; do
+    [[ -e $skill ]] || continue
+    dest="$tgt/$(basename "$skill")"
+    if [[ -e $dest && ! -L $dest ]]; then
+      echo "Skipping $agent skill, target is not a symlink: $dest"
+      continue
+    fi
+    ln -sfn "$skill" "$dest"
+  done
+}
+
+cmd_link() {
+  local agent
+  for agent in "$@"; do
+    link_agent "$agent"
+  done
+}
+
+cmd_add() {
+  local name=${1:-}
+  [[ -n $name ]] || usage 1
+  shift
+
+  local agents=("$@")
+  [[ ${#agents[@]} -gt 0 ]] || agents=("${DEFAULT_AGENTS[@]}")
+
+  local skill="$AGENTS_DIR/skills/$name"
+  if [[ -d $skill ]]; then
+    echo "Skill exists: $skill"
+  else
+    mkdir -p "$skill"
+    cat > "$skill/SKILL.md" <<SKILL
+---
+name: $name
+description: <one line: what this does, and the phrases that should trigger it>
+---
+
+# ${name//-/ }
+
+## Overview
+
+<What this skill is for, and when not to use it.>
+
+## Workflow
+
+### 1. <First step>
+
+<Prefer shell commands (git, gh) over any one agent's built-in tools, so this stays
+agent-agnostic.>
+SKILL
+    echo "Created $skill/SKILL.md"
+  fi
+
+  local agent
+  for agent in "${agents[@]}"; do
+    mkdir -p "$AGENTS_DIR/$agent/skills"
+    ln -sfn "../../skills/$name" "$AGENTS_DIR/$agent/skills/$name"
+    echo "Enabled for $agent"
+  done
+
+  cmd_link "${agents[@]}"
+}
+
+case "${1:-}" in
+  link)
+    shift
+    if [[ $# -gt 0 ]]; then cmd_link "$@"; else cmd_link "${DEFAULT_AGENTS[@]}"; fi
+    ;;
+  add)
+    shift
+    cmd_add "$@"
+    ;;
+  -h | --help | help) usage ;;
+  *) usage 1 ;;
+esac
