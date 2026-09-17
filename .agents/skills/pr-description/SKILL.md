@@ -49,7 +49,7 @@ Use explicit branch names in all git commands—do not use HEAD directly.
   - Any meaningful gaps, intentionally omitted tests, or blocked validation that affects reviewer confidence
   - Manual verification that exercised behavior not well represented by automated tests
 - Do not turn the testing section into a command log. Avoid `Tested with:` followed by exact commands like `npm test`, `npm run lint-*`, targeted test-file invocations, typecheck commands, or lists of every test file. Those exact commands and pass/fail details belong in the agent's chat rather than the PR description
-- Never claim tests pass, a bug is fixed, or behavior was verified unless that actually happened in this session
+- DO NOT report test coverage or test passing status. This is already reported by CI and the PR status. The description should focus on _what_ was tested and _how_ to think about it, not whether it passed
 - If the repo's template has sections the author owns (deploy checklists, DB migration checkboxes, screenshots), leave them for the author — write "N/A" only when the change genuinely does not touch that area
 
 **Voice rules (avoid AI-y prose):**
@@ -68,27 +68,9 @@ Use explicit branch names in all git commands—do not use HEAD directly.
 - Listing function names and their parameters/return types
 - Bullet points that read like a changelog ("Added `fooHelper` function", "Updated `barService` to call `baz`")
 - Enumerating every test by name or listing verification commands as the testing strategy
+- Multi-sentence bullet points.
+- Large table cells in the Before/After section.
 
-## Output: update remote PR if one exists, else copy-paste
+## Output
 
-After generating the description, check whether a PR already exists for $CURRENT_BRANCH:
-
-```bash
-gh pr view "$CURRENT_BRANCH" --json number,url 2>/dev/null
-```
-
-- **If a PR exists**: print the generated description in a markdown codeblock so the user can read it, then ask: _"Update PR #<num> on GitHub with this body? (y/N)"_. On confirmation, write the body to a temp file and push it via `gh pr edit`. Only update the body — don't touch the title (this skill is body-only; see the description metadata).
-
-  ```bash
-  TMP=$(mktemp -t pr-body.XXXXXX.md)
-  cat > "$TMP" <<'PR_BODY_EOF'
-  <full description here>
-  PR_BODY_EOF
-  gh pr edit "$CURRENT_BRANCH" --body-file "$TMP"
-  ```
-
-  Then output the PR URL.
-
-- **If no PR exists**: print the description in a markdown codeblock and offer to copy it to the clipboard (`pbcopy` on macOS, `wl-copy` or `xclip -selection clipboard` on Linux).
-
-If the agent's own instructions require an attribution footer on PRs, append it at the end of the body.
+Always output to chat, do not update the actual PR body.
