@@ -9,7 +9,7 @@ Writes a PR description using chat, diff, and the PR template.
 
 Using the chat context and a final diff against the base branch, write a PR description
 following the template. Use the repo's own `.github/pull_request_template.md` when it has
-one; otherwise use `references/template.md` from this skill.
+one; otherwise use `references/template.md` from this skill. DO NO ADD YOUR OWN SECTIONS.
 
 To get the correct diff (compatible with git worktrees and stacked PRs):
 
@@ -37,20 +37,18 @@ Use explicit branch names in all git commands—do not use HEAD directly.
 - A file whose changes cancel out against the parent is not in the PR. Omit it rather than explaining that it nets to zero
 - Your own detours count. What you learned while iterating belongs in chat unless it describes shipped behaviour
 
-**Write for a human reviewer, not a parser.** The diff already shows _what_ changed; the description should explain _why_ and _how to think about it_.
+**Write for a human reviewer, not a parser.** The diff already shows _what_ changed; the description should explain _why_ and _how to think about it_. Be as brief as possible, verbosity is not a virtue.
 
 - Describe behavior at a level a human reviewer can skim. Bullet points are fine for structure, but they should summarize behavior, not mirror the diff
 - Call out non-obvious design decisions and trade-offs only when a reviewer would actually ask. Skip "we chose X over Y" framing on decisions nobody would question
-- For the testing section, describe the testing strategy and confidence level, not the verification command history. The section should help a reviewer understand why the PR is covered well enough and where to focus review
 - Useful topics to cover when relevant include:
   - The main behavior or risk area covered by automated tests
-  - The level of coverage used, such as service-level tests for business rules, controller smoke tests for request wiring, component tests for UI behavior, or end-to-end/manual checks for user flows
-  - Edge cases, regressions, permissions, feature flags, stale-client behavior, or error states that were intentionally covered
   - Any meaningful gaps, intentionally omitted tests, or blocked validation that affects reviewer confidence
   - Manual verification that exercised behavior not well represented by automated tests
 - Do not turn the testing section into a command log. Avoid `Tested with:` followed by exact commands like `npm test`, `npm run lint-*`, targeted test-file invocations, typecheck commands, or lists of every test file. Those exact commands and pass/fail details belong in the agent's chat rather than the PR description
 - DO NOT report test coverage or test passing status. This is already reported by CI and the PR status. The description should focus on _what_ was tested and _how_ to think about it, not whether it passed
 - If the repo's template has sections the author owns (deploy checklists, DB migration checkboxes, screenshots), leave them for the author — write "N/A" only when the change genuinely does not touch that area
+- Dont refer to this branch's position in a github or graphite stack. The PR description should be understandable in isolation, without context about the stack or other branches
 
 **Voice rules (avoid AI-y prose):**
 
@@ -59,7 +57,6 @@ Use explicit branch names in all git commands—do not use HEAD directly.
 - Use em-dashes (—) sparingly. At most one per paragraph; prefer periods or commas
 - No hype verbs: "lands", "ships", "bakes in", "introduces", "powers", "unlocks", "leverages". Just say what it does ("adds", "uses", "fixes")
 - No filler sentences. "Functionality is unchanged", "No runtime behavior change", "ships automatically because..." — if a section is N/A, write "N/A" and move on
-- Don't bold inline labels (`**Visual changes**`, `**Testing**`) inside a paragraph. Either use a real `###` heading or skip the label entirely
 - Plain words over fancy ones: "added" not "introduces", "uses" not "leverages", "fix" not "addresses"
 - Reference an issue or ticket only if it actually appears in the branch name, a commit message, or the existing PR body. Do not guess a ticket number
 
@@ -70,7 +67,9 @@ Use explicit branch names in all git commands—do not use HEAD directly.
 - Enumerating every test by name or listing verification commands as the testing strategy
 - Multi-sentence bullet points.
 - Large table cells in the Before/After section.
+- Listing things that did not change or were left alone.
+- Stating manual verification was run that you did not run. Just because it is marked as a required check does not mean it was done.
 
 ## Output
 
-Always output to chat, do not update the actual PR body.
+Always output to chat, do not update the actual PR body using a code fence with markdown content

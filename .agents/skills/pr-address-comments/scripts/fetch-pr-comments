@@ -1,0 +1,54 @@
+#!/usr/bin/env bash
+# Usage: fetch-pr-comments.sh [--min] [PR number | URL | branch]
+#   Defaults to the PR for the current branch. --min drops bot authors.
+set -euo pipefail
+
+MIN=false
+TARGET=()
+for arg in "$@"; do
+  case "$arg" in
+    --min) MIN=true ;;
+    *) TARGET+=("$arg") ;;
+  esac
+done
+
+PR_JSON=$(gh pr view ${TARGET[@]+"${TARGET[@]}"} --json number,url,author,headRefName,baseRefName,reviewDecision)
+PR=$(jq -r .number <<<"$PR_JSON")
+
+echo "## PR"
+jq -c '{number,url,author:.author.login,head:.headRefName,base:.baseRefName,reviewDecision}' <<<"$PR_JSON"
+
+echo
+echo "## Unresolved review threads"
+gh api graphql --paginate -F owner='{owner}' -F repo='{repo}' -F pr="$PR" -f query='
+query($owner:String!,$repo:String!,$pr:Int!,$cursor:String){
+  repository(owner:$owner,name:$repo){
+    pullRequest(number:$pr){
+      reviewThreads(first:100,after:$cursor){
+        pageInfo{hasNextPage endCursor}
+        nodes{
+          isResolved isOutdated path line
+          comments(first:50){nodes{author{login} body}}
+        }
+      }
+    }
+  }
+}' --jq '.data.repository.pullRequest.reviewThreads.nodes[] | select(.isResolved|not)' \
+| jq -r --argjson min "$MIN" '
+    .comments.nodes |= map(select(($min|not) or (.author.login|endswith("[bot]")|not)))
+    | select(.comments.nodes|length > 0)
+    | "### \(.path):\(.line // "file")\(if .isOutdated then " (outdated)" else "" end)\n"
+      + ([.comments.nodes[] | "@\(.author.login)\n\(.body)"] | join("\n\n")) + "\n"'
+
+echo "## PR-level comments"
+gh api --paginate "repos/{owner}/{repo}/issues/$PR/comments" \
+| jq -r --argjson min "$MIN" '.[]
+    | select(($min|not) or (.user.login|endswith("[bot]")|not))
+    | "@\(.user.login)\n\(.body)\n"'
+
+echo "## Review summaries with a body"
+gh api --paginate "repos/{owner}/{repo}/pulls/$PR/reviews" \
+| jq -r --argjson min "$MIN" '.[]
+    | select(.body != "")
+    | select(($min|not) or (.user.login|endswith("[bot]")|not))
+    | "@\(.user.login) [\(.state)]\n\(.body)\n"'
