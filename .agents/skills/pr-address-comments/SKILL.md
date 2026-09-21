@@ -17,8 +17,11 @@ written to GitHub.
 
 # Steps
 
-1. **Fetch the digest.** From this skill's directory:
-   `bash scripts/fetch-pr-comments [--min] [PR]`
+1. **Fetch the digest.** Stay in the repo's working directory (the script calls
+   `gh`, which resolves the repo from the current directory) and invoke the
+   script by its full path — this file's own directory plus `scripts/fetch-pr-comments` —
+   rather than `cd`-ing into the skill directory first:
+   `bash /absolute/path/to/this/skill/scripts/fetch-pr-comments [--min] [PR]`
    It prints PR metadata, unresolved review threads with their replies, PR-level
    comments, and review summaries with a body. Bot comments (Codex, CI, Linear)
    are included by default; `--min` drops them. Resolved threads are never
