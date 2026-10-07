@@ -1,0 +1,23 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="512" height="512" viewBox="0 0 354 354">
+  <!--
+    Inverted, square variant of logo.svg (black shapes on white).
+    Shapes and their relative positions are identical to logo.svg;
+    horizontal padding is half the original (33 left, 52 right), and the
+    canvas is made square by adding vertical padding.
+
+    Shape bounding box: x 33–302 (width 269), y 111–243 (height 132)
+    Vertical padding:   (354 - 132) / 2 = 111 top and bottom
+    Plus center:        (99, 177)
+    Equals center:      (242, 177)
+    Rendered size:      512 × 512 (viewBox scales uniformly)
+  -->
+  <rect width="354" height="354" fill="white"/>
+
+  <!-- Plus sign — center (99, 177), arm thickness 38, overall size 132 -->
+  <rect x="33" y="158" width="132" height="38" fill="black"/><!-- horizontal -->
+  <rect x="80" y="111" width="38"  height="132" fill="black"/><!-- vertical -->
+
+  <!-- Equals sign — center (242, 177), small gap between bars -->
+  <rect x="182" y="137" width="120" height="36" fill="black"/><!-- top bar -->
+  <rect x="182" y="185" width="120" height="36" fill="black"/><!-- bottom bar -->
+</svg>
