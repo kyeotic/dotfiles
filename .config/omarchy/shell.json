@@ -42,6 +42,9 @@
           "id": "omarchy.bluetooth"
         },
         {
+          "id": "omarchy.tailscale"
+        },
+        {
           "id": "omarchy.network"
         },
         {

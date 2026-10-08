@@ -61,10 +61,18 @@ translate = false
 # threads = 4
 
 [output]
-# Primary output mode: "type" or "clipboard"
-# - type: Simulates keyboard input at cursor position (requires ydotool)
+# Primary output mode: "type", "clipboard", or "paste"
+# - type: Simulates keyboard input at cursor position (slow: one keystroke per char)
 # - clipboard: Copies text to clipboard (requires wl-copy)
-mode = "type"
+# - paste: Copies to clipboard then sends paste_keys (instant)
+mode = "paste"
+
+# Shift+Insert matches Omarchy's universal paste (Super+V) and works in kitty
+# (mapped in kitty.conf) as well as GTK/browser apps, unlike Ctrl+V.
+paste_keys = "shift+insert"
+
+# Put the previous clipboard contents back after pasting
+restore_clipboard = true
 
 # Fall back to clipboard if typing fails
 fallback_to_clipboard = true

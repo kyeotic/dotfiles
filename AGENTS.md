@@ -49,7 +49,7 @@ macOS GUI apps are in `Brewfile` (casks only), applied by `scripts/install_apps`
 ## Repository Structure
 
 - **`home/`** - Files symlinked to `~/` (`.zshrc`, `.zsh_aliases`, `.zsh_functions`, `.zsh_git`, `.gitconfig`, `.starship-rc`)
-- **`.config/`** - Files symlinked to `~/.config/` (starship, kitty, fish, direnv, hypr, omarchy, conky, pipewire, voxtype). Omarchy: `hypr/*.lua` (Hyprland user overrides; `monitors.lua` is deliberately NOT in the repo since monitor/workspace layout is per-machine — it stays a local file in `~/.config/hypr`) and `omarchy/shell.json` (bar/idle). `omarchy refresh` replaces these symlinks with real files; copy changes back into the repo, then re-run `scripts/stow`
+- **`.config/`** - Files symlinked to `~/.config/` (starship, kitty, fish, direnv, hypr, omarchy, conky, pipewire, voxtype). Omarchy: `hypr/*.lua` (Hyprland user overrides; `monitors.lua` and `autostart.lua` are deliberately NOT in the repo since monitor/workspace layout and startup apps are per-machine — they stay local files in `~/.config/hypr`) and `omarchy/shell.json` (bar/idle). `omarchy refresh` replaces these symlinks with real files; copy changes back into the repo, then re-run `scripts/stow`
 - **`scripts/`** - Installation and setup scripts (all bash, idempotent)
 - **`nix/`** - nix-darwin flake for macOS (`flake.nix`, `home.nix`, `darwin.nix`, `switch`)
 - **`Brewfile.linux`** - Homebrew CLI packages for Linux (and macOS via install_apps)
