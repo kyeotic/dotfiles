@@ -1,0 +1,60 @@
+#!/usr/bin/env bash
+
+# Install and start espanso (text expander) using the stowed ~/.config/espanso config.
+# Linux only (macOS has built-in text replacement); builds the AUR package matching the
+# session type (Wayland/X11). Idempotent; re-run after an espanso upgrade on Wayland to
+# restore the input capability.
+
+set -eu
+
+if [[ "$(uname)" != "Linux" ]] || grep -qi microsoft /proc/version 2>/dev/null; then
+  echo "setup-espanso: Linux only (skipping on macOS/WSL)"
+  exit 0
+fi
+
+if ! command -v pacman >/dev/null 2>&1; then
+  command -v espanso >/dev/null 2>&1 \
+    || { echo "setup-espanso: only Arch-based distros are automated; see https://espanso.org/install/"; exit 1; }
+else
+  AUR_HELPER="$(command -v yay || command -v paru || true)"
+  if [[ -z "$AUR_HELPER" ]]; then
+    echo "setup-espanso: install yay or paru first"
+    exit 1
+  fi
+  if [[ "${XDG_SESSION_TYPE:-}" == "x11" ]]; then
+    PKG=espanso-x11-git
+  else
+    PKG=espanso-wayland-git
+  fi
+
+  # The -bin packages are Debian builds; every wxWidgets window (launcher wizard, welcome,
+  # search) segfaults against Arch's wxwidgets-gtk3, so build from source instead
+  for BIN_PKG in espanso-wayland-bin espanso-x11-bin; do
+    if pacman -Q "$BIN_PKG" >/dev/null 2>&1; then
+      systemctl --user stop espanso.service 2>/dev/null || true
+      sudo pacman -Rns --noconfirm "$BIN_PKG"
+    fi
+  done
+
+  if ! pacman -Q "$PKG" >/dev/null 2>&1; then
+    "$AUR_HELPER" -S --needed --noconfirm --removemake "$PKG"
+  fi
+fi
+
+# Wayland has no global key-event API, so espanso reads /dev/input directly
+if [[ "${XDG_SESSION_TYPE:-}" != "x11" ]]; then
+  ESPANSO_BIN="$(readlink -f "$(command -v espanso)")"
+  if ! getcap "$ESPANSO_BIN" | grep -q cap_dac_override; then
+    sudo setcap "cap_dac_override+p" "$ESPANSO_BIN"
+  fi
+fi
+
+if ! espanso service check >/dev/null 2>&1; then
+  espanso service register
+fi
+
+if espanso status >/dev/null 2>&1; then
+  espanso restart
+else
+  espanso start
+fi

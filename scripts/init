@@ -33,6 +33,15 @@ if [[ -t 0 ]]; then
       $HOME/dotfiles/scripts/setup-nas-mounts || echo "NAS mount setup failed; rerun setup-nas-mounts later"
     fi
   fi
+
+  # Text expansion; needs sudo on Wayland, so it's opt-in. Linux only (macOS has its own)
+  if [[ "$(uname)" == "Linux" ]] && ! grep -qi microsoft /proc/version 2>/dev/null; then
+    printf "\nSet up espanso text expansion? [y/N] "
+    read -r SETUP_ESPANSO
+    if [[ "$SETUP_ESPANSO" =~ ^[Yy] ]]; then
+      $HOME/dotfiles/scripts/setup-espanso || echo "espanso setup failed; rerun setup-espanso later"
+    fi
+  fi
 fi
 
 printf "\n\nInstall Complete\nStart a new terminal for all changes to take effect"

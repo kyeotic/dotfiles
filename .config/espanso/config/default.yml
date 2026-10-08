@@ -1,2 +1,5 @@
-# Espanso default configuration
-# https://espanso.org/docs/configuration/
+# https://espanso.org/docs/configuration/options/
+
+# Wayland can't report the active layout to espanso, so set it explicitly (ignored on macOS)
+keyboard_layout:
+  layout: us

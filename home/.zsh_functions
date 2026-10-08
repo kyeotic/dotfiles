@@ -89,3 +89,7 @@ function install-xinput {
 function setup-nas-mounts {
   ~/dotfiles/scripts/setup-nas-mounts "$@"
 }
+
+function setup-espanso {
+  ~/dotfiles/scripts/setup-espanso "$@"
+}

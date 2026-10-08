@@ -27,21 +27,5 @@ stow_pkg "$HOME/dotfiles" ~/.config/autokey/data autokey
 # Agent skills: one canonical copy in .agents/skills, linked per-agent
 "$HOME/dotfiles/scripts/agent-skill" link
 
-# Services co-located with their configs, need to live in systemd/user
-mkdir -p ~/.config/systemd/user
-ln -sf ~/dotfiles/.config/espanso/espanso.service ~/.config/systemd/user/espanso.service
-ln -sf ~/dotfiles/.config/conky/conky.service ~/.config/systemd/user/conky.service
-systemctl --user daemon-reload 2>/dev/null || true
-
-# kwin scripts live in ~/.local/share, not ~/.config
-mkdir -p ~/.local/share/kwin/scripts
-# stow -d $HOME/dotfiles/.config/kwin -t ~/.local/share/kwin -S scripts --adopt
-# stow -d $HOME/dotfiles/.config/kwin/scripts -t $HOME/.local/share/kwin/scripts -S window-snap
-# stow -d $HOME/dotfiles/.config/kwin -t $HOME/.local/share/kwin/scripts -S window-snap
-ln -sfn ~/dotfiles/.config/kwin/scripts/window-snap ~/.local/share/kwin/scripts/window-snap
-ln -sfn ~/dotfiles/.config/kwin/scripts/toggle-panel ~/.local/share/kwin/scripts/toggle-panel
-
-
-
 # if [[ -a $HOME/.hyper.js ]]; then rm $HOME/.hyper.js; fi
 # ln $HOME/dotfiles/configs/.hyper.js $HOME/.hyper.js 

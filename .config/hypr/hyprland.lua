@@ -34,3 +34,7 @@ hl.env("MANGOHUD", "1")
 -- Tile the main Steam window instead of Omarchy's floating 1100x700. A maximized
 -- float loses its maximize when a game goes fullscreen and snaps back small.
 o.window({ class = "steam", title = "Steam" }, { tile = true })
+
+-- Keep the screensaver off while a fullscreen Steam game is up. Omarchy only covers
+-- the "steam" client class; games are steam_app_<id>, and gamepad input doesn't reset idle.
+o.window({ class = "^steam_app_\\d+$" }, { idle_inhibit = "fullscreen" })

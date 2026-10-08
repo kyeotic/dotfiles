@@ -170,13 +170,6 @@ if [[ "$(uname)" == "Linux" ]]; then
             echo "Added $USER to docker group. Log out and back in for it to take effect."
         fi
     fi
-
-    # app-ctl distrobox: espanso (text expander) + conky (system monitor) — Bazzite/ostree only
-    if [ -f /run/ostree-booted ]; then
-        DOTFILES_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
-        "$DOTFILES_DIR/bazzite/distrobox/app-ctl/setup"
-        systemctl --user enable --now espanso.service conky.service
-    fi
 fi
 
 # Homebrew for macOS (Linux gets brew from install_shell)
