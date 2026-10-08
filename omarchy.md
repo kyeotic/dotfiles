@@ -1,0 +1,59 @@
+# Omarchy machine setup
+
+Setup to do on every Omarchy machine that the dotfiles can't (or shouldn't) do on
+their own: per-machine files that stay out of the repo, and one-time manual steps.
+Run `scripts/init` (or `scripts/install_apps` + `scripts/stow`) first.
+
+## Monitors (`~/.config/hypr/monitors.lua`, machine-local)
+
+`monitors.lua` is deliberately not in the repo. Omarchy installs a default one.
+
+- **Pin the refresh rate.** `mode = "preferred"` can pick 60Hz on high-refresh
+  monitors (it did on the ASUS PG27UCDM, which does 240Hz). List the real modes with
+  `hyprctl monitors all`, then set the mode explicitly:
+  ```lua
+  hl.monitor({ output = "DP-3", mode = "3840x2160@240", position = "0x0", scale = 1.5, vrr = 2 })
+  ```
+- **Turn on VRR** with `vrr = 2` on gaming monitors. It enables adaptive sync for
+  fullscreen apps only, which avoids the brightness flicker OLEDs get with VRR
+  on the desktop. `hyprctl monitors` reports `vrr=false` until something goes fullscreen.
+  Without this, a game's in-game "Adaptive Sync" setting does nothing.
+- Apply with `hyprctl reload`, then check `hyprctl configerrors` and
+  `hyprctl monitors -j | jq -r '.[] | "\(.name) \(.refreshRate) vrr=\(.vrr)"'`.
+- 60Hz-only monitors (e.g. LG UltraFine) cap any game on them at 60. Play on
+  the high-refresh monitor.
+
+## Game stats bar widget (MangoHud)
+
+The bar shows `CPU · GPU · VRAM · FPS` while a game runs. All config is in the
+dotfiles (`.config/MangoHud/`, `.config/omarchy/bar/scripts/gamestats`,
+`MANGOHUD=1` in `.config/hypr/hyprland.lua`); `install_apps` installs `mangohud`.
+
+**First-time setup on a new machine:**
+- **Log out and back in** after the first stow. `MANGOHUD=1` is set by Hyprland,
+  and the Omarchy shell (which runs the app launcher) only picks up Hyprland's
+  environment at login. Apps launched from a shell that started earlier won't get
+  it. To fix it without logging out:
+  ```bash
+  systemctl --user set-environment MANGOHUD=1
+  dbus-update-activation-environment --systemd MANGOHUD=1
+  omarchy restart shell
+  ```
+  Then fully exit Steam (Steam menu → Exit; closing the window isn't enough) and relaunch it.
+
+**Using it:**
+- Every Vulkan game (Proton/DXVK and most native games) is picked up
+  automatically. **OpenGL-only games** need the Steam launch option `mangohud %command%`.
+- The in-game overlay is invisible by default. MangoHud stops logging when its
+  HUD is hidden, so preset 1 is a transparent HUD instead. **Shift_R+F10** cycles to
+  the full overlay (preset 2).
+- If a non-game Vulkan app shows up in the widget, add its process name to
+  `blacklist=` in `.config/MangoHud/MangoHud.conf` (mpv is already there).
+- Logs go to `/tmp/mangohud/` (MangoHud can't expand `~`). The widget creates the
+  folder and prunes logs older than a day.
+- GPU % and VRAM come from `nvidia-smi` when present. On AMD the widget falls
+  back to MangoHud's own numbers, where VRAM is per-process.
+
+**Testing without a game:** `sudo pacman -S vulkan-tools`, then
+`MANGOHUD=1 vkcube --wsi wayland` and run `~/.config/omarchy/bar/scripts/gamestats`.
+It should print JSON while vkcube runs and nothing about 3s after it closes.
