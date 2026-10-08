@@ -24,6 +24,15 @@ if [[ -t 0 ]]; then
   if [[ "$CLONE_REPOS" =~ ^[Yy] ]]; then
     $HOME/dotfiles/scripts/clone-active
   fi
+
+  # NAS mounts need the home network and vault creds; Linux only
+  if [[ "$(uname)" == "Linux" && -f "$HOME/.smb-share" ]]; then
+    printf "\nMount KYE-NAS SMB shares at /mnt? [y/N] "
+    read -r MOUNT_NAS
+    if [[ "$MOUNT_NAS" =~ ^[Yy] ]]; then
+      $HOME/dotfiles/scripts/setup-nas-mounts || echo "NAS mount setup failed; rerun setup-nas-mounts later"
+    fi
+  fi
 fi
 
 printf "\n\nInstall Complete\nStart a new terminal for all changes to take effect"

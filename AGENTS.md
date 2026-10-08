@@ -24,8 +24,9 @@ Bootstrap: `curl -fsSL https://raw.githubusercontent.com/kyeotic/dotfiles/HEAD/s
 
 The `scripts/` directory contains the installation pipeline (all steps are idempotent):
 - `install` - Bootstrap script (installs git/curl on Linux, installs Nix on macOS, clones repo, runs init)
-- `init` - Main orchestrator, runs: `install_shell` → `install_apps` → `vault-sync sync` → prompts (default no) to run `clone-active`
+- `init` - Main orchestrator, runs: `install_shell` → `install_apps` → `vault-sync sync` → prompts (default no) to run `clone-active` → on Linux, prompts (default no) to run `setup-nas-mounts`
 - `clone-active` - Clones active personal repos into `~/dev` (skips existing); not run automatically since it's unwanted on work machines
+- `setup-nas-mounts` - Linux only. Mounts KYE-NAS SMB shares (`nas`, `media`, `apps`) at `/mnt/<share>` via a marker-tagged fstab block with `x-systemd.automount`, using `~/.smb-share` (vault-sync) as credentials. Pins `kye-nas` in `/etc/hosts` via `nmblookup` when it doesn't resolve, and adds GTK bookmarks. Also available as the `setup-nas-mounts` shell function
 - `install_shell` - Installs zsh; on Linux runs `brew bundle --file=Brewfile.linux`; on macOS runs `darwin-rebuild switch`
 - `install_apps` - Installs tools not in Homebrew (deno, rust, tfswitch, nvm, kitty, claude, fonts on Linux)
 - `stow` - Creates symlinks via GNU Stow mapping `home/` → `~/` and `.config/` → `~/.config/`

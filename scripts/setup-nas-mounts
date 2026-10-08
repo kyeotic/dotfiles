@@ -1,0 +1,94 @@
+#!/usr/bin/env bash
+
+# Mount KYE-NAS SMB shares at /mnt/<share> via fstab + systemd automount.
+# Credentials come from ~/.smb-share (written by vault-sync). Idempotent.
+
+set -eu
+
+NAS_HOST="${NAS_HOST:-kye-nas}"
+SHARES=(nas media apps)
+CREDENTIALS="$HOME/.smb-share"
+MARKER="# dotfiles: setup-nas-mounts"
+
+if [[ "$(uname)" != "Linux" ]] || grep -qi microsoft /proc/version 2>/dev/null; then
+  echo "setup-nas-mounts: Linux only (skipping on macOS/WSL)"
+  exit 0
+fi
+
+if [[ ! -f "$CREDENTIALS" ]]; then
+  echo "setup-nas-mounts: $CREDENTIALS not found; run 'vault-sync sync' first"
+  exit 1
+fi
+chmod 600 "$CREDENTIALS"
+
+if ! command -v mount.cifs >/dev/null 2>&1; then
+  echo "Installing cifs-utils"
+  if command -v pacman >/dev/null 2>&1; then
+    sudo pacman -S --needed --noconfirm cifs-utils
+  elif command -v apt-get >/dev/null 2>&1; then
+    sudo apt-get install -y cifs-utils
+  elif command -v dnf >/dev/null 2>&1; then
+    sudo dnf install -y cifs-utils
+  else
+    echo "setup-nas-mounts: install cifs-utils manually"
+    exit 1
+  fi
+fi
+
+# The NAS only advertises itself over NetBIOS, which most distros don't resolve
+# by default. Pin it in /etc/hosts so the kernel CIFS client can find it.
+if ! getent hosts "$NAS_HOST" >/dev/null; then
+  NAS_IP="${NAS_IP:-}"
+  if [[ -z "$NAS_IP" ]] && command -v nmblookup >/dev/null 2>&1; then
+    NAS_IP="$(nmblookup -s /dev/null "$NAS_HOST" 2>/dev/null | awk '/<00>/ {print $1; exit}')" || true
+    # Broadcast replies are often dropped by the firewall; fall back to scanning
+    # the local /24 for SMB hosts and asking each one its NetBIOS name directly
+    if [[ -z "$NAS_IP" ]]; then
+      echo "Scanning local network for $NAS_HOST"
+      SUBNET="$(ip -4 route get 1.1.1.1 | awk '{for (i=1;i<NF;i++) if ($i=="src") print $(i+1)}' | cut -d. -f1-3)"
+      for ip in $(for i in $(seq 1 254); do (timeout 0.5 bash -c "</dev/tcp/$SUBNET.$i/445" 2>/dev/null && echo "$SUBNET.$i") & done; wait); do
+        if nmblookup -s /dev/null -A "$ip" 2>/dev/null | grep -qiE "^[[:space:]]*$NAS_HOST[[:space:]]+<00>"; then
+          NAS_IP="$ip"
+          break
+        fi
+      done
+    fi
+  fi
+  if [[ -z "$NAS_IP" ]]; then
+    echo "setup-nas-mounts: cannot resolve $NAS_HOST (are you on the home network?)"
+    exit 1
+  fi
+  echo "Pinning $NAS_HOST -> $NAS_IP in /etc/hosts"
+  echo "$NAS_IP  $NAS_HOST  $MARKER" | sudo tee -a /etc/hosts >/dev/null
+fi
+
+OPTS="credentials=$CREDENTIALS,uid=$(id -u),gid=$(id -g),iocharset=utf8,_netdev,nofail,noauto,x-systemd.automount,x-systemd.idle-timeout=600,x-systemd.mount-timeout=10"
+
+# Rewrite our managed fstab lines (and drop any older unmanaged entries for these shares)
+TMP_FSTAB="$(mktemp)"
+grep -vF "$MARKER" /etc/fstab | grep -vE "^//$NAS_HOST/($(IFS='|'; echo "${SHARES[*]}"))[[:space:]]" > "$TMP_FSTAB" || true
+for share in "${SHARES[@]}"; do
+  sudo mkdir -p "/mnt/$share"
+  echo "//$NAS_HOST/$share  /mnt/$share  cifs  $OPTS  0  0  $MARKER" >> "$TMP_FSTAB"
+done
+if ! sudo cmp -s "$TMP_FSTAB" /etc/fstab; then
+  echo "Updating /etc/fstab"
+  sudo cp /etc/fstab /etc/fstab.bak
+  sudo cp "$TMP_FSTAB" /etc/fstab
+fi
+rm -f "$TMP_FSTAB"
+
+sudo systemctl daemon-reload
+for share in "${SHARES[@]}"; do
+  sudo systemctl restart "mnt-$share.automount"
+done
+
+# File manager sidebar bookmarks (Nautilus/GTK)
+BOOKMARKS="$HOME/.config/gtk-3.0/bookmarks"
+mkdir -p "$(dirname "$BOOKMARKS")"
+touch "$BOOKMARKS"
+for share in "${SHARES[@]}"; do
+  grep -qxF "file:///mnt/$share $share" "$BOOKMARKS" || echo "file:///mnt/$share $share" >> "$BOOKMARKS"
+done
+
+echo "NAS shares available at: $(printf '/mnt/%s ' "${SHARES[@]}")(mounted on first access)"
