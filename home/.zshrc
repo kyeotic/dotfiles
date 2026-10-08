@@ -57,7 +57,9 @@ export PATH="$PATH:/Applications/Visual Studio Code.app/Contents/Resources/app/b
 [ -f "$HOME/.cargo/env" ] && . "$HOME/.cargo/env" #rust
 
 # Nvm
-export NVM_DIR="$HOME/.nvm"
+# Match nvm's installer default: $XDG_CONFIG_HOME/nvm when set, else ~/.nvm
+export NVM_DIR="${XDG_CONFIG_HOME:+$XDG_CONFIG_HOME/nvm}"
+export NVM_DIR="${NVM_DIR:-$HOME/.nvm}"
 [ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"
 [ -s "$NVM_DIR/bash_completion" ] && \. "$NVM_DIR/bash_completion"
 

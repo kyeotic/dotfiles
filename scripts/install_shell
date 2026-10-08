@@ -16,6 +16,10 @@ else
     echo "Installing zsh..."
     if [ "$(uname)" = "Darwin" ]; then
         echo "zsh ships with macOS"
+    elif command -v pacman >/dev/null 2>&1; then
+        # Arch (Omarchy) ships without zsh — use the system package so the login shell
+        # doesn't depend on Linuxbrew
+        sudo pacman -S --needed --noconfirm zsh
     else
         # Ensure Linuxbrew is available then use it for zsh (avoids rpm-ostree on Bazzite)
         if ! command -v brew >/dev/null 2>&1; then

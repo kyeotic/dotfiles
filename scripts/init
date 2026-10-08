@@ -5,9 +5,25 @@ set -eu
 $HOME/dotfiles/scripts/install_shell
 $HOME/dotfiles/scripts/install_apps
 
+# install_apps puts tools in ~/.local/bin, which is only on PATH via .zshrc
+export PATH="$HOME/.local/bin:$PATH"
+
 # Sync vault secrets if config exists
-if command -v vault-sync >/dev/null 2>&1 && [[ -f "$HOME/dotfiles/.vault-sync.toml" ]]; then
-  (cd "$HOME/dotfiles" && vault-sync sync)
+if [[ -f "$HOME/dotfiles/.vault-sync.toml" ]]; then
+  if command -v vault-sync >/dev/null 2>&1; then
+    (cd "$HOME/dotfiles" && vault-sync sync)
+  else
+    echo "vault-sync not found; skipping secret sync"
+  fi
+fi
+
+# Offer to clone active personal repos (not wanted on every machine, e.g. work)
+if [[ -t 0 ]]; then
+  printf "\nClone active personal repos into ~/dev? [y/N] "
+  read -r CLONE_REPOS
+  if [[ "$CLONE_REPOS" =~ ^[Yy] ]]; then
+    $HOME/dotfiles/scripts/clone-active
+  fi
 fi
 
 printf "\n\nInstall Complete\nStart a new terminal for all changes to take effect"

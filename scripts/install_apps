@@ -25,6 +25,8 @@ if ! command -v tfswitch >/dev/null 2>&1; then
     curl -L https://raw.githubusercontent.com/warrensbox/terraform-switcher/master/install.sh | bash -s -- -b "$HOME/.local/bin"
 fi
 
+# Match nvm's installer default: $XDG_CONFIG_HOME/nvm when set (e.g. Omarchy), else ~/.nvm
+NVM_DIR="${NVM_DIR:-${XDG_CONFIG_HOME:+$XDG_CONFIG_HOME/nvm}}"
 NVM_DIR="${NVM_DIR:-$HOME/.nvm}"
 if [ ! -f "$NVM_DIR/nvm.sh" ]; then
     echo "Installing nvm"
@@ -96,7 +98,9 @@ if [[ "$(uname)" == "Linux" ]]; then
     # Start syncthing as a systemd user service (installed via Brewfile.linux) — skip on WSL
     if ! grep -qi microsoft /proc/version 2>/dev/null; then
         if command -v brew >/dev/null 2>&1 && command -v syncthing >/dev/null 2>&1; then
-            if ! systemctl --user is-enabled homebrew.syncthing.service >/dev/null 2>&1; then
+            # brew services names the unit sh.brew.syncthing (older versions: homebrew.syncthing)
+            if ! systemctl --user is-enabled sh.brew.syncthing.service >/dev/null 2>&1 \
+                && ! systemctl --user is-enabled homebrew.syncthing.service >/dev/null 2>&1; then
                 brew services start syncthing
             fi
         fi

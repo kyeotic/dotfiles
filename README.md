@@ -15,6 +15,7 @@ This will:
 2. Install [Nix](https://determinate.systems/nix/) (macOS only, for nix-darwin system management)
 3. Clone this repo to `~/dotfiles`
 4. Run the full init pipeline: install zsh, install packages, install apps
+5. Generate a new ssh-key (which should go in your [ssh-keys repo](https://gist.github.com/kyeotic/f7e1254cfe712b3e028b6cb88adfe60f))
 
 If the repo is already cloned, run the init pipeline directly:
 

@@ -1,4 +1,4 @@
-# CLAUDE.md
+# AGENTS.md
 
 This file provides guidance to Claude Code (claude.ai/code) when working with code in this repository.
 
@@ -24,7 +24,8 @@ Bootstrap: `curl -fsSL https://raw.githubusercontent.com/kyeotic/dotfiles/HEAD/s
 
 The `scripts/` directory contains the installation pipeline (all steps are idempotent):
 - `install` - Bootstrap script (installs git/curl on Linux, installs Nix on macOS, clones repo, runs init)
-- `init` - Main orchestrator, runs: `install_shell` → `install_apps`
+- `init` - Main orchestrator, runs: `install_shell` → `install_apps` → `vault-sync sync` → prompts (default no) to run `clone-active`
+- `clone-active` - Clones active personal repos into `~/dev` (skips existing); not run automatically since it's unwanted on work machines
 - `install_shell` - Installs zsh; on Linux runs `brew bundle --file=Brewfile.linux`; on macOS runs `darwin-rebuild switch`
 - `install_apps` - Installs tools not in Homebrew (deno, rust, tfswitch, nvm, kitty, claude, fonts on Linux)
 - `stow` - Creates symlinks via GNU Stow mapping `home/` → `~/` and `.config/` → `~/.config/`
@@ -47,7 +48,7 @@ macOS GUI apps are in `Brewfile` (casks only), applied by `scripts/install_apps`
 ## Repository Structure
 
 - **`home/`** - Files symlinked to `~/` (`.zshrc`, `.zsh_aliases`, `.zsh_functions`, `.zsh_git`, `.gitconfig`, `.starship-rc`)
-- **`.config/`** - Files symlinked to `~/.config/` (starship, kitty, fish, direnv, hypr, conky, pipewire)
+- **`.config/`** - Files symlinked to `~/.config/` (starship, kitty, fish, direnv, hypr, omarchy, conky, pipewire, voxtype). Omarchy: `hypr/*.lua` (Hyprland user overrides; `monitors.lua` is deliberately NOT in the repo since monitor/workspace layout is per-machine — it stays a local file in `~/.config/hypr`) and `omarchy/shell.json` (bar/idle). `omarchy refresh` replaces these symlinks with real files; copy changes back into the repo, then re-run `scripts/stow`
 - **`scripts/`** - Installation and setup scripts (all bash, idempotent)
 - **`nix/`** - nix-darwin flake for macOS (`flake.nix`, `home.nix`, `darwin.nix`, `switch`)
 - **`Brewfile.linux`** - Homebrew CLI packages for Linux (and macOS via install_apps)

@@ -1,0 +1,58 @@
+#!/usr/bin/env bash
+set -e
+
+# Clones active personal repos (skips any already present).
+# Usage: clone-active [dest]   (default: ~/dev)
+# Prompted for by scripts/init.
+
+# Uses SSH remotes: ensure a key exists
+"$(dirname "${BASH_SOURCE[0]}")/setup-ssh"
+
+# setup-ssh only shows the add-key instructions when it creates the key, so check GitHub accepts it
+until ssh -T git@github.com 2>&1 | grep -q "successfully authenticated"; do
+  printf "\nGitHub rejected your SSH key. Add it at https://github.com/settings/keys\n"
+  cat ~/.ssh/id_ed25519.pub
+  read -r -p "Press enter to retry (Ctrl-C to abort)"
+done
+
+DEST="${1:-$HOME/dev}"
+mkdir -p "$DEST"
+
+repos=(
+  git@github.com:kyeotic/accomplice.git
+  git@github.com:kyeotic/acquaint.git
+  git@github.com:kyeotic/blog.git
+  git@github.com:kyeotic/canopy.git
+  git@github.com:kyeotic/chess2.git
+  git@github.com:kyeotic/crank.git
+  git@github.com:kyeotic/flowchart.git
+  git@github.com:kyeotic/foodie.git
+  git@github.com:kyeotic/full-stack-template.git
+  git@github.com:kyeotic/homelab.git
+  git@github.com:kyeotic/launch.git
+  git@github.com:kyeotic/lesswrong.git
+  git@github.com:kyeotic/portfolio.git
+  git@github.com:kyeotic/poster.git
+  git@github.com:kyeotic/raviger.git
+  git@github.com:kyeotic/shovel.git
+  git@github.com:kyeotic/smashdown.git
+  git@github.com:kyeotic/snow-tracker.git
+  git@github.com:kyeotic/spa-template.git
+  git@github.com:kyeotic/spoons.git
+  git@github.com:kyeotic/ssh-keys.git
+  git@github.com:kyeotic/stack-sync.git
+  git@github.com:kyeotic/vault-sync.git
+)
+
+for repo in "${repos[@]}"; do
+  name=$(basename "$repo" .git)
+  target="$DEST/$name"
+  if [ -d "$target" ]; then
+    echo "SKIP: $name already exists"
+  else
+    echo "Cloning $name..."
+    git clone "$repo" "$target"
+  fi
+done
+
+echo "Done."
