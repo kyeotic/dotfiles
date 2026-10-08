@@ -44,7 +44,7 @@ pause_media = true
 # .en models are English-only but faster and more accurate for English
 # large-v3-turbo is faster than large-v3 with minimal accuracy loss (recommended for GPU)
 # Or provide absolute path to a custom .bin model file
-model = "base.en"
+model = "large-v3-turbo"
 
 # Language for transcription
 # Use "en" for English, "auto" for auto-detection
@@ -52,7 +52,7 @@ model = "base.en"
 language = "en"
 
 # Biases vocabulary/spelling toward these terms
-initial_prompt = "Omarchy, Hyprland, Neovim, kitty, dotfiles."
+initial_prompt = "I use Omarchy on my computer."
 
 # Translate non-English speech to English
 translate = false
