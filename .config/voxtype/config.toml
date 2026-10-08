@@ -65,14 +65,14 @@ translate = false
 # - type: Simulates keyboard input at cursor position (slow: one keystroke per char)
 # - clipboard: Copies text to clipboard (requires wl-copy)
 # - paste: Copies to clipboard then sends paste_keys (instant)
-mode = "paste"
-
-# Shift+Insert matches Omarchy's universal paste (Super+V) and works in kitty
-# (mapped in kitty.conf) as well as GTK/browser apps, unlike Ctrl+V.
-paste_keys = "shift+insert"
-
-# Put the previous clipboard contents back after pasting
-restore_clipboard = true
+#
+# "paste" sends one fixed chord via wtype, but Omarchy's universal paste (Super+V)
+# uses Ctrl+V for apps and Shift+Insert for terminals, and Firefox ignores
+# Shift+Insert. So copy to the clipboard and let paste-hook paste through Hyprland
+# with the same per-window choice. It also restores the previous clipboard.
+mode = "clipboard"
+pre_output_command = "$HOME/.config/voxtype/paste-hook pre"
+post_output_command = "$HOME/.config/voxtype/paste-hook post"
 
 # Fall back to clipboard if typing fails
 fallback_to_clipboard = true

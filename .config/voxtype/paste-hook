@@ -1,0 +1,58 @@
+#!/usr/bin/env bash
+# Voxtype output hooks that paste dictation the way Omarchy's universal paste (Super+V)
+# does: Ctrl+V for normal windows, Shift+Insert for terminal-tagged ones. Voxtype's own
+# paste mode sends one fixed chord via wtype, and Firefox ignores Shift+Insert.
+#
+#   pre  - save the clipboard and mark that output is happening
+#   post - paste via Hyprland, then restore the saved clipboard
+#
+# Voxtype runs the post hook on cancel/error too; the marker (only written by the pre hook,
+# which only runs right before real output) keeps those from pasting stale clipboard.
+
+dir="${XDG_RUNTIME_DIR:-/tmp}/voxtype"
+marker="$dir/paste-pending"
+saved="$dir/paste-saved"
+saved_type="$dir/paste-saved-type"
+
+# Same terminal detection and down/up split as Omarchy's universal_clipboard_shortcut.
+paste_lua='
+local window = hl.get_active_window()
+local mods, key = "CTRL", "V"
+for _, tag in ipairs((window and window.tags) or {}) do
+  if tag:gsub("%*$", "") == "terminal" then
+    mods, key = "SHIFT", "Insert"
+  end
+end
+hl.dispatch(hl.dsp.send_key_state({ mods = mods, key = key, state = "down" }))
+hl.timer(function()
+  hl.dispatch(hl.dsp.send_key_state({ mods = mods, key = key, state = "up" }))
+end, { timeout = 50, type = "oneshot" })
+'
+
+case "$1" in
+  pre)
+    mkdir -p "$dir"
+    rm -f "$saved" "$saved_type"
+    types=$(wl-paste --list-types 2>/dev/null)
+    type=$(grep -m1 '^text/plain;charset=utf-8$' <<<"$types" || head -n1 <<<"$types")
+    if [[ -n $type ]] && wl-paste --no-newline --type "$type" >"$saved" 2>/dev/null; then
+      printf '%s' "$type" >"$saved_type"
+    fi
+    touch "$marker"
+    ;;
+  post)
+    [[ -e $marker ]] || exit 0
+    rm -f "$marker"
+    hyprctl eval "$paste_lua" >/dev/null
+    if [[ -s $saved_type ]]; then
+      # Give the app time to read the clipboard before putting the old contents back.
+      sleep 0.3
+      wl-copy --type "$(<"$saved_type")" <"$saved" >/dev/null 2>&1
+      rm -f "$saved" "$saved_type"
+    fi
+    ;;
+  *)
+    echo "usage: $0 pre|post" >&2
+    exit 1
+    ;;
+esac

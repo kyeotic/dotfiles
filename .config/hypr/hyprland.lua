@@ -38,3 +38,45 @@ o.window({ class = "steam", title = "Steam" }, { tile = true })
 -- Keep the screensaver off while a fullscreen Steam game is up. Omarchy only covers
 -- the "steam" client class; games are steam_app_<id>, and gamepad input doesn't reset idle.
 o.window({ class = "^steam_app_\\d+$" }, { idle_inhibit = "fullscreen" })
+
+-- Only show the screensaver on the main monitor (the one at 0,0); the others are switched
+-- off (DPMS) until it closes. Omarchy opens one per monitor and has no setting for it.
+-- The other copies are kept rather than closed: closing one makes omarchy-screensaver kill
+-- all of them and cancel the idle cycle. They're also made invisible, in case a display
+-- wakes while the screensaver is still up. The window is fullscreen, so it's drawn with
+-- opacity_fullscreen, not opacity. mouse_move_enables_dpms is off while they're blanked:
+-- the launcher moving the cursor to the next monitor would otherwise wake them right away.
+local screensaver_blanked = {}
+local screensaver_mouse_wakes = nil
+
+hl.on("window.open", function(w)
+  local m = w.monitor
+  if w.class == "org.omarchy.screensaver" and m and (m.x ~= 0 or m.y ~= 0) then
+    for _, prop in ipairs({ "opacity", "opacity_fullscreen" }) do
+      hl.dispatch(hl.dsp.window.set_prop({ prop = prop, value = "0", window = "address:" .. w.address }))
+    end
+    if screensaver_mouse_wakes == nil then
+      screensaver_mouse_wakes = hl.get_config("misc.mouse_move_enables_dpms")
+      hl.config({ misc = { mouse_move_enables_dpms = false } })
+    end
+    local name = m.name
+    screensaver_blanked[name] = true
+    hl.timer(function()
+      if screensaver_blanked[name] then
+        hl.dispatch(hl.dsp.dpms({ action = "disable", monitor = name }))
+      end
+    end, { timeout = 500, type = "oneshot" })
+  end
+end)
+
+hl.on("window.close", function(w)
+  if w.class ~= "org.omarchy.screensaver" then return end
+  if screensaver_mouse_wakes ~= nil then
+    hl.config({ misc = { mouse_move_enables_dpms = screensaver_mouse_wakes } })
+    screensaver_mouse_wakes = nil
+  end
+  for name in pairs(screensaver_blanked) do
+    hl.dispatch(hl.dsp.dpms({ action = "enable", monitor = name }))
+  end
+  screensaver_blanked = {}
+end)
