@@ -23,6 +23,30 @@ Run `scripts/init` (or `scripts/install_apps` + `scripts/stow`) first.
 - 60Hz-only monitors (e.g. LG UltraFine) cap any game on them at 60. Play on
   the high-refresh monitor.
 
+### HDR
+
+- **Force HDR on HDR monitors** (check with `edid-decode /sys/class/drm/card*-DP-3/edid | grep ST2084`).
+  Without `cm = "hdr"` the desktop stays sRGB and only fullscreen apps that ask for HDR
+  over Wayland get it (`render:cm_auto_hdr`):
+  ```lua
+  hl.monitor({ output = "DP-3", mode = "3840x2160@240", position = "0x0", scale = 1.5, vrr = 2,
+               bitdepth = 10, cm = "hdr", sdr_max_luminance = 250 })
+  ```
+  `hyprctl monitors` should show `colorManagementPreset: hdr` and `currentFormat: XBGR2101010`.
+- **SDR content is mapped into HDR.** `sdr_max_luminance` is the SDR white level in nits.
+  The default of 80 looks dim and washed out on an OLED. Raise it if SDR looks dim; lower it
+  if it's too bright. `sdrbrightness` and `sdrsaturation` (typically 1.0–2.0) also tune SDR.
+- Skip forced HDR on low-nit panels (the LG UltraFine peaks around 300 nits), where SDR
+  only looks worse.
+- **XWayland apps can't output HDR.** Native Linux games (e.g. Godot games like Slay the
+  Spire 2) run through XWayland and show as SDR.
+- **Proton games** need the Wine Wayland driver for HDR. Use the Steam launch option
+  `PROTON_ENABLE_WAYLAND=1 PROTON_ENABLE_HDR=1 %command%`, then turn on HDR in the game.
+  Not set globally, because the Wayland driver breaks some launchers and overlays.
+  If a game shows a white screen or flickers on start, try `quirks:prefer_hdr = 1`.
+- 10-bit output: Hyprland border colors stay 8-bit, and some screen-capture tools don't
+  support 10-bit.
+
 ## Game stats bar widget (MangoHud)
 
 The bar shows `CPU · GPU · VRAM · FPS` while a game runs. All config is in the

@@ -47,7 +47,8 @@
 hl.config({
   input = {
     -- Lower mouse sensitivity (range -1.0 to 1.0, default 0).
-    sensitivity = -0.15,
+    sensitivity = -0.08,
+    accel_profile = "flat",
   },
 })
 
