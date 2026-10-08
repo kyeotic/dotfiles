@@ -9,19 +9,21 @@ LOG_DIR=/tmp/mangohud
 # MangoHud won't create its output_folder
 mkdir -p "$LOG_DIR"
 
+# Logs are one row per frame (log_interval=0) in tmpfs; drop finished sessions so
+# only the running game's log holds memory
+find "$LOG_DIR" -maxdepth 1 -name '*.csv' -mmin +30 -delete 2>/dev/null
+
 log=$(find "$LOG_DIR" -maxdepth 1 -name '*.csv' -newermt '3 seconds ago' -printf '%T@ %p\n' 2>/dev/null \
   | sort -rn | head -n 1 | cut -d' ' -f2-)
 
-if [ -z "$log" ]; then
-  find "$LOG_DIR" -maxdepth 1 -name '*.csv' -mmin +1440 -delete 2>/dev/null
-  exit 0
-fi
+[ -z "$log" ] && exit 0
 
-# Line 3 is the column header; average the last ~1s of samples (log_interval=100)
+# Line 3 is the column header. Average the last few frames (MangoHud's fps column is
+# already a 500ms average); skip a partially written last row (field count differs).
 read -r fps cpu gpu vram < <(
-  { sed -n 3p "$log"; tail -n 10 "$log"; } | awk -F, '
-    NR == 1 { for (i = 1; i <= NF; i++) col[$i] = i; next }
-    $col["fps"] ~ /^[0-9.]+$/ {
+  { sed -n 3p "$log"; tail -n 30 "$log"; } | awk -F, '
+    NR == 1 { for (i = 1; i <= NF; i++) col[$i] = i; cols = NF; next }
+    NF == cols && $col["fps"] ~ /^[0-9.]+$/ {
       n++
       fps += $col["fps"]; cpu += $col["cpu_load"]
       gpu += $col["gpu_load"]; vram += $col["gpu_vram_used"]

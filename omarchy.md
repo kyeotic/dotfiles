@@ -50,7 +50,12 @@ dotfiles (`.config/MangoHud/`, `.config/omarchy/bar/scripts/gamestats`,
 - If a non-game Vulkan app shows up in the widget, add its process name to
   `blacklist=` in `.config/MangoHud/MangoHud.conf` (mpv is already there).
 - Logs go to `/tmp/mangohud/` (MangoHud can't expand `~`). The widget creates the
-  folder and prunes logs older than a day.
+  folder and deletes logs idle for 30+ minutes.
+- **Keep `log_interval=0`.** Any other value makes MangoHud (0.8.4) log from a
+  detached thread that is never joined, and it can crash the game during exit
+  (segfault in `Logger::try_log` → `~overlay_params`, after the game has already
+  saved). `0` logs from the game's render thread instead, about 82 bytes per frame
+  (~35-70 MB/hour of `/tmp` at 120-240fps).
 - GPU % and VRAM come from `nvidia-smi` when present. On AMD the widget falls
   back to MangoHud's own numbers, where VRAM is per-process.
 

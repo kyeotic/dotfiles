@@ -5,7 +5,7 @@
     "lock": 300
   },
   "bar": {
-    "position": "bottom",
+    "position": "top",
     "transparent": false,
     "centerAnchor": "omarchy.clock",
     "layout": {
