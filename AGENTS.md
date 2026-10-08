@@ -49,14 +49,13 @@ macOS GUI apps are in `Brewfile` (casks only), applied by `scripts/install_apps`
 
 ## Repository Structure
 
-- **`home/`** - Files symlinked to `~/` (`.zshrc`, `.zsh_aliases`, `.zsh_functions`, `.zsh_git`, `.gitconfig`, `.starship-rc`)
+- **`home/`** - Files symlinked to `~/` (`.zshrc`, `.zsh_aliases`, `.zsh_functions`, `.zsh_git`, `.gitconfig`, `.starship-rc`). Also `.local/share/applications/discord.desktop`, which overrides the `discord` package's launcher to force XWayland (`--ozone-platform=x11`; Omarchy's `ELECTRON_OZONE_PLATFORM_HINT=wayland` otherwise breaks Discord keybind recording). Push-to-talk keys are forwarded to Discord by binds in `.config/hypr/bindings.lua` (Left Alt via `pass`; the Naga side button `mouse:276` is translated to F13 via `send_key_state`, since XWayland drops passed mouse buttons)
 - **`.config/`** - Files symlinked to `~/.config/` (starship, kitty, direnv, espanso, hypr, omarchy, MangoHud, voxtype). Neovim is deliberately not in the repo: Omarchy's `omarchy-nvim` package owns `~/.config/nvim` (restore with `omarchy-nvim-setup` / `omarchy-nvim-refresh`). Omarchy: `hypr/*.lua` (Hyprland user overrides; `monitors.lua` and `autostart.lua` are deliberately NOT in the repo since monitor/workspace layout and startup apps are per-machine — they stay local files in `~/.config/hypr`) and `omarchy/shell.json` (bar/idle). `omarchy/bar/scripts/gamestats` is a bar command widget showing CPU/GPU/VRAM/FPS while a game runs (`hypr/hyprland.lua` sets `MANGOHUD=1` for all Vulkan apps; non-games go in `blacklist=` in MangoHud.conf; OpenGL-only games need Steam launch option `mangohud %command%`); it reads the CSV logs that `MangoHud/MangoHud.conf` writes to `/tmp/mangohud` (preset 1 = invisible HUD so logging runs; Shift_R+F10 cycles to the full HUD). `omarchy refresh` replaces these symlinks with real files; copy changes back into the repo, then re-run `scripts/stow`
 - **`scripts/`** - Installation and setup scripts (all bash, idempotent)
 - **`nix/`** - nix-darwin flake for macOS (`flake.nix`, `home.nix`, `darwin.nix`, `switch`)
 - **`Brewfile.linux`** - Homebrew CLI packages for Linux (and macOS via install_apps)
 - **`Brewfile`** - Homebrew casks for macOS GUI apps
 - **`omarchy.md`** - Per-machine/manual setup for Omarchy machines (monitors refresh/VRR, MangoHud first-run); add notes here for setup that isn't in stowed config
-- **`autokey/`** - Linux text expansion phrases and scripts
 - **`.agents/`** - Agent-agnostic coding-agent skills (`.agents/skills/`), symlinked per-agent into `~/.claude/skills` and `~/.codex/skills`; add one with `scripts/agent-skill add <name>`, see `.agents/README.md`
 
 ## Key Conventions

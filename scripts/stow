@@ -21,8 +21,6 @@ stow_pkg() {
 
 stow_pkg "$HOME/dotfiles" ~/.config .config/
 stow_pkg "$HOME/dotfiles" ~/ home
-mkdir -p ~/.config/autokey/data
-stow_pkg "$HOME/dotfiles" ~/.config/autokey/data autokey
 
 # Agent skills: one canonical copy in .agents/skills, linked per-agent
 "$HOME/dotfiles/scripts/agent-skill" link

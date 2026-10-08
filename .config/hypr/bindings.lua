@@ -27,3 +27,17 @@
 -- o.bind("SUPER + SHIFT + S", nil, "omarchy-capture-screenshot")
 -- o.bind("SUPER + H", nil, "voxtype record toggle")
 -- o.bind("SUPER + PERIOD", nil, "omarchy-shell shell toggle omarchy.emojis")
+
+-- Discord push-to-talk. Wayland has no global key grabs, so forward the keys to the
+-- Discord window. Discord must run under XWayland for this, see
+-- home/.local/share/applications/discord.desktop.
+local discord = "class:^(discord)$"
+-- pass forwards press and release. Left Alt still reaches the focused app.
+-- ignore_mods: on release Alt is itself a held mod, so without it the release never
+-- matches and Discord stays transmitting.
+o.bind("ALT_L", "Discord push-to-talk", hl.dsp.pass({ window = discord }), { non_consuming = true, ignore_mods = true })
+-- Razer Naga side button (mouse:276). XWayland drops a passed mouse button
+-- immediately, so send Discord F13 (keycode 191 = evdev KEY_F13 + 8; XKB names it
+-- XF86Tools) with explicit down/up binds. Record it in Discord by pressing the button.
+o.bind("mouse:276", "Discord push-to-talk", hl.dsp.send_key_state({ mods = "", key = "code:191", state = "down", window = discord }))
+o.bind("mouse:276", "Discord push-to-talk", hl.dsp.send_key_state({ mods = "", key = "code:191", state = "up", window = discord }), { release = true })
