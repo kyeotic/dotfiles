@@ -27,3 +27,10 @@ require("default.hypr.toggles")
 
 -- Add any other personal Hyprland configuration below.
 -- o.window("qemu", { workspace = "5" })
+
+-- MangoHud on every Vulkan app (feeds the bar gamestats widget); see MangoHud/MangoHud.conf
+hl.env("MANGOHUD", "1")
+
+-- Tile the main Steam window instead of Omarchy's floating 1100x700. A maximized
+-- float loses its maximize when a game goes fullscreen and snaps back small.
+o.window({ class = "steam", title = "Steam" }, { tile = true })

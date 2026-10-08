@@ -28,7 +28,7 @@ The `scripts/` directory contains the installation pipeline (all steps are idemp
 - `clone-active` - Clones active personal repos into `~/dev` (skips existing); not run automatically since it's unwanted on work machines
 - `setup-nas-mounts` - Linux only. Mounts KYE-NAS SMB shares (`nas`, `media`, `apps`) at `/mnt/<share>` via a marker-tagged fstab block with `x-systemd.automount`, using `~/.smb-share` (vault-sync) as credentials. Pins `kye-nas` in `/etc/hosts` via `nmblookup` when it doesn't resolve, and adds GTK bookmarks. Also available as the `setup-nas-mounts` shell function
 - `install_shell` - Installs zsh; on Linux runs `brew bundle --file=Brewfile.linux`; on macOS runs `darwin-rebuild switch`
-- `install_apps` - Installs tools not in Homebrew (deno, rust, tfswitch, nvm, kitty, claude, fonts on Linux)
+- `install_apps` - Installs tools not in Homebrew (deno, rust, tfswitch, nvm, kitty, claude; on Linux: fonts, and mangohud via the distro package manager)
 - `stow` - Creates symlinks via GNU Stow mapping `home/` → `~/` and `.config/` → `~/.config/`
 
 To re-link after changes: `~/dotfiles/scripts/stow`
@@ -49,7 +49,7 @@ macOS GUI apps are in `Brewfile` (casks only), applied by `scripts/install_apps`
 ## Repository Structure
 
 - **`home/`** - Files symlinked to `~/` (`.zshrc`, `.zsh_aliases`, `.zsh_functions`, `.zsh_git`, `.gitconfig`, `.starship-rc`)
-- **`.config/`** - Files symlinked to `~/.config/` (starship, kitty, fish, direnv, hypr, omarchy, conky, pipewire, voxtype). Omarchy: `hypr/*.lua` (Hyprland user overrides; `monitors.lua` and `autostart.lua` are deliberately NOT in the repo since monitor/workspace layout and startup apps are per-machine — they stay local files in `~/.config/hypr`) and `omarchy/shell.json` (bar/idle). `omarchy refresh` replaces these symlinks with real files; copy changes back into the repo, then re-run `scripts/stow`
+- **`.config/`** - Files symlinked to `~/.config/` (starship, kitty, fish, direnv, hypr, omarchy, MangoHud, conky, pipewire, voxtype). Omarchy: `hypr/*.lua` (Hyprland user overrides; `monitors.lua` and `autostart.lua` are deliberately NOT in the repo since monitor/workspace layout and startup apps are per-machine — they stay local files in `~/.config/hypr`) and `omarchy/shell.json` (bar/idle). `omarchy/bar/scripts/gamestats` is a bar command widget showing CPU/GPU/VRAM/FPS while a game runs (`hypr/hyprland.lua` sets `MANGOHUD=1` for all Vulkan apps; non-games go in `blacklist=` in MangoHud.conf; OpenGL-only games need Steam launch option `mangohud %command%`); it reads the CSV logs that `MangoHud/MangoHud.conf` writes to `/tmp/mangohud` (preset 1 = invisible HUD so logging runs; Shift_R+F10 cycles to the full HUD). `omarchy refresh` replaces these symlinks with real files; copy changes back into the repo, then re-run `scripts/stow`
 - **`scripts/`** - Installation and setup scripts (all bash, idempotent)
 - **`nix/`** - nix-darwin flake for macOS (`flake.nix`, `home.nix`, `darwin.nix`, `switch`)
 - **`Brewfile.linux`** - Homebrew CLI packages for Linux (and macOS via install_apps)

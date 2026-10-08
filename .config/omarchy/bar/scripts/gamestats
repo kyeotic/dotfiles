@@ -1,0 +1,45 @@
+#!/usr/bin/env bash
+
+# Omarchy bar widget: CPU / GPU / VRAM / FPS while a game is running.
+# "Running" = a MangoHud log (see .config/MangoHud/MangoHud.conf) written in the
+# last few seconds. Prints nothing otherwise, which hides the widget.
+
+LOG_DIR=/tmp/mangohud
+
+# MangoHud won't create its output_folder
+mkdir -p "$LOG_DIR"
+
+log=$(find "$LOG_DIR" -maxdepth 1 -name '*.csv' -newermt '3 seconds ago' -printf '%T@ %p\n' 2>/dev/null \
+  | sort -rn | head -n 1 | cut -d' ' -f2-)
+
+if [ -z "$log" ]; then
+  find "$LOG_DIR" -maxdepth 1 -name '*.csv' -mmin +1440 -delete 2>/dev/null
+  exit 0
+fi
+
+# Line 3 is the column header; average the last ~1s of samples (log_interval=100)
+read -r fps cpu gpu vram < <(
+  { sed -n 3p "$log"; tail -n 10 "$log"; } | awk -F, '
+    NR == 1 { for (i = 1; i <= NF; i++) col[$i] = i; next }
+    $col["fps"] ~ /^[0-9.]+$/ {
+      n++
+      fps += $col["fps"]; cpu += $col["cpu_load"]
+      gpu += $col["gpu_load"]; vram += $col["gpu_vram_used"]
+    }
+    END { if (n) printf "%.0f %.0f %.0f %.1f\n", fps / n, cpu / n, gpu / n, vram / n }'
+)
+[ -z "$fps" ] && exit 0
+
+# MangoHud's NVIDIA load/VRAM need libXNVCtrl and are per-process; nvidia-smi gives whole-card numbers
+vram_text="${vram}G"
+if command -v nvidia-smi >/dev/null 2>&1; then
+  IFS=', ' read -r gpu mem_used mem_total < <(
+    nvidia-smi --query-gpu=utilization.gpu,memory.used,memory.total --format=csv,noheader,nounits | head -n 1
+  )
+  vram_text=$(awk -v u="$mem_used" -v t="$mem_total" 'BEGIN { printf "%.1f/%.0fG", u / 1024, t / 1024 }')
+fi
+
+game=$(basename "$log" .csv | sed -E 's/_[0-9]{4}-[0-9]{2}-[0-9]{2}_[0-9]{2}-[0-9]{2}-[0-9]{2}$//')
+
+printf '{"text":"CPU %s%%  GPU %s%%  VRAM %s  %s FPS","tooltip":"%s"}\n' \
+  "$cpu" "$gpu" "$vram_text" "$fps" "${game//\"/}"

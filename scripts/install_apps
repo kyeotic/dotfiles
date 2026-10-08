@@ -106,6 +106,20 @@ if [[ "$(uname)" == "Linux" ]]; then
         fi
     fi
 
+    # MangoHud (FPS/stats layer, feeds the Omarchy gamestats bar widget) — not in Homebrew;
+    # it's a Vulkan layer that must be registered system-wide. Skip WSL; Bazzite ships it.
+    if ! command -v mangohud >/dev/null 2>&1 \
+        && ! grep -qi microsoft /proc/version 2>/dev/null \
+        && [ ! -f /run/ostree-booted ]; then
+        if command -v pacman >/dev/null 2>&1; then
+            sudo pacman -S --needed --noconfirm mangohud
+        elif command -v apt-get >/dev/null 2>&1; then
+            sudo apt-get install -y mangohud
+        elif command -v dnf >/dev/null 2>&1; then
+            sudo dnf install -y mangohud
+        fi
+    fi
+
     # Discord flatpak: grant access to the secret service so login tokens survive reboots
     if flatpak list --app 2>/dev/null | grep -q com.discordapp.Discord; then
         flatpak override --user --talk-name=org.freedesktop.secrets com.discordapp.Discord

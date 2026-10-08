@@ -33,6 +33,12 @@
       ],
       "right": [
         {
+          "id": "gamestats",
+          "type": "command",
+          "exec": "~/.config/omarchy/bar/scripts/gamestats",
+          "interval": 1
+        },
+        {
           "id": "omarchy.tray"
         },
         {
