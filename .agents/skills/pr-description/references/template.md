@@ -15,12 +15,23 @@ but only ones that actually exist; do not invent a ticket number._
 
 ## New Behavior and Testing
 
-_What's the new behavior, and why is it covered well enough to merge? Describe the
-testing strategy and where a reviewer should focus, not the commands that were run._
+_What's the new behavior, and why is it covered well enough to merge?_
 
 ### Before / After
 
-| **Before** | **After** |
-| ---------- | --------- |
+| **Before**     | **After**      |
+|----------------|----------------|
 | _Old behavior_ | _New behavior_ |
 ```
+
+Some general notes on tone and style.
+
+DO the following:
+- DO Describe the context motivating the change
+- DO Describe the reason the specific implementation was selected if others were considered
+- Summarize and *keep it short*
+
+DO NOT do the following:
+- Do NOT describe the files changed (the code diff already does that)
+- Do NOT enumerate the results of automated tests that were run or created
+- DO NOT exhaustively explain every detail of the context or change

@@ -44,6 +44,9 @@ o.window({ class = "steam", title = "Steam" }, { tile = true })
 -- wallpaper show through. Use e.g. "0.97 0.93" for a hint of transparency instead.
 o.window("com.microsoft.VSCode", { tag = "-default-opacity", opacity = "0.999 0.985" })
 
+-- Make Firefox fully opaque even when unfocused; Omarchy's default is "1.0 0.985".
+o.window({ tag = "firefox-based-browser" }, { opacity = "1 1" })
+
 -- Keep the screensaver off while a fullscreen Steam game is up. Omarchy only covers
 -- the "steam" client class; games are steam_app_<id>, and gamepad input doesn't reset idle.
 o.window({ class = "^steam_app_\\d+$" }, { idle_inhibit = "fullscreen" })

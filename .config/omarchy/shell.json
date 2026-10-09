@@ -28,10 +28,12 @@
           "id": "omarchy.weather"
         },
         {
-          "id": "omasys.task-manager"
+          "id": "omarchy.system-update"
         },
         {
-          "id": "omarchy.system-update"
+          "id": "omasys.task-manager",
+          "display": "icon",
+          "collapse": true
         }
       ],
       "right": [
