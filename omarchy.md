@@ -47,6 +47,24 @@ Run `scripts/init` (or `scripts/install_apps` + `scripts/stow`) first.
 - 10-bit output: Hyprland border colors stay 8-bit, and some screen-capture tools don't
   support 10-bit.
 
+### XWayland primary monitor (`~/.config/hypr/autostart.lua`, machine-local)
+
+- **Symptom:** a Proton game's menus look fine but gameplay is squished/stretched
+  (seen with Nova Drift, a GameMaker game).
+- **Cause:** Hyprland's layout doesn't set an XWayland primary output. With none set,
+  XWayland listed the portrait DP-2 first at `+0+0`, so Wine/GameMaker read the
+  portrait size as "the main display" and stretched it onto DP-3. Check with
+  `xrandr --listmonitors`: the primary has a `*` (`+*DP-3`).
+- **Fix now:** `xrandr --output DP-3 --primary`, then fully quit and relaunch the game.
+- **Fix at login:** add to `autostart.lua` (retries until XWayland is up):
+  ```lua
+  hl.on("hyprland.start", function()
+    hl.exec_cmd("sh -c 'for i in $(seq 30); do xrandr --output DP-3 --primary 2>/dev/null && exit 0; sleep 1; done'")
+  end)
+  ```
+- It only runs at login. If a monitor reconnects mid-session (e.g. power cycle) and
+  games go squished again, rerun the `xrandr` command.
+
 ## Game stats bar widget (MangoHud)
 
 The bar shows `CPU · GPU · VRAM · FPS` while a game runs. All config is in the
