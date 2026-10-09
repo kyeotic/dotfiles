@@ -31,9 +31,18 @@ require("default.hypr.toggles")
 -- MangoHud on every Vulkan app (feeds the bar gamestats widget); see MangoHud/MangoHud.conf
 hl.env("MANGOHUD", "1")
 
+-- Firefox inhibits idle during video through the desktop portal, which Hyprland routes to
+-- the GTK backend, where it does nothing. Make it use a Wayland idle inhibitor instead,
+-- which the Omarchy idle service respects. Takes effect after restarting Firefox.
+hl.env("MOZ_WAKE_LOCK_TYPE", "WaylandIdleInhibit")
+
 -- Tile the main Steam window instead of Omarchy's floating 1100x700. A maximized
 -- float loses its maximize when a game goes fullscreen and snaps back small.
 o.window({ class = "steam", title = "Steam" }, { tile = true })
+
+-- Make VS Code fully opaque; Omarchy's default (0.985 active / 0.96 inactive) lets the
+-- wallpaper show through. Use e.g. "0.97 0.93" for a hint of transparency instead.
+o.window("com.microsoft.VSCode", { tag = "-default-opacity", opacity = "0.999 0.985" })
 
 -- Keep the screensaver off while a fullscreen Steam game is up. Omarchy only covers
 -- the "steam" client class; games are steam_app_<id>, and gamepad input doesn't reset idle.

@@ -28,6 +28,9 @@
           "id": "omarchy.weather"
         },
         {
+          "id": "omasys.task-manager"
+        },
+        {
           "id": "omarchy.system-update"
         }
       ],
