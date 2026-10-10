@@ -31,7 +31,7 @@
           "id": "omarchy.system-update"
         },
         {
-          "id": "omasys.task-manager",
+          "id": "kyeotic.sysmon",
           "display": "icon",
           "collapse": true
         }
@@ -71,7 +71,9 @@
           "id": "omarchy.clock",
           "format": "ddd d MMM h:mm AP",
           "formatAlt": "d MMMM 'W'ww yyyy",
-          "verticalFormat": "HH\n—\nmm"
+          "verticalFormat": "HH\n—\nmm",
+          "birthYear": 0,
+          "lifeExpectancy": 90
         }
       ]
     }

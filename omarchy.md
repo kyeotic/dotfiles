@@ -47,25 +47,63 @@ Run `scripts/init` (or `scripts/install_apps` + `scripts/stow`) first.
 - 10-bit output: Hyprland border colors stay 8-bit, and some screen-capture tools don't
   support 10-bit.
 
-### XWayland primary monitor (`~/.config/hypr/autostart.lua`, machine-local)
+## Gaming
 
-- **Symptom:** a Proton game's menus look fine but gameplay is squished/stretched
-  (seen with Nova Drift, a GameMaker game).
-- **Cause:** Hyprland's layout doesn't set an XWayland primary output. With none set,
-  XWayland listed the portrait DP-2 first at `+0+0`, so Wine/GameMaker read the
-  portrait size as "the main display" and stretched it onto DP-3. Check with
-  `xrandr --listmonitors`: the primary has a `*` (`+*DP-3`).
-- **Fix now:** `xrandr --output DP-3 --primary`, then fully quit and relaunch the game.
-- **Fix at login:** add to `autostart.lua` (retries until XWayland is up):
-  ```lua
-  hl.on("hyprland.start", function()
-    hl.exec_cmd("sh -c 'for i in $(seq 30); do xrandr --output DP-3 --primary 2>/dev/null && exit 0; sleep 1; done'")
-  end)
-  ```
-- It only runs at login. If a monitor reconnects mid-session (e.g. power cycle) and
-  games go squished again, rerun the `xrandr` command.
+### Proton games on a multi-monitor setup (XWayland)
 
-## Game stats bar widget (MangoHud)
+By default Proton runs games through XWayland. XWayland keeps its own monitor
+layout, which Hyprland builds and which doesn't match Hyprland's:
+
+| | DP-3 (main) | DP-2 (portrait) |
+|---|---|---|
+| Hyprland (scaled units) | left, 0 → 2560 | right, 2560 → 4000 |
+| XWayland (raw pixels) | right, 2160 → 6000 | left, 0 → 2160 |
+
+XWayland seems to order outputs by monitor ID, not by position, and uses pixels
+because Omarchy sets `xwayland.force_zero_scaling = true`. There's no setting to
+reorder it. Compare with `xrandr --listmonitors` vs `hyprctl monitors`. This causes
+two problems:
+
+- **Squished/stretched gameplay, menus fine** (seen with Nova Drift, a GameMaker
+  game). XWayland had no primary output and listed the portrait DP-2 first, so the
+  game read the portrait size as "the main display" and stretched it onto DP-3.
+  - Fix now: `xrandr --output DP-3 --primary`, then fully quit and relaunch the game.
+    The primary shows a `*` in `xrandr --listmonitors` (`+*DP-3`).
+  - Fix at login: add this to `~/.config/hypr/autostart.lua` (machine-local). It
+    retries until XWayland is up:
+    ```lua
+    hl.on("hyprland.start", function()
+      hl.exec_cmd("sh -c 'for i in $(seq 30); do xrandr --output DP-3 --primary 2>/dev/null && exit 0; sleep 1; done'")
+    end)
+    ```
+    It only runs at login. If a monitor reconnects mid-session (e.g. power cycle),
+    rerun the `xrandr` command.
+- **Mouse stops partway across the game and jumps to the other monitor.** When the
+  game confines or warps the cursor, it uses XWayland's coordinates, and Hyprland
+  reads them with its own layout. The game's left edge (XWayland x=2160) lands at
+  about 2160 / 1.5 = 1440 in Hyprland, past the middle of DP-3, so the usable area
+  is shifted right by about half a screen. The primary-monitor fix doesn't help here.
+
+**Fix for both: the Wine Wayland driver.** The Steam launch option
+`PROTON_ENABLE_WAYLAND=1 %command%` makes the game a native Wayland client, so
+XWayland's layout no longer matters. Needs Proton 10+ (Experimental 11 works);
+add `PROTON_ENABLE_HDR=1` for HDR (see HDR above). Fully quit the game before
+relaunching. Not set globally, because it breaks some launchers and overlays.
+Still being tested with Nova Drift.
+
+### gamescope
+
+The fallback when a game misbehaves on the Wayland driver. gamescope runs the game
+inside its own single-screen compositor, so the monitor layout, primary display and
+scaling never reach it. Install with `omarchy pkg add gamescope`, then use the Steam
+launch option:
+```
+gamescope -W 3840 -H 2160 -f -- %command%
+```
+`-W`/`-H` set the output size (DP-3's native resolution) and `-f` starts fullscreen.
+Add `-r 240` to cap at the monitor's refresh rate.
+
+### Game stats bar widget (MangoHud)
 
 The bar shows `CPU · GPU · VRAM · FPS` while a game runs. All config is in the
 dotfiles (`.config/MangoHud/`, `.config/omarchy/bar/scripts/gamestats`,

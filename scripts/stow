@@ -22,6 +22,12 @@ stow_pkg() {
 stow_pkg "$HOME/dotfiles" ~/.config .config/
 stow_pkg "$HOME/dotfiles" ~/ home
 
+# Linux-only ~/.config files. Same stow dir and target as .config/ so stow can
+# unfold a shared dir (e.g. ghostty/) that .config/ already linked whole.
+if [[ "$(uname)" == "Linux" ]]; then
+  stow_pkg "$HOME/dotfiles" ~/.config config-linux
+fi
+
 # Agent skills: one canonical copy in .agents/skills, linked per-agent
 "$HOME/dotfiles/scripts/agent-skill" link
 
