@@ -142,3 +142,18 @@ dotfiles (`.config/MangoHud/`, `.config/omarchy/bar/scripts/gamestats`,
 **Testing without a game:** `sudo pacman -S vulkan-tools`, then
 `MANGOHUD=1 vkcube --wsi wayland` and run `~/.config/omarchy/bar/scripts/gamestats`.
 It should print JSON while vkcube runs and nothing about 3s after it closes.
+
+## On update
+
+Things to check after updating Omarchy (`omarchy update`). Check the version with
+`omarchy version`.
+
+- **Past 4.0.4: remove the VS Code theme reload hook.** Omarchy 4.0.4's generated
+  "Omarchy" VS Code theme doesn't reload when the theme changes
+  ([#9336](https://github.com/omacom/omarchy/issues/9336)), so
+  `config-linux/omarchy/hooks/theme-set.d/vscode-reload-theme` works around it.
+  The fix ([PR #10134](https://github.com/omacom/omarchy/pull/10134)) was merged
+  after 4.0.4. Once a newer release is installed, delete the hook and its paragraph
+  in `AGENTS.md`, then remove the dangling link with
+  `rm ~/.config/omarchy/hooks/theme-set.d/vscode-reload-theme`.
+  Leaving the hook in place is harmless, but it does nothing useful after the fix.

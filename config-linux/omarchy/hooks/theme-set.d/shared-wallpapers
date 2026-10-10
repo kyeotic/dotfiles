@@ -1,0 +1,18 @@
+#!/bin/bash
+
+# Offer the shared wallpaper folder as backgrounds in every theme.
+#
+# Omarchy only reads per-theme user backgrounds from
+# ~/.config/omarchy/backgrounds/<theme-slug>/, following symlinks, so link the
+# applied theme's slug to the shared folder. Theme-set picks the background
+# before this hook runs, so the first switch to a theme won't include them.
+
+shared="$HOME/SyncDrive/images/Wallpapers"
+link="$HOME/.config/omarchy/backgrounds/$1"
+
+[[ -n $1 && -d $shared ]] || exit 0
+# Leave a theme's own folder (or an existing link) alone.
+[[ -e $link || -L $link ]] && exit 0
+
+mkdir -p "${link%/*}"
+ln -s "$shared" "$link"

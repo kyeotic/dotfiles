@@ -1,0 +1,32 @@
+#!/bin/bash
+
+# Make VS Code pick up Omarchy themes that have no vscode.json of their own.
+#
+# omarchy-theme-set-vscode maps all of those themes to one generated extension
+# whose "Omarchy" theme file is a symlink into the current theme. VS Code caches
+# a theme's colors once loaded and only re-reads the file if the theme declares
+# "_watch": true, so switching between two such themes (or back to one from a
+# named theme) leaves the old colors on screen.
+
+omarchy-toggle-enabled skip-vscode-theme-changes && exit 0
+
+pkg="$HOME/.vscode/extensions/omarchy-theme/package.json"
+theme="$HOME/.local/state/omarchy/current/theme/vscode-theme.json"
+
+# Themes with a vscode.json use a regular extension theme; nothing to reload.
+[[ -f $HOME/.local/state/omarchy/current/theme/vscode.json ]] && exit 0
+[[ -f $pkg && -f $theme ]] || exit 0
+
+# omarchy-theme-set-vscode rewrites package.json on every switch, so re-add the
+# flag each time. VS Code only reads it at startup.
+tmp=$(mktemp)
+if jq '.contributes.themes[]._watch = true' "$pkg" >"$tmp"; then
+  mv "$tmp" "$pkg"
+else
+  rm -f "$tmp"
+fi
+
+# Switching from a named theme changes the setting back to "Omarchy", and VS Code
+# applies its cached colors. Once it's watching the file again, touch it so it
+# reloads.
+setsid bash -c "sleep 2; touch '$theme'" >/dev/null 2>&1 &
