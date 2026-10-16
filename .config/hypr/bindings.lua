@@ -28,6 +28,12 @@
 -- o.bind("SUPER + H", nil, "voxtype record toggle")
 -- o.bind("SUPER + PERIOD", nil, "omarchy-shell shell toggle omarchy.emojis")
 
+-- Scrolling screenshot: select a region, then scroll it. Needs wayscrollshot (AUR
+-- wayscrollshot-bin), which has no launcher entry. Saves to ~/Pictures/wayscrollshot.
+-- The PATH prefix swaps in a grim wrapper (.config/wayscrollshot/grim) so shots
+-- aren't captured at 1x and blurry on scaled monitors.
+o.bind("CTRL + SHIFT + PRINT", "Scrolling screenshot", "pkill wayscrollshot || PATH=$HOME/.config/wayscrollshot:$PATH wayscrollshot")
+
 -- Same command as the Omarchy menu's Suspend entry.
 o.bind("CTRL + SUPER + F12", "Suspend", "systemctl suspend")
 

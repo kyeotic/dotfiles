@@ -1,0 +1,12 @@
+#!/bin/sh
+# grim wrapper for wayscrollshot, which is put first on PATH by the Hyprland binding
+# (.config/hypr/bindings.lua). wayscrollshot calls `grim -s 1`, which captures at
+# logical size and makes shots blurry on scaled (HiDPI) monitors. Dropping -s lets
+# grim use the output's real scale.
+for arg do
+  shift
+  if [ -n "$skip" ]; then skip=; continue; fi
+  if [ "$arg" = "-s" ]; then skip=1; continue; fi
+  set -- "$@" "$arg"
+done
+exec /usr/bin/grim "$@"

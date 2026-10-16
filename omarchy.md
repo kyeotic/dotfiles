@@ -27,6 +27,11 @@ into the repo, then re-run `scripts/stow`.
   - `hyprland.lua` sets `MOZ_WAKE_LOCK_TYPE=WaylandIdleInhibit` so Firefox video playback
     blocks the screensaver. By default Firefox uses the desktop portal, whose GTK backend
     does nothing on Hyprland.
+  - `bindings.lua` binds Ctrl+Shift+Print to `wayscrollshot` (scrolling screenshots,
+    which Omarchy's screenshot tool can't do). Install it per machine with
+    `yay -S wayscrollshot-bin`; it ships no launcher entry. wayscrollshot runs
+    `grim -s 1`, which captures at logical size (blurry at scale 1.5), so the binding
+    puts `.config/wayscrollshot/grim` first on PATH, a wrapper that drops `-s`.
   - `bindings.lua` forwards Discord push-to-talk keys: Left Alt via `pass`, and the Naga
     side button `mouse:276` is translated to F13 via `send_key_state`, since XWayland
     drops passed mouse buttons.
