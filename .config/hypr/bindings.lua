@@ -28,6 +28,9 @@
 -- o.bind("SUPER + H", nil, "voxtype record toggle")
 -- o.bind("SUPER + PERIOD", nil, "omarchy-shell shell toggle omarchy.emojis")
 
+-- Same command as the Omarchy menu's Suspend entry.
+o.bind("CTRL + SUPER + F12", "Suspend", "systemctl suspend")
+
 -- Discord push-to-talk. Wayland has no global key grabs, so forward the keys to the
 -- Discord window. Discord must run under XWayland for this, see
 -- home/.local/share/applications/discord.desktop.

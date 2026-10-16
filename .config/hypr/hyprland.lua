@@ -28,6 +28,12 @@ require("default.hypr.toggles")
 -- Add any other personal Hyprland configuration below.
 -- o.window("qemu", { workspace = "5" })
 
+-- Hyprdrive (overview + dock), only on machines where it's installed (see omarchy.md).
+-- Its installer skips appending its own require because this line already contains one.
+if package.searchpath("hypr.hyprdrive", package.path) then
+  require("hypr.hyprdrive")
+end
+
 -- MangoHud on every Vulkan app (feeds the bar gamestats widget); see MangoHud/MangoHud.conf
 hl.env("MANGOHUD", "1")
 

@@ -10,6 +10,10 @@
 # Required for `voxtype record toggle` and `voxtype status` commands.
 state_file = "auto"
 
+# Transcription engine. Parakeet needs the ONNX binary: voxtype setup onnx --enable
+# (switch back to whisper with --disable).
+engine = "parakeet"
+
 [hotkey]
 # Hotkey is configured in Hyprland. Default is Super + Ctrl + X
 enabled = false
@@ -37,6 +41,13 @@ pause_media = true
 #
 # Volume level (0.0 to 1.0)
 # volume = 0.7
+
+[parakeet]
+# English-only NVIDIA model, runs on CUDA. parakeet-tdt-0.6b-v2-int8 is the smaller CPU-friendly variant.
+model = "parakeet-tdt-0.6b-v2"
+
+# Load the model when recording starts and unload it when idle, so nothing sits in VRAM
+on_demand_loading = true
 
 [whisper]
 # Model to use for transcription
@@ -81,15 +92,17 @@ fallback_to_clipboard = true
 # 0 = fastest possible, increase if characters are dropped
 type_delay_ms = 1
 
-# Post-processing command (optional)
-# Pipe transcribed text through an external command for cleanup before output.
-# The command receives text on stdin and outputs processed text on stdout.
-# Useful for LLM-based text cleanup, grammar correction, filler word removal.
-# On any failure (timeout, error), falls back to original transcription.
-#
+# Start Ollama and load the cleanup model while you speak, so post-processing is fast.
+# ollama-cleanup stops the Ollama it started after 10 minutes without dictation.
+# Disabled for now; uncomment this and [output.post_process] below to re-enable.
+# pre_recording_command = "$HOME/.config/voxtype/ollama-cleanup warm"
+
+# Clean up punctuation, fillers and self-corrections with a local Ollama model.
+# On any failure (timeout, error), voxtype falls back to the original transcription.
+# One-time setup (and after changing its model): ~/.config/voxtype/ollama-cleanup setup
 # [output.post_process]
-# command = "ollama run llama3.2:1b 'Clean up this dictation. Fix grammar, remove filler words. Output only the cleaned text:'"
-# timeout_ms = 30000  # 30 second timeout (generous for LLM)
+# command = "$HOME/.config/voxtype/ollama-cleanup"
+# timeout_ms = 20000 # covers a cold start (Ollama launch + model load) if warm hasn't finished
 
 [output.notification]
 # Show notification when recording starts (hotkey pressed)
