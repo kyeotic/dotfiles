@@ -32,9 +32,11 @@ into the repo, then re-run `scripts/stow`.
     `yay -S wayscrollshot-bin`; it ships no launcher entry. wayscrollshot runs
     `grim -s 1`, which captures at logical size (blurry at scale 1.5), so the binding
     puts `.config/wayscrollshot/grim` first on PATH, a wrapper that drops `-s`.
-  - `bindings.lua` forwards Discord push-to-talk keys: Left Alt via `pass`, and the Naga
-    side button `mouse:276` is translated to F13 via `send_key_state`, since XWayland
-    drops passed mouse buttons.
+  - `bindings.lua` binds Discord push-to-talk (Left Alt and the Naga side button
+    `mouse:276`) to the portal global shortcut `discord:discord-push-to-talk`. Discord
+    only registers it while a PTT keybind exists in its settings (check with
+    `hyprctl globalshortcuts`). Forwarding keys with `pass`/`send_key_state` failed in
+    fullscreen Proton games, which grab the X keyboard.
 - **`omarchy/shell.json`**: bar and idle settings.
 - **`omarchy/bar/scripts/gamestats`** and **`MangoHud/MangoHud.conf`**: the game stats
   bar widget (see Game stats bar widget below).
@@ -196,7 +198,8 @@ dotfiles (`.config/MangoHud/`, `.config/omarchy/bar/scripts/gamestats`,
   HUD is hidden, so preset 1 is a transparent HUD instead. **Shift_R+F10** cycles to
   the full overlay (preset 2).
 - If a non-game Vulkan app shows up in the widget, add its process name to
-  `blacklist=` in `.config/MangoHud/MangoHud.conf` (mpv is already there).
+  `blacklist=` in `.config/MangoHud/MangoHud.conf` (mpv and Steam's shader
+  pre-compiler `fossilize_replay` are already there).
 - Logs go to `/tmp/mangohud/` (MangoHud can't expand `~`). The widget creates the
   folder and deletes logs idle for 30+ minutes.
 - **Keep `log_interval=0`.** Any other value makes MangoHud (0.8.4) log from a
