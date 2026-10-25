@@ -1,4 +1,5 @@
 alias dev="cd ~/dev"
+alias cdd="cd ~/dotfiles"
 alias a="argocd"
 alias k="kubectl"
 alias t="terraform"
