@@ -1,0 +1,77 @@
+#!/usr/bin/env python3
+# Turns a Steam Controller back button into a key Hyprland can bind (Discord push-to-talk).
+#
+# Steam Input can't do it: on the desktop it types through XTest (XWayland only), and in
+# games the Steam overlay injects keys straight into the game process, so Hyprland never
+# sees either. Instead this reads the controller's raw HID reports from the wireless
+# puck (hidraw allows several readers, so Steam keeps working) and mirrors the button
+# onto a uinput mouse's side button, which bindings.lua already binds as mouse:276 for
+# the Naga.
+#
+# Needs python-evdev, plus read access to the puck's /dev/hidraw* and write access to
+# /dev/uinput (both via the logind seat ACL). Runs as steam-ptt.service.
+
+import glob
+import os
+import select
+
+from evdev import UInput, ecodes
+
+PUCK_HID_ID = "000028DE:00001304"  # Valve Steam Controller Puck
+STATE_REPORT = 0x42
+# Found by capture: byte 2 holds face/back buttons (0x01 is A, 0x80 the back button
+# used here). Byte 5 is grip touch, which changes just from holding the controller.
+BUTTON_BYTE, BUTTON_MASK = 2, 0x80
+OUTPUT_KEY = ecodes.BTN_EXTRA  # mouse:276
+RESCAN_SECONDS = 5
+# libinput only treats a device as a mouse if it has a left button and motion axes.
+MOUSE_CAPABILITIES = {
+    ecodes.EV_KEY: [ecodes.BTN_LEFT, ecodes.BTN_RIGHT, ecodes.BTN_MIDDLE, OUTPUT_KEY],
+    ecodes.EV_REL: [ecodes.REL_X, ecodes.REL_Y],
+}
+
+
+def puck_nodes():
+    nodes = []
+    for path in glob.glob("/sys/class/hidraw/hidraw*/device/uevent"):
+        with open(path) as f:
+            if PUCK_HID_ID in f.read():
+                nodes.append("/dev/" + path.split("/")[4])
+    return nodes
+
+
+def main():
+    ui = UInput(MOUSE_CAPABILITIES, name="steam-ptt")
+    fds = {}  # fd -> node
+    held = set()  # fds whose controller has the button down
+
+    def set_held(fd, down):
+        was = bool(held)
+        (held.add if down else held.discard)(fd)
+        if bool(held) != was:
+            ui.write(ecodes.EV_KEY, OUTPUT_KEY, int(bool(held)))
+            ui.syn()
+
+    while True:
+        for node in set(puck_nodes()) - set(fds.values()):
+            try:
+                fds[os.open(node, os.O_RDONLY | os.O_NONBLOCK)] = node
+            except OSError:
+                pass
+        ready, _, _ = select.select(list(fds), [], [], RESCAN_SECONDS)
+        for fd in ready:
+            try:
+                report = os.read(fd, 64)
+            except BlockingIOError:
+                continue
+            except OSError:  # puck unplugged
+                set_held(fd, False)
+                os.close(fd)
+                del fds[fd]
+                continue
+            if len(report) > BUTTON_BYTE and report[0] == STATE_REPORT:
+                set_held(fd, bool(report[BUTTON_BYTE] & BUTTON_MASK))
+
+
+if __name__ == "__main__":
+    main()

@@ -47,5 +47,7 @@ local discord_ptt = "discord:discord-push-to-talk"
 -- Left Alt still reaches the focused app. ignore_mods: on release Alt is itself a
 -- held mod, so without it the release never matches and Discord stays transmitting.
 o.bind("ALT_L", "Discord push-to-talk", hl.dsp.global(discord_ptt), { non_consuming = true, ignore_mods = true })
--- Razer Naga side button.
+-- Razer Naga side button. Also the Steam Controller back button: steam-ptt.service
+-- (config-linux/steam-ptt) reads it from the controller's raw HID reports and presses
+-- this button on a virtual mouse, since Steam Input's key output never reaches Hyprland.
 o.bind("mouse:276", "Discord push-to-talk", hl.dsp.global(discord_ptt))

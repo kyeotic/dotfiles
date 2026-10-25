@@ -32,11 +32,12 @@ into the repo, then re-run `scripts/stow`.
     `yay -S wayscrollshot-bin`; it ships no launcher entry. wayscrollshot runs
     `grim -s 1`, which captures at logical size (blurry at scale 1.5), so the binding
     puts `.config/wayscrollshot/grim` first on PATH, a wrapper that drops `-s`.
-  - `bindings.lua` binds Discord push-to-talk (Left Alt and the Naga side button
-    `mouse:276`) to the portal global shortcut `discord:discord-push-to-talk`. Discord
-    only registers it while a PTT keybind exists in its settings (check with
-    `hyprctl globalshortcuts`). Forwarding keys with `pass`/`send_key_state` failed in
-    fullscreen Proton games, which grab the X keyboard.
+  - `bindings.lua` binds Discord push-to-talk (Left Alt, the Naga side button
+    `mouse:276`, which the Steam Controller bridge also presses) to the portal global shortcut
+    `discord:discord-push-to-talk`. Discord only registers it while a PTT keybind exists
+    in its settings (check with `hyprctl globalshortcuts`). Forwarding keys with
+    `pass`/`send_key_state` failed in fullscreen Proton games, which grab the X keyboard.
+    See Steam Controller push-to-talk below for the controller.
 - **`omarchy/shell.json`**: bar and idle settings.
 - **`omarchy/bar/scripts/gamestats`** and **`MangoHud/MangoHud.conf`**: the game stats
   bar widget (see Game stats bar widget below).
@@ -52,6 +53,32 @@ into the repo, then re-run `scripts/stow`.
 - **`.local/share/applications/discord.desktop`** overrides the `discord` package's
   launcher to force XWayland (`--ozone-platform=x11`). Omarchy's
   `ELECTRON_OZONE_PLATFORM_HINT=wayland` otherwise breaks Discord keybind recording.
+
+### Steam Controller push-to-talk (`config-linux/steam-ptt/`, Linux only)
+
+A Steam Controller back button can't be bound through Steam Input: its keyboard output
+never reaches Hyprland. On the desktop Steam types with XTest (XWayland only), and in
+games the Steam overlay injects keys straight into the game process. So `steam-ptt`
+reads the button from the controller's raw HID reports instead (all `/dev/hidraw*` of the
+wireless puck, `28DE:1304`; hidraw allows several readers, so Steam is unaffected) and
+presses the side button (`BTN_EXTRA`) of a virtual mouse (uinput device `steam-ptt`),
+so the Naga's existing `mouse:276` bind handles it. The device also declares left/right/
+middle buttons and X/Y motion, which libinput needs to treat it as a mouse; it never
+moves. It needs no Steam mapping and works in every game; leave the back button
+unbound in Steam.
+
+The button is report `0x42`, byte 2, mask `0x80` (byte 2 `0x01` is A), found by capture.
+To use a different back button, record `/dev/hidraw*` while pressing it and change
+`BUTTON_BYTE`/`BUTTON_MASK`. A wired controller has a different product ID and isn't
+covered.
+
+Per machine:
+```
+pkexec pacman -S --needed python-evdev
+systemctl --user daemon-reload && systemctl --user enable --now steam-ptt.service
+```
+Reading `/dev/hidraw*` and writing `/dev/uinput` rely on the logind seat ACL
+(`getfacl /dev/hidraw3 /dev/uinput`).
 
 ### `config-linux/omarchy/` (Linux only)
 
