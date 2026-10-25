@@ -6,6 +6,8 @@ if [[ -f "/opt/homebrew/bin/brew" ]]; then
   eval "$(/opt/homebrew/bin/brew shellenv zsh)"
 elif [[ -f "/home/linuxbrew/.linuxbrew/bin/brew" ]]; then
   eval "$(/home/linuxbrew/.linuxbrew/bin/brew shellenv zsh)"
+  # Move brew behind system dirs so AUR/makepkg builds don't pick up brew's python, compilers, or libs
+  path=(${path:#$HOMEBREW_PREFIX/(s|)bin} $HOMEBREW_PREFIX/bin $HOMEBREW_PREFIX/sbin)
 fi
 
 # Add deno completions to search path

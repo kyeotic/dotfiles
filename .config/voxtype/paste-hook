@@ -8,11 +8,16 @@
 #
 # Voxtype runs the post hook on cancel/error too; the marker (only written by the pre hook,
 # which only runs right before real output) keeps those from pasting stale clipboard.
+#
+# Back-to-back dictations into the same window get a space between them: if the last paste
+# went to this window within $gap seconds, the transcript is pasted with a leading space.
 
 dir="${XDG_RUNTIME_DIR:-/tmp}/voxtype"
 marker="$dir/paste-pending"
 saved="$dir/paste-saved"
 saved_type="$dir/paste-saved-type"
+last="$dir/last-paste"
+gap=60
 
 # Same terminal detection and down/up split as Omarchy's universal_clipboard_shortcut.
 paste_lua='
@@ -43,7 +48,17 @@ case "$1" in
   post)
     [[ -e $marker ]] || exit 0
     rm -f "$marker"
+    window=$(hyprctl activewindow -j 2>/dev/null | jq -r '.address // empty')
+    now=$(date +%s)
+    if [[ -n $window && -s $last ]]; then
+      read -r last_window last_time <"$last"
+      if [[ $last_window == "$window" ]] && (( now - last_time <= gap )); then
+        text=$(wl-paste --no-newline 2>/dev/null)
+        [[ -n $text && $text != [[:space:]]* ]] && printf ' %s' "$text" | wl-copy
+      fi
+    fi
     hyprctl eval "$paste_lua" >/dev/null
+    [[ -n $window ]] && printf '%s %s\n' "$window" "$now" >"$last"
     if [[ -s $saved_type ]]; then
       # Give the app time to read the clipboard before putting the old contents back.
       sleep 0.3

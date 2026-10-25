@@ -40,7 +40,8 @@ into the repo, then re-run `scripts/stow`.
 - **`omarchy/shell.json`**: bar and idle settings.
 - **`omarchy/bar/scripts/gamestats`** and **`MangoHud/MangoHud.conf`**: the game stats
   bar widget (see Game stats bar widget below).
-- **`voxtype/`**: dictation. `paste-hook` pastes output per window type, and
+- **`voxtype/`**: dictation. `paste-hook` pastes output per window type (and adds a
+  leading space when the previous dictation went to the same window within 60s), and
   `ollama-cleanup` post-processes transcripts with a local Ollama model (see Dictation
   below).
 - **Neovim isn't in the repo.** Omarchy's `omarchy-nvim` package owns `~/.config/nvim`
