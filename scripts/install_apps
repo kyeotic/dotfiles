@@ -80,20 +80,21 @@ fi
 
 # Linux: install Nerd Fonts (Linuxbrew doesn't support casks)
 if [[ "$(uname)" == "Linux" ]]; then
-    if ! fc-list 2>/dev/null | grep -qi "Hack Nerd Font"; then
-        echo "Installing Nerd Fonts (Hack, Meslo, FiraCode)..."
-        FONTS_DIR="$HOME/.local/share/fonts"
-        mkdir -p "$FONTS_DIR"
-        for font in Hack Meslo FiraCode; do
+    FONTS_DIR="$HOME/.local/share/fonts"
+    for font in Hack Meslo FiraCode JetBrainsMono; do
+        # Omarchy ships JetBrainsMono; skip any family that is already present
+        if ! fc-list 2>/dev/null | grep -i "$font" | grep -qi "Nerd Font"; then
+            echo "Installing ${font} Nerd Font..."
+            mkdir -p "$FONTS_DIR"
             tmp=$(mktemp -d)
             curl -fsSL "https://github.com/ryanoasis/nerd-fonts/releases/latest/download/${font}.zip" \
                 -o "$tmp/${font}.zip"
             unzip -q "$tmp/${font}.zip" -d "$tmp/${font}"
             find "$tmp/${font}" -name "*.ttf" -o -name "*.otf" | xargs -I{} cp {} "$FONTS_DIR/"
             rm -rf "$tmp"
-        done
-        fc-cache -fv >/dev/null 2>&1
-    fi
+            fc-cache -f >/dev/null 2>&1
+        fi
+    done
 
     # Start syncthing as a systemd user service (installed via Brewfile.linux) — skip on WSL
     if ! grep -qi microsoft /proc/version 2>/dev/null; then

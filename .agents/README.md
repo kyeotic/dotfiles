@@ -28,6 +28,18 @@ safe. Then fill in the SKILL.md.
 `scripts/agent-skill link` relinks everything; `scripts/stow` calls it, so the normal
 re-link flow still works.
 
+## Renaming a skill
+
+```sh
+scripts/agent-skill rename <old> <new>
+```
+
+Useful when a skill installed by another tool (a plugin, a synced directory) lands in
+`~/.claude/skills` or `~/.codex/skills` under the same name as one of ours. It moves
+`.agents/skills/<old>` to `<new>`, updates `name:` in the SKILL.md frontmatter, re-points
+the per-agent symlinks, removes the old link from each agent's config dir (only if it was
+ours), and relinks under the new name. Nothing else at the old path is touched.
+
 A skill that genuinely cannot be shared can live directly in `claude/skills/` or
 `codex/skills/` as a real directory instead of a symlink.
 

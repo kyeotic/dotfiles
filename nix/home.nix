@@ -52,10 +52,12 @@ in
     nerd-fonts.hack
     nerd-fonts.meslo-lg
     nerd-fonts.fira-code
+    nerd-fonts.jetbrains-mono
   ] ++ lib.optionals (isDarwin) [
     nerd-fonts.hack
     nerd-fonts.meslo-lg
     nerd-fonts.fira-code
+    nerd-fonts.jetbrains-mono
   ];
 
   fonts.fontconfig.enable = !isWSL;

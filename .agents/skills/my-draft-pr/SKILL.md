@@ -1,12 +1,12 @@
 ---
-name: draft-pr
-description: Push changes and create a draft PR whose body follows /pr-description (visual-first, short prose)
+name: my-draft-pr
+description: Push changes and create a draft PR whose body follows /my-pr-description (visual-first, short prose)
 disable-model-invocation: true
 ---
 
 > **Graphite users**: Use `/gt-submit` instead for stack-aware PR submission.
 
-Pushes changes and creates a draft PR using the PR template, with the body written by `/pr-description` (requires gh CLI to be configured).
+Pushes changes and creates a draft PR using the PR template, with the body written by `/my-pr-description` (requires gh CLI to be configured).
 
 # Command instructions
 
@@ -43,7 +43,7 @@ git push -u origin $CURRENT_BRANCH
 
 Using the chat context and diff, write a PR description following @.github/pull_request_template.md.
 
-Write the body by following the `pr-description` skill (`.agents/skills/pr-description/SKILL.md`): its **Describe the end state only**, **Show, don't tell**, and **Words** sections. Skip its diff and output steps; this skill has already gathered the diff and handles creating the PR.
+Write the body by following the `my-pr-description` skill (`.agents/skills/my-pr-description/SKILL.md`): its **Describe the end state only**, **Show, don't tell**, and **Words** sections. Skip its diff and output steps; this skill has already gathered the diff and handles creating the PR.
 
 Keep the list of media paths you produce: Step 4 passes them to `gh pr create` as `--attach` flags. In a Conductor cloud workspace `--attach` is refused (`ghu_` token), so leave it off and follow **Choose the upload path** in the `pr-media` skill.
 

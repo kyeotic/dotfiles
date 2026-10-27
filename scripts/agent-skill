@@ -4,6 +4,7 @@
 #
 #   agent-skill link                    link every enabled skill into its agent's config dir
 #   agent-skill add <name> [agent...]   create the skill if missing, enable it, link it
+#   agent-skill rename <old> <new>      rename a skill and relink it for every agent
 #
 # Skills live once in .agents/skills/<name>/. Each agent opts in via a symlink in
 # .agents/<agent>/skills/. Default agents: claude codex.
@@ -15,7 +16,7 @@ AGENTS_DIR="$DOTFILES/.agents"
 DEFAULT_AGENTS=(claude codex)
 
 usage() {
-  sed -n '3,10p' "$0" | sed 's/^# \{0,1\}//'
+  sed -n '3,11p' "$0" | sed 's/^# \{0,1\}//'
   exit "${1:-0}"
 }
 
@@ -103,6 +104,50 @@ SKILL
   cmd_link "${agents[@]}"
 }
 
+cmd_rename() {
+  local old=${1:-} new=${2:-}
+  [[ -n $old && -n $new ]] || usage 1
+
+  local src="$AGENTS_DIR/skills/$old"
+  local dst="$AGENTS_DIR/skills/$new"
+  [[ -d $src ]] || { echo "No such skill: $src" >&2; exit 1; }
+  [[ ! -e $dst ]] || { echo "Skill already exists: $dst" >&2; exit 1; }
+
+  mv "$src" "$dst"
+  echo "Moved $src -> $dst"
+
+  # Keep the frontmatter name in step with the directory name. -i.bak + rm because
+  # in-place sed differs between macOS and GNU.
+  if [[ -f $dst/SKILL.md ]]; then
+    sed -i.bak "2,/^---\$/s/^name: $old\$/name: $new/" "$dst/SKILL.md" && rm -f "$dst/SKILL.md.bak"
+  fi
+
+  # Re-point every agent that had it enabled. Drop the old link in the agent's real
+  # skills dir only if it was ours; a foreign skill of the same name is left alone,
+  # since that is usually the conflict being worked around.
+  local agents=() agent_dir agent link real
+  for agent_dir in "$AGENTS_DIR"/*/; do
+    agent_dir=${agent_dir%/}
+    agent=$(basename "$agent_dir")
+    link="$agent_dir/skills/$old"
+    [[ -L $link ]] || continue
+
+    rm "$link"
+    ln -sfn "../../skills/$new" "$agent_dir/skills/$new"
+    agents+=("$agent")
+
+    real="$(skills_dir_for "$agent")/$old"
+    if [[ -L $real && $(readlink "$real") == "$agent_dir/skills/$old" ]]; then
+      rm "$real"
+    fi
+    echo "Renamed for $agent"
+  done
+
+  if [[ ${#agents[@]} -gt 0 ]]; then
+    cmd_link "${agents[@]}"
+  fi
+}
+
 case "${1:-}" in
   link)
     shift
@@ -111,6 +156,10 @@ case "${1:-}" in
   add)
     shift
     cmd_add "$@"
+    ;;
+  rename)
+    shift
+    cmd_rename "$@"
     ;;
   -h | --help | help) usage ;;
   *) usage 1 ;;

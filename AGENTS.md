@@ -64,7 +64,7 @@ macOS GUI apps are in `Brewfile` (casks only), applied by `scripts/install_apps`
 - **`nix/`** - nix-darwin flake for macOS (`flake.nix`, `home.nix`, `darwin.nix`, `switch`)
 - **`Brewfile.linux`** - Homebrew CLI packages for Linux (and macOS via install_apps)
 - **`Brewfile`** - Homebrew casks for macOS GUI apps
-- **`.agents/`** - Agent-agnostic coding-agent skills (`.agents/skills/`), symlinked per-agent into `~/.claude/skills` and `~/.codex/skills`; add one with `scripts/agent-skill add <name>`, see `.agents/README.md`
+- **`.agents/`** - Agent-agnostic coding-agent skills (`.agents/skills/`), symlinked per-agent into `~/.claude/skills` and `~/.codex/skills`; add one with `scripts/agent-skill add <name>`, rename one with `scripts/agent-skill rename <old> <new>`, see `.agents/README.md`
 
 ## Key Conventions
 

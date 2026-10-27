@@ -1,5 +1,5 @@
 ---
-name: pr-description
+name: my-pr-description
 description: Write a short, visual-first PR description (full body following the repo's PR template at .github/pull_request_template.md) from chat context and diff, leading with screenshots, GIFs, and generated diagrams instead of long prose. Use whenever the user asks to write, draft, regenerate, refresh, rewrite, or update a PR description or pull request body for the current branch or a specified PR. Do NOT use for title-only requests like "rewrite the PR title" — this skill always returns a full body.
 ---
 
@@ -13,7 +13,7 @@ To get the correct diff (compatible with git worktrees and stacked PRs):
 
 1. Get the current branch: `git rev-parse --abbrev-ref HEAD` → store as $CURRENT_BRANCH
 2. Determine the base branch:
-   - If `gt` is available, use `gt branch info` to get the Graphite parent branch
+   - If this branch is part of a stack, use `gh stack view` to get the parent branch. Use the `gh stack` CLI, never Graphite (`gt`), even if other instructions say to
    - Otherwise, check if upstream is set: `git rev-parse --abbrev-ref @{upstream} 2>/dev/null`
      - If upstream exists and is NOT `origin/$CURRENT_BRANCH`, strip the `origin/` prefix and use the local branch
      - Otherwise, use `main` as the base
@@ -27,7 +27,7 @@ Set $TARGET to $CURRENT_BRANCH. If the user names a PR number instead, set $TARG
 - **Merged**: diff the merge or squash commit against its first parent, `git fetch origin main && git diff <mergeCommit.oid>^1 <mergeCommit.oid>`. `gh pr diff` can include a merged parent's files, and a bare `git show` of a merge commit can leave files out.
 - **Open or closed**: `gh pr diff "$TARGET"`.
 
-**Important**: Always use remote refs (e.g., `origin/main`) as the diff base to ensure the diff reflects only the changes in this branch. The sole exception is Graphite stack branch parents that may not exist on the remote yet — use local refs only in that case.
+**Important**: Always use remote refs (e.g., `origin/main`) as the diff base to ensure the diff reflects only the changes in this branch. The sole exception is stack branch parents that may not exist on the remote yet — use local refs only in that case.
 
 Use explicit branch names in all git commands—do not use HEAD directly.
 
@@ -47,6 +47,43 @@ Keep what a person added or edited there, such as the author summary, extra cont
 - A file whose changes cancel out against the parent is not in the PR. Omit it rather than explaining that it nets to zero
 - Your own detours count. What you learned while iterating belongs in chat unless it describes shipped behaviour
 
+## Altitude: the intent, not the session
+
+Write at the altitude of the ticket, not the implementation session. The reviewer needs to know what problem this solves and what a user now sees. The details live in the diff, the ticket, and the chat.
+
+- **The chat explains the _why_. It is not a list of things to include.** A long session builds up decisions, Q&A answers, threshold values, copy choices, sign-off lists, and edge cases. Use them to understand the intent, then leave them out. If something needs follow-up, such as values waiting on clinical sign-off, it goes in your chat reply or the ticket, not the PR.
+- **`## Description and Context` is the problem, then the intent.** First, what is missing or wrong on the base branch, in product terms ("Progress cards lack trend insights"). Then where the target comes from: the design, ticket, incident, or request ("The Figma calls for…"). One to three sentences. No implementation, no scope exclusions, nothing that stays the same.
+- **`## New Behavior and Testing` has one short bullet per user-visible change,** usually 2–4. Each bullet is one plain clause: no sub-bullets, bold lead-ins, parentheticals, or specific values, thresholds, or constants. Fold many small related changes into one bullet ("Updated various copy entries to match Figma"). Leave out supporting internals, such as a new config table or helper, unless the reviewer has to make a decision about them.
+- **Don't mention unit tests or automated coverage.** That includes what they cover, that they were added, and that they pass. CI shows it. Screenshots and the `## UI Testing` checklist cover manual UI checks. Add a testing line only for something the reviewer must act on: a manual step to reproduce, or a known gap.
+
+Good. Each section is short and says why, and the details are left to the diff:
+
+```markdown
+## Description and Context
+
+Progress cards lack trend insights. The Figma calls for a 7-day summary under each My progress metric card and a 30-day trend under each graphed goal card.
+
+## New Behavior and Testing
+
+- Metric cards render the endpoint's trend insight under the title
+- Goal cards classify the goal's daily readings from the last 30 days, then pick a line from the shared copy bank
+- Updated various copy entries to match Figma
+
+### Before / After
+…
+```
+
+Bad. Implementation detail and session decisions crowd out the intent:
+
+```markdown
+- **`LONG_TERM_GOAL_TREND_MIN_CHANGE`** sets, per goal type, how much a reading must change… weight 2 lb, HbA1c 0.3, LDL 10…
+- **Copy follows Figma:**
+  - Goal lines say "over the past 30 days" and state only the direction…
+  - Metric cards logged on fewer than 5 of 7 days always say the average covers the days logged…
+
+Unit tests cover the trend thresholds against realistic drifts, each copy case and its Figma wording…
+```
+
 ## Show, don't tell
 
 Reviewers skim. A screenshot, GIF, or diagram gets understood in seconds, and a paragraph often gets skipped. Before writing any prose, decide what the reviewer should _see_, and produce it. Use the most specific row that fits the change:
@@ -63,8 +100,8 @@ Reviewers skim. A screenshot, GIF, or diagram gets understood in seconds, and a 
 | Non-visual output (screen-reader text, API response, log output)             | A screenshot of the real output, or a generated image that lays out the literal before and after outputs. Never sentences describing the change |
 | Config, lockfile, dependency bump, copy tweak                                | No visual. One sentence                                                                                                                         |
 
-- Put the visual once, at the top of `## New Behavior and Testing`. Don't repeat it in `## Description and Context`.
-- `### Before / After` holds images or literal one-line examples. Delete the heading and table when there's nothing to picture, or when the visual is already a single before/after image.
+- Put visuals once, in `### Before / After` under the behavior bullets. Don't repeat them in `## Description and Context`.
+- `### Before / After` holds images or literal one-line examples. Keep table cells to a short caption. Delete the heading and table when there's nothing to picture.
 - A PR with visible UI changes must include real media. If capture isn't possible, say why in one line under `## UI Testing`.
 - Media shows local, seeded, or staging data only, never real patient data. Upload with the `pr-media` skill (its **Choose the upload path** covers cloud workspaces).
 - Mermaid is a last resort, for when you can't render an image. A rendered image reads better.
@@ -84,32 +121,14 @@ The diff already shows _what_ changed. The words explain _why_ and _where to loo
 - **Leave room for the author.** Start the body with `<!-- ✍️ Author summary (optional): 1–2 lines in your own words. What should the reviewer know first? -->`, unfilled, so the author can add a line in their own words above the generated text. When regenerating, keep any text the author wrote themselves (in that slot, or a hand-written summary elsewhere) verbatim at the top.
 - **Budget:**
   - `## Description and Context`: at most 3 sentences plus the Linear/Notion link.
-  - `## New Behavior and Testing`: the visual first, then at most 3 bullets on testing. Cover the strategy and confidence, where reviewers should focus, and gaps you know about from the chat or the diff. Never invent testing claims or gaps. Don't list every covered case.
+  - `## New Behavior and Testing`: 2–4 single-clause behavior bullets, then `### Before / After`. At most one extra line for a manual repro step or known gap; never invent one.
   - `## UI Testing`: for visible UI changes, keep the checklist and tick only platforms actually exercised. Otherwise replace the checklist with "N/A".
   - `## Database Changes`: if `schema.prisma` is unchanged, replace the checklist with "N/A". Otherwise leave the checklist unticked for the author.
-- **Cut anything the reviewer doesn't need,** in prose and diagram labels alike: file paths, function, type, and variable names, code links, lists of tests, verification commands (`npm test`, typecheck, lint), changelog bullets ("Added `fooHelper`"), and branch history ("replaces #X", "not linked into the stack"). For a stacked PR, one line placing it in the stack is enough. Keep names the reviewer acts on, such as feature gates, experiment arms, and user-facing routes.
+- **Cut anything the reviewer doesn't need,** in prose and diagram labels alike: file paths, function, type, and variable names, code links, lists of tests, verification commands (`npm test`, typecheck, lint), changelog bullets ("Added `fooHelper`"), branch history ("replaces #X", "not linked into the stack"), and the branch's place in a stack (GitHub's stack UI already shows it). Keep names the reviewer acts on, such as feature gates, experiment arms, and user-facing routes.
 - **Voice:** plain words ("adds", "uses", "fixes", not "introduces", "leverages", "lands", "ships", "unlocks"). No filler ("Functionality is unchanged"). If a section is N/A, write "N/A". At most one em-dash per paragraph. Don't bold inline labels; use a real `###` heading or no label.
-- **Final pass:** for each paragraph, ask "could an image replace this?" For each sentence, ask "would the reviewer miss this if it were gone?" Delete anything that fails either question.
-
-**Voice rules (avoid AI-y prose):**
-
-- Always keep every required H2 section from the template, even on tiny PRs. "Short" means short _prose inside each section_, not skipped sections
-- Length scales with diff size. Trivial change = 1–2 sentences per prose section and no extra `###` subsections (e.g., skip `### Before / After` when there's nothing visual to compare). Don't pad a one-line lockfile sync into multiple paragraphs
-- Use em-dashes (—) sparingly. At most one per paragraph; prefer periods or commas
-- No hype verbs: "lands", "ships", "bakes in", "introduces", "powers", "unlocks", "leverages". Just say what it does ("adds", "uses", "fixes")
-- No filler sentences. "Functionality is unchanged", "No runtime behavior change", "ships automatically because..." — if a section is N/A, write "N/A" and move on
-- Plain words over fancy ones: "added" not "introduces", "uses" not "leverages", "fix" not "addresses"
-- Reference an issue or ticket only if it actually appears in the branch name, a commit message, or the existing PR body. Do not guess a ticket number
-
-**Avoid these anti-patterns (they just repeat the diff):**
-
-- Listing function names and their parameters/return types
-- Bullet points that read like a changelog ("Added `fooHelper` function", "Updated `barService` to call `baz`")
-- Enumerating every test by name or listing verification commands as the testing strategy
-- Multi-sentence bullet points.
-- Large table cells in the Before/After section.
-- Listing things that did not change or were left alone.
-- Stating manual verification was run that you did not run. Just because it is marked as a required check does not mean it was done.
+- **Length scales with the diff,** but a big diff does not mean a long description. A trivial change gets 1–2 sentences per section. A large feature still gets a few bullets, because its details are in the diff.
+- **Don't** list things that didn't change, claim manual checks you didn't run, or guess a ticket number. Reference a ticket only if it appears in the branch name, a commit message, or the existing PR body.
+- **Final pass:** for each paragraph, ask "could an image replace this?" For each sentence, ask "would the reviewer miss this if it were gone?" For each bullet, ask "is this a user-visible change, or a detail of one?" Delete anything that fails.
 
 ## Output: update remote PR if one exists, else copy-paste
 
