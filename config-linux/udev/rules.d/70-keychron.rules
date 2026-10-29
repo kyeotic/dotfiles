@@ -1,0 +1,3 @@
+# Let the desktop user open Keychron raw HID (launcher.keychron.com / WebHID).
+# Must sort before 73-seat-late.rules, which turns the uaccess tag into an ACL.
+KERNEL=="hidraw*", SUBSYSTEM=="hidraw", ATTRS{idVendor}=="3434", TAG+="uaccess"

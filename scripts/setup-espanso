@@ -47,6 +47,23 @@ if [[ "${XDG_SESSION_TYPE:-}" != "x11" ]]; then
   if ! getcap "$ESPANSO_BIN" | grep -q cap_dac_override; then
     sudo setcap "cap_dac_override+p" "$ESPANSO_BIN"
   fi
+
+  # Reinstalling the binary drops the capability, so re-apply it after every upgrade
+  if [[ -n "${PKG:-}" && ! -f /etc/pacman.d/hooks/espanso-setcap.hook ]]; then
+    sudo mkdir -p /etc/pacman.d/hooks
+    sudo tee /etc/pacman.d/hooks/espanso-setcap.hook >/dev/null <<EOF
+[Trigger]
+Operation = Install
+Operation = Upgrade
+Type = Package
+Target = $PKG
+
+[Action]
+Description = Granting espanso cap_dac_override to read /dev/input...
+When = PostTransaction
+Exec = /usr/bin/setcap cap_dac_override+p $ESPANSO_BIN
+EOF
+  fi
 fi
 
 if ! espanso service check >/dev/null 2>&1; then
@@ -57,4 +74,10 @@ if espanso status >/dev/null 2>&1; then
   espanso restart
 else
   espanso start
+fi
+
+# espanso goes deaf after the keyboard is reset on resume; restart it after every sleep
+if [[ "${XDG_SESSION_TYPE:-}" != "x11" ]]; then
+  systemctl --user daemon-reload
+  systemctl --user enable --now espanso-resume.service
 fi

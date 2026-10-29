@@ -102,6 +102,19 @@ Reading `/dev/hidraw*` and writing `/dev/uinput` rely on the logind seat ACL
   terminal configs and `vscode.json` are dropped) and `omarchy theme update` never
   pulls over it.
 
+### udev rules (`config-linux/udev/rules.d/`, installed on Omarchy)
+
+On Omarchy, `scripts/install_apps` copies each `*.rules` file here into
+`/etc/udev/rules.d/` when it is missing or has changed, then reloads udev and re-triggers
+devices. It copies rather than links because udev can read rules before `/home` is
+mounted. Stow also links the dir into `~/.config/udev/`, which nothing reads.
+
+- **`70-keychron.rules`**: tags Keychron (`3434`) hidraw nodes `uaccess` so
+  launcher.keychron.com (WebHID) can open the keyboard. Without it the browser lists the
+  device but the open fails (red "HID Device Connected【K】" toast) because the nodes are
+  root-only. The file must sort before `73-seat-late.rules`, which turns the tag into an ACL.
+  Check with `getfacl /dev/hidrawN`.
+
 ## Monitors (`~/.config/hypr/monitors.lua`, machine-local)
 
 `monitors.lua` is deliberately not in the repo. Omarchy installs a default one.

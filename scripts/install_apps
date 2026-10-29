@@ -121,6 +121,23 @@ if [[ "$(uname)" == "Linux" ]]; then
         fi
     fi
 
+    # Omarchy: install udev rules from config-linux/udev (e.g. Keychron WebHID access).
+    # Copied, not symlinked: udev can read rules before /home is mounted
+    if command -v omarchy >/dev/null 2>&1; then
+        UDEV_CHANGED=0
+        for rule in "$HOME"/dotfiles/config-linux/udev/rules.d/*.rules; do
+            dest="/etc/udev/rules.d/$(basename "$rule")"
+            if ! cmp -s "$rule" "$dest"; then
+                sudo install -m 644 "$rule" "$dest"
+                UDEV_CHANGED=1
+            fi
+        done
+        if [[ $UDEV_CHANGED == 1 ]]; then
+            sudo udevadm control --reload-rules
+            sudo udevadm trigger
+        fi
+    fi
+
     # Discord flatpak: grant access to the secret service so login tokens survive reboots
     if flatpak list --app 2>/dev/null | grep -q com.discordapp.Discord; then
         flatpak override --user --talk-name=org.freedesktop.secrets com.discordapp.Discord

@@ -1,0 +1,13 @@
+[Unit]
+Description=Restart espanso after resume from sleep
+After=espanso.service
+
+# espanso reads /dev/input directly on Wayland and goes deaf when the keyboard is reset
+# on resume, so restart it whenever logind reports PrepareForSleep(false)
+[Service]
+ExecStart=/bin/sh -c 'gdbus monitor --system --dest org.freedesktop.login1 --object-path /org/freedesktop/login1 | while read -r line; do case "$$line" in *"PrepareForSleep (false"*) sleep 2; systemctl --user restart espanso.service ;; esac; done'
+Restart=always
+RestartSec=3
+
+[Install]
+WantedBy=default.target
