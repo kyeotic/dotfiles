@@ -101,6 +101,16 @@ Reading `/dev/hidraw*` and writing `/dev/uinput` rely on the logind seat ACL
   as the user's own, so it isn't restricted like a git-cloned theme (whose `.lua`,
   terminal configs and `vscode.json` are dropped) and `omarchy theme update` never
   pulls over it.
+- **`plugins/kyeotic.audio`**: a clone of the built-in `omarchy.audio` popup in which the
+  scroll wheel scrolls the panel instead of changing the slider under the pointer. The
+  handler is in the shared `Ui/PanelSlider.qml`, which has no setting to turn it off, so
+  the clone adds `AudioSlider.qml` (that file minus `onWheel`, plus `import qs.Ui`) and
+  uses it at the three slider sites in `Panel.qml`. It also lets the popup grow to half the
+  monitor before it scrolls (upstream caps it at `Style.space(560)`). Those are the only
+  differences from upstream. Scrolling on the bar icon still changes the master volume. `shell.json` names
+  `kyeotic.audio`, so run `scripts/stow` on a new machine or the bar has no audio widget.
+  The id is fixed in the repo and doesn't follow `$USER`. Edits to the stowed plugin don't
+  hot-reload, and neither does `rescanPlugins`, so run `omarchy restart shell`. See On update.
 
 ### udev rules (`config-linux/udev/rules.d/`, installed on Omarchy)
 
@@ -395,6 +405,14 @@ Things to check after updating Omarchy (`omarchy update`). Check the version wit
 `omarchy version`.
 
 - **After a Hyprland update: rebuild Hyprdrive** (see above) if it fails with a version mismatch.
+
+- **Re-sync `kyeotic.audio`.** A clone gets no upstream fixes. Compare it with the package
+  (`config-linux/omarchy/plugins/kyeotic.audio/` against
+  `/usr/share/omarchy/shell/plugins/panels/audio/`, and `AudioSlider.qml` against
+  `/usr/share/omarchy/shell/Ui/PanelSlider.qml`). If upstream changed, copy `Panel.qml` and
+  `Model.js` again, rename the three `PanelSlider` uses and re-apply the height cap. Once
+  [#17105](https://github.com/omacom/omarchy/issues/17105) is fixed in a release, delete the
+  clone and put `omarchy.audio` back in `shell.json`.
 
 - **Past 4.0.4: remove the VS Code theme reload hook.** Omarchy 4.0.4's generated
   "Omarchy" VS Code theme doesn't reload when the theme changes

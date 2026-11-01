@@ -69,6 +69,7 @@ macOS GUI apps are in `Brewfile` (casks only), applied by `scripts/install_apps`
 ## Key Conventions
 
 - Shell config is split across `.zshrc` (main), `.zsh_aliases` (aliases), `.zsh_functions` (functions), `.zsh_git` (git helpers), and `.starship-rc` (prompt env setup)
+- `.zsh_aliases` and `.zsh_git` load only in interactive shells, so coding agents get real commands: Claude Code builds its shell snapshot with `zsh -c -l`, which still sources `.zshrc`. Keep PATH and env setup out of those two files, since agent shells never load them. A shell's snapshot is taken at session start, so changes apply to new sessions
 - `.starship-rc` sources nix-daemon.sh on macOS, initializes starship, sets up zsh-autosuggestions and completions from `$(brew --prefix)/share/`
 - Platform detection via `uname` (Darwin vs Linux); no NixOS-specific branches remain
 - Username detection via `whoami` selects between personal (`kyeotic`) and work (`tkye`) profiles on macOS

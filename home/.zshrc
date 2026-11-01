@@ -18,8 +18,9 @@ if [[ ":$FPATH:" != *":$HOME/.zsh/completions:"* ]]; then export FPATH="$HOME/.z
 
 # Shared Dotfiles
 if [[ -a ~/.zsh_functions ]]; then source ~/.zsh_functions; fi
-if [[ -a ~/.zsh_aliases ]]; then source ~/.zsh_aliases; fi
-if [[ -a ~/.zsh_git ]]; then source ~/.zsh_git; fi
+# Interactive only, so agent shells (`zsh -c -l`) get real commands instead of aliases
+if [[ -o interactive && -a ~/.zsh_aliases ]]; then source ~/.zsh_aliases; fi
+if [[ -o interactive && -a ~/.zsh_git ]]; then source ~/.zsh_git; fi
 if [[ -a ~/.zsh_just_completions ]]; then source ~/.zsh_just_completions; fi
 
 # Allow local-machine-only configuration
