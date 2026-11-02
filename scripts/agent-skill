@@ -1,22 +1,30 @@
 #!/usr/bin/env bash
 
-# Manage agent-agnostic skills in .agents/.
+# Manage agent-agnostic skills in one or more .agents/ roots.
 #
-#   agent-skill link                    link every enabled skill into its agent's config dir
-#   agent-skill add <name> [agent...]   create the skill if missing, enable it, link it
-#   agent-skill rename <old> <new>      rename a skill and relink it for every agent
+#   agent-skill link                              link every enabled skill into its agent's config dir
+#   agent-skill add [--root <dir>] <name> [agent...]   create the skill if missing, enable it, link it
+#   agent-skill rename [--root <dir>] <old> <new>      rename a skill and relink it for every agent
+#   agent-skill roots                             print the roots in precedence order
 #
-# Skills live once in .agents/skills/<name>/. Each agent opts in via a symlink in
-# .agents/<agent>/skills/. Default agents: claude codex.
+# Skills live once in <root>/skills/<name>/. Each agent opts in via a symlink in
+# <root>/<agent>/skills/. Default agents: claude codex.
+#
+# Roots come from AGENT_SKILL_ROOTS, a colon-separated list of .agents dirs in precedence
+# order: later roots win when two hold a skill of the same name. Default is just
+# $DOTFILES/.agents. Set it in ~/.localrc to add a private root, e.g.
+#   export AGENT_SKILL_ROOTS="$HOME/dotfiles/.agents:$HOME/dev/tkye-nourish/.agents"
 
 set -eu
 
 DOTFILES="${DOTFILES:-$HOME/dotfiles}"
-AGENTS_DIR="$DOTFILES/.agents"
 DEFAULT_AGENTS=(claude codex)
 
+ROOTS=()
+IFS=: read -r -a ROOTS <<< "${AGENT_SKILL_ROOTS:-$DOTFILES/.agents}"
+
 usage() {
-  sed -n '3,11p' "$0" | sed 's/^# \{0,1\}//'
+  sed -n '3,16p' "$0" | sed 's/^# \{0,1\}//'
   exit "${1:-0}"
 }
 
@@ -29,11 +37,23 @@ skills_dir_for() {
   esac
 }
 
-# Link .agents/<agent>/skills/* into the agent's real skills dir. Per-skill rather than
-# the whole directory, because those dirs also hold skills installed by other tools.
+# Every agent dir that exists under any root, deduplicated.
+all_agents() {
+  local root dir
+  for root in "${ROOTS[@]}"; do
+    for dir in "$root"/*/; do
+      dir=${dir%/}
+      [[ -d $dir/skills ]] && basename "$dir"
+    done
+  done | sort -u
+}
+
+# Link <root>/<agent>/skills/* into the agent's real skills dir. Per-skill rather than the
+# whole directory, because those dirs also hold skills installed by other tools. ln -sfn
+# overwrites, so calling this for each root in order gives later roots precedence.
 link_agent() {
-  local agent=$1
-  local src="$AGENTS_DIR/$agent/skills"
+  local root=$1 agent=$2
+  local src="$root/$agent/skills"
   local tgt
   tgt=$(skills_dir_for "$agent")
 
@@ -53,13 +73,43 @@ link_agent() {
 }
 
 cmd_link() {
-  local agent
-  for agent in "$@"; do
-    link_agent "$agent"
+  local root agent
+  for root in "${ROOTS[@]}"; do
+    [[ -d $root ]] || { echo "Skipping missing root: $root"; continue; }
+    for agent in "$@"; do
+      link_agent "$root" "$agent"
+    done
   done
 }
 
+# Relink everything, so a change in one root (rename, removal) lets a shadowed skill from a
+# lower-precedence root show through again.
+relink_all() {
+  local agents=()
+  while IFS= read -r a; do agents+=("$a"); done < <(all_agents)
+  [[ ${#agents[@]} -gt 0 ]] && cmd_link "${agents[@]}"
+  return 0
+}
+
+# Parse a leading --root <dir> (or --root=<dir>) into $ROOT and shift it off. Default: first root.
+ROOT=""
+ROOT_GIVEN=""
+parse_root() {
+  ROOT=${ROOTS[0]}
+  REST=()
+  while [[ $# -gt 0 ]]; do
+    case $1 in
+      --root) ROOT=$2; ROOT_GIVEN=1; shift 2 ;;
+      --root=*) ROOT=${1#--root=}; ROOT_GIVEN=1; shift ;;
+      *) REST+=("$1"); shift ;;
+    esac
+  done
+  ROOT=${ROOT%/}
+}
+
 cmd_add() {
+  parse_root "$@"
+  set -- "${REST[@]+"${REST[@]}"}"
   local name=${1:-}
   [[ -n $name ]] || usage 1
   shift
@@ -67,7 +117,7 @@ cmd_add() {
   local agents=("$@")
   [[ ${#agents[@]} -gt 0 ]] || agents=("${DEFAULT_AGENTS[@]}")
 
-  local skill="$AGENTS_DIR/skills/$name"
+  local skill="$ROOT/skills/$name"
   if [[ -d $skill ]]; then
     echo "Skill exists: $skill"
   else
@@ -96,20 +146,35 @@ SKILL
 
   local agent
   for agent in "${agents[@]}"; do
-    mkdir -p "$AGENTS_DIR/$agent/skills"
-    ln -sfn "../../skills/$name" "$AGENTS_DIR/$agent/skills/$name"
+    mkdir -p "$ROOT/$agent/skills"
+    ln -sfn "../../skills/$name" "$ROOT/$agent/skills/$name"
     echo "Enabled for $agent"
   done
 
-  cmd_link "${agents[@]}"
+  relink_all
 }
 
 cmd_rename() {
+  parse_root "$@"
+  set -- "${REST[@]+"${REST[@]}"}"
   local old=${1:-} new=${2:-}
   [[ -n $old && -n $new ]] || usage 1
 
-  local src="$AGENTS_DIR/skills/$old"
-  local dst="$AGENTS_DIR/skills/$new"
+  # Without --root, use the one root that has <old>; refuse to guess between several.
+  if [[ -z $ROOT_GIVEN ]]; then
+    local found=() r
+    for r in "${ROOTS[@]}"; do [[ -d $r/skills/$old ]] && found+=("${r%/}"); done
+    if [[ ${#found[@]} -eq 1 ]]; then
+      ROOT=${found[0]}
+    elif [[ ${#found[@]} -gt 1 ]]; then
+      printf 'Skill %s exists in several roots, pass --root:\n' "$old" >&2
+      printf '  %s\n' "${found[@]}" >&2
+      exit 1
+    fi
+  fi
+
+  local src="$ROOT/skills/$old"
+  local dst="$ROOT/skills/$new"
   [[ -d $src ]] || { echo "No such skill: $src" >&2; exit 1; }
   [[ ! -e $dst ]] || { echo "Skill already exists: $dst" >&2; exit 1; }
 
@@ -125,8 +190,8 @@ cmd_rename() {
   # Re-point every agent that had it enabled. Drop the old link in the agent's real
   # skills dir only if it was ours; a foreign skill of the same name is left alone,
   # since that is usually the conflict being worked around.
-  local agents=() agent_dir agent link real
-  for agent_dir in "$AGENTS_DIR"/*/; do
+  local agent_dir agent link real
+  for agent_dir in "$ROOT"/*/; do
     agent_dir=${agent_dir%/}
     agent=$(basename "$agent_dir")
     link="$agent_dir/skills/$old"
@@ -134,7 +199,6 @@ cmd_rename() {
 
     rm "$link"
     ln -sfn "../../skills/$new" "$agent_dir/skills/$new"
-    agents+=("$agent")
 
     real="$(skills_dir_for "$agent")/$old"
     if [[ -L $real && $(readlink "$real") == "$agent_dir/skills/$old" ]]; then
@@ -143,15 +207,17 @@ cmd_rename() {
     echo "Renamed for $agent"
   done
 
-  if [[ ${#agents[@]} -gt 0 ]]; then
-    cmd_link "${agents[@]}"
-  fi
+  relink_all
+}
+
+cmd_roots() {
+  printf '%s\n' "${ROOTS[@]}"
 }
 
 case "${1:-}" in
   link)
     shift
-    if [[ $# -gt 0 ]]; then cmd_link "$@"; else cmd_link "${DEFAULT_AGENTS[@]}"; fi
+    if [[ $# -gt 0 ]]; then cmd_link "$@"; else relink_all; fi
     ;;
   add)
     shift
@@ -161,6 +227,7 @@ case "${1:-}" in
     shift
     cmd_rename "$@"
     ;;
+  roots) cmd_roots ;;
   -h | --help | help) usage ;;
   *) usage 1 ;;
 esac

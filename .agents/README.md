@@ -43,6 +43,21 @@ ours), and relinks under the new name. Nothing else at the old path is touched.
 A skill that genuinely cannot be shared can live directly in `claude/skills/` or
 `codex/skills/` as a real directory instead of a symlink.
 
+## Private roots
+
+Skills that should not be in this public repo (work-specific ones, say) live in another
+repo with this same `.agents/` layout. `AGENT_SKILL_ROOTS` is a colon-separated list of
+`.agents` dirs in precedence order; set it per machine in `~/.localrc`:
+
+```sh
+export AGENT_SKILL_ROOTS="$HOME/dotfiles/.agents:$HOME/dev/tkye-nourish/.agents"
+```
+
+`link` walks the roots in order and later roots win, so a private skill with the same
+name as one here overrides it. Unset, the only root is this directory. `add` and `rename`
+take `--root <dir>` to pick a root (default: the first); `rename` finds the root on its own
+when only one holds the skill. `scripts/agent-skill roots` prints the list.
+
 Linking is per-skill rather than whole-directory, because `~/.claude/skills` and
 `~/.codex/skills` also hold skills installed by other tools. An existing real directory
 at a target path is left alone with a warning.
