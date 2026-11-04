@@ -50,6 +50,10 @@ o.window({ class = "steam", title = "Steam" }, { tile = true })
 -- wallpaper show through. Use e.g. "0.97 0.93" for a hint of transparency instead.
 o.window("com.microsoft.VSCode", { tag = "-default-opacity", opacity = "0.999 0.985" })
 
+-- Make Discord fully opaque, focused or not. Super+Backspace does the same, but only until
+-- the next Hyprland reload (e.g. a theme switch).
+o.window({ class = "^discord$" }, { tag = "-default-opacity", opacity = "1 1" })
+
 -- Make Firefox fully opaque even when unfocused; Omarchy's default is "1.0 0.985".
 o.window({ tag = "firefox-based-browser" }, { opacity = "1 1" })
 

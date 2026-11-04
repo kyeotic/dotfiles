@@ -391,6 +391,14 @@ hyprctl plugin load ~/.local/lib/hyprdrive/hyprdrive.so && hyprctl reload
 `BEGIN raw-snippet`), and the settings panel in `~/.config/omarchy/plugins/dragos.hyprdrive/`.
 Settings are in the bar's Hyprdrive panel.
 
+`hyprdrive/25-rules.lua` restates Omarchy's `default-opacity` rule as `0.985 0.85`
+(Omarchy's own is `0.985 0.96`), so every tagged window is more see-through when unfocused.
+Don't edit that part of the file (it's regenerated). To keep an app at a different opacity, give it
+a rule in `hyprland.lua` that drops the tag (`tag = "-default-opacity"`), as Discord's does.
+Super+Backspace (Omarchy's "Toggle window transparency") only sets a live `opaque` flag on
+the focused window. Nothing saves it, so a Hyprland reload (which every theme switch does) or
+restarting the app drops it. Use a rule for anything that should stay opaque.
+
 **Update:** `git fetch --tags`, check out the newest tag, then
 `rm -f hyprdrive.so ~/.local/lib/hyprdrive/hyprdrive.so && make all && make install`,
 `omarchy restart shell`, and log out and back in. After a Hyprland update, if the plugin
