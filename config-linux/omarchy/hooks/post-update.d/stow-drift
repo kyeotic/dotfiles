@@ -1,0 +1,8 @@
+#!/bin/bash
+
+# Migrations can replace a stowed config symlink with a real file. omarchy-update
+# runs this after omarchy-migrate, so their changes are copied into the repo and
+# the links restored before scripts/stow would back the files up and revert them.
+
+[[ -x $HOME/dotfiles/scripts/stow-drift ]] || exit 0
+"$HOME/dotfiles/scripts/stow-drift"

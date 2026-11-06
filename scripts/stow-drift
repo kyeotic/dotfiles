@@ -1,0 +1,72 @@
+#!/usr/bin/env bash
+
+# Put stowed files that were replaced with real files back in the repo, then re-link.
+#
+# Some tools swap a stow symlink for a regular file: Omarchy migrations that
+# rewrite a config with `jq … > tmp && mv tmp file`, or `omarchy refresh`.
+# scripts/stow would move that file to a backup and restore the repo copy, so
+# its changes would be lost. This copies a changed file into the repo instead,
+# to review with `git diff`.
+#
+# Not run by scripts/stow: on a fresh machine the real files are the distro's
+# defaults, and copying those into the repo is what --adopt got wrong. Omarchy
+# runs it after every update (config-linux/omarchy/hooks/post-update.d/stow-drift).
+
+set -euo pipefail
+
+dotfiles="$HOME/dotfiles"
+backup_dir="${XDG_STATE_HOME:-$HOME/.local/state}/dotfiles/backup/$(date +%Y%m%d-%H%M%S)"
+relink=0
+
+backup() {
+  local dest="$backup_dir/${1#"$HOME"/}"
+  mkdir -p "$(dirname "$dest")"
+  cp -p "$1" "$dest"
+}
+
+# check_pkg <package dir> <target dir>, the same pairs scripts/stow uses.
+check_pkg() {
+  local pkg=$1 tgt=$2 src rel dst
+  while IFS= read -r -d '' src; do
+    rel=${src#"$dotfiles/$pkg/"}
+    dst="$tgt/$rel"
+
+    # Missing, a link of its own, or the repo file itself (through a link
+    # or a folded directory): nothing to do.
+    [[ -f $dst && ! -L $dst ]] || continue
+    [[ $dst -ef $src ]] && continue
+
+    backup "$dst"
+
+    if cmp -s "$dst" "$src"; then
+      echo "Re-linking unchanged copy: $dst"
+    elif [[ -L $src ]] ||
+      ! git -C "$dotfiles" ls-files --error-unmatch -- "$src" >/dev/null 2>&1 ||
+      ! git -C "$dotfiles" diff --quiet HEAD -- "$src"; then
+      # scripts/stow below still replaces it with a link (stow won't link a
+      # package with a conflict in it), so its contents survive only in the backup.
+      echo "Not copied into the repo, which has its own changes to $pkg/$rel." >&2
+      echo "  Merge it by hand from the backup of $dst" >&2
+      continue
+    else
+      cp "$dst" "$src"
+      echo "Copied into the repo, review with git diff: $pkg/$rel"
+    fi
+
+    rm "$dst"
+    relink=1
+  done < <(find "$dotfiles/$pkg" \( -type f -o -type l \) -print0)
+}
+
+check_pkg .config ~/.config
+check_pkg home ~
+if [[ "$(uname)" == "Linux" ]]; then
+  check_pkg config-linux ~/.config
+fi
+
+if (( relink )); then
+  echo "Backups of the replaced files: $backup_dir"
+  # Omarchy hooks may run without Homebrew on PATH.
+  command -v stow >/dev/null || PATH="/home/linuxbrew/.linuxbrew/bin:/opt/homebrew/bin:$PATH"
+  "$dotfiles/scripts/stow"
+fi

@@ -3,18 +3,25 @@
 # Link Config and home
 mkdir -p ~/.config
 
-# stow_pkg: remove real-file conflicts so the repo version always wins.
+# Conflicts are moved here (same path relative to ~) rather than deleted.
+backup_dir="${XDG_STATE_HOME:-$HOME/.local/state}/dotfiles/backup/$(date +%Y%m%d-%H%M%S)"
+
+# stow_pkg: move real-file conflicts to $backup_dir so the repo version always wins.
 # stow reports conflicts two ways (foreign symlink, and real file/dir), hence both
 # sed patterns. sed, not grep -oP, because BSD grep has no -P.
 # --adopt was removed because it moves local files INTO the repo, overwriting it.
+# A conflict can be a stowed file that something replaced with a real copy (an
+# Omarchy migration, `omarchy refresh`); run scripts/stow-drift first to keep its changes.
 stow_pkg() {
   local src=$1 tgt=$2 pkg=$3
   stow -n -d "$src" -t "$tgt" -S "$pkg" 2>&1 \
     | sed -n -e 's/.*existing target is not owned by stow: //p' \
               -e 's/.*over existing target \(.*\) since neither a link nor a directory.*/\1/p' \
     | while IFS= read -r f; do
-        echo "Removing conflict: $tgt/$f"
-        rm -rf "$tgt/$f"
+        local dest="$backup_dir${tgt#"$HOME"}/$f"
+        echo "Moving conflict to backup: $tgt/$f -> $dest"
+        mkdir -p "$(dirname "$dest")"
+        mv "$tgt/$f" "$dest"
       done
   stow -d "$src" -t "$tgt" -S "$pkg"
 }

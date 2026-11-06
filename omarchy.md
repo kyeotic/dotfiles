@@ -10,8 +10,11 @@ per-machine files that stay out of the repo, and one-time manual steps. Run
 
 ## Config in the repo
 
-`omarchy refresh` replaces the stowed symlinks with real files. Copy any changes back
-into the repo, then re-run `scripts/stow`.
+`omarchy refresh` and some migrations (e.g. 4.5.0's `jq … > tmp && mv tmp shell.json`)
+replace stowed symlinks with real files. After an update the `stow-drift` hook (below)
+copies changed ones back into the repo and re-links them; review with `git diff`. After
+`omarchy refresh`, run `scripts/stow-drift` yourself. Running only `scripts/stow` would move
+the copies to `~/.local/state/dotfiles/backup/` and restore the repo version.
 
 ### `.config/` (stowed on every machine, used only on Omarchy)
 
@@ -82,6 +85,10 @@ Reading `/dev/hidraw*` and writing `/dev/uinput` rely on the logind seat ACL
 
 ### `config-linux/omarchy/` (Linux only)
 
+- **`hooks/post-update.d/stow-drift`**: runs `scripts/stow-drift` after `omarchy update`.
+  `omarchy-update` runs it after the migrations, so a config a migration replaced with a real
+  file is copied into the repo and re-linked. If the repo copy had uncommitted changes, the
+  migrated one is only in `~/.local/state/dotfiles/backup/` and needs merging by hand.
 - **`hooks/theme-set.d/vscode-reload-theme`**: makes VS Code live-reload Omarchy's
   generated "Omarchy" theme (used by themes without a `vscode.json`). It adds
   `"_watch": true` to `~/.vscode/extensions/omarchy-theme/package.json`, which VS Code
@@ -398,6 +405,10 @@ a rule in `hyprland.lua` that drops the tag (`tag = "-default-opacity"`), as Dis
 Super+Backspace (Omarchy's "Toggle window transparency") only sets a live `opaque` flag on
 the focused window. Nothing saves it, so a Hyprland reload (which every theme switch does) or
 restarting the app drops it. Use a rule for anything that should stay opaque.
+
+Hyprland reloads when `hyprland.lua` changes. A `git pull` that rebases (or a checkout or stash)
+can briefly write an older version of the file, and Hyprland can end up running that version
+even after git puts the new one back. If window rules look wrong after a pull, run `hyprctl reload`.
 
 **Update:** `git fetch --tags`, check out the newest tag, then
 `rm -f hyprdrive.so ~/.local/lib/hyprdrive/hyprdrive.so && make all && make install`,
