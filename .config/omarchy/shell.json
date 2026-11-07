@@ -7,7 +7,6 @@
   "bar": {
     "position": "top",
     "transparent": true,
-    "centerAnchor": "omarchy.clock",
     "layout": {
       "left": [
         {
@@ -19,32 +18,24 @@
       ],
       "center": [
         {
-          "id": "omarchy.indicators"
+          "id": "omarchy.weather"
+        },
+        {
+          "id": "omarchy.system-update"
+        }
+      ],
+      "right": [
+        {
+          "id": "omarchy.tray"
         },
         {
           "id": "omarchy.keyboard-layout"
         },
         {
-          "id": "omarchy.weather"
-        },
-        {
-          "id": "omarchy.system-update"
-        },
-        {
-          "id": "kyeotic.sysmon",
-          "display": "icon",
-          "collapse": true
-        }
-      ],
-      "right": [
-        {
           "id": "gamestats",
           "type": "command",
           "exec": "~/.config/omarchy/bar/scripts/gamestats",
           "interval": 1
-        },
-        {
-          "id": "omarchy.tray"
         },
         {
           "id": "omarchy.agents"
@@ -74,6 +65,48 @@
           "verticalFormat": "HH\n—\nmm",
           "birthYear": 0,
           "lifeExpectancy": 90
+        },
+        {
+          "id": "omarchy.elsewhen",
+          "cities": [
+            {
+              "name": "Los Angeles",
+              "zone": "America/Los_Angeles"
+            },
+            {
+              "name": "New York",
+              "zone": "America/New_York"
+            },
+            {
+              "name": "London",
+              "zone": "Europe/London"
+            },
+            {
+              "name": "Dubai",
+              "zone": "Asia/Dubai"
+            },
+            {
+              "name": "Tokyo",
+              "zone": "Asia/Tokyo"
+            }
+          ]
+        }
+      ],
+      "centerBegin": [
+        {
+          "id": "omarchy.indicators"
+        }
+      ],
+      "centerEnd": [
+        {
+          "id": "kyeotic.sysmon",
+          "display": "icon",
+          "collapse": false
+        }
+      ],
+      "tray": [
+        {
+          "id": "superwhisper.panel"
         }
       ]
     }

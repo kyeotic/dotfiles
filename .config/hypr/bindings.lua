@@ -51,3 +51,13 @@ o.bind("ALT_L", "Discord push-to-talk", hl.dsp.global(discord_ptt), { non_consum
 -- (config-linux/steam-ptt) reads it from the controller's raw HID reports and presses
 -- this button on a virtual mouse, since Steam Input's key output never reaches Hyprland.
 o.bind("mouse:276", "Discord push-to-talk", hl.dsp.global(discord_ptt))
+
+-- Dictation. Omarchy 4.5 binds Alt+Space to toggle it, but Left Alt is Discord
+-- push-to-talk above and passes through, so Space while talking (jumping in a game)
+-- toggled dictation and the Space was swallowed. Keep the pre-4.5 keys instead.
+-- o.dictation_installed is nil before 4.5, so these are skipped there.
+if o.dictation_installed and o.dictation_installed() then
+  hl.unbind("ALT + SPACE")
+  o.bind("SUPER + CTRL + X", "Toggle dictation", "omarchy-dictation toggle")
+  o.bind_hold("F9", "Start dictation (push-to-talk)", "omarchy-dictation start", "Stop dictation (push-to-talk)", "omarchy-dictation stop")
+end

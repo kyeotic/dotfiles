@@ -19,6 +19,8 @@ require("default.hypr.omarchy")
 require("hypr.monitors")
 require("hypr.input")
 require("hypr.bindings")
+-- One shared set of workspaces 1-10 instead of 4.5's per-monitor ones.
+require("hypr.global-workspaces")
 require("hypr.looknfeel")
 require("hypr.autostart")
 
@@ -45,17 +47,6 @@ hl.env("MOZ_WAKE_LOCK_TYPE", "WaylandIdleInhibit")
 -- Tile the main Steam window instead of Omarchy's floating 1100x700. A maximized
 -- float loses its maximize when a game goes fullscreen and snaps back small.
 o.window({ class = "steam", title = "Steam" }, { tile = true })
-
--- Make VS Code fully opaque; Omarchy's default (0.985 active / 0.96 inactive) lets the
--- wallpaper show through. Use e.g. "0.97 0.93" for a hint of transparency instead.
-o.window("com.microsoft.VSCode", { tag = "-default-opacity", opacity = "0.999 0.985" })
-
--- Make Discord fully opaque, focused or not. Super+Backspace does the same, but only until
--- the next Hyprland reload (e.g. a theme switch).
-o.window({ class = "^discord$" }, { tag = "-default-opacity", opacity = "1 1" })
-
--- Make Firefox fully opaque even when unfocused; Omarchy's default is "1.0 0.985".
-o.window({ tag = "firefox-based-browser" }, { opacity = "1 1" })
 
 -- Keep the screensaver off while a fullscreen Steam game is up. Omarchy only covers
 -- the "steam" client class; games are steam_app_<id>, and gamepad input doesn't reset idle.

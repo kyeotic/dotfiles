@@ -30,6 +30,18 @@ the copies to `~/.local/state/dotfiles/backup/` and restore the repo version.
   - `hyprland.lua` sets `MOZ_WAKE_LOCK_TYPE=WaylandIdleInhibit` so Firefox video playback
     blocks the screensaver. By default Firefox uses the desktop portal, whose GTK backend
     does nothing on Hyprland.
+  - `global-workspaces.lua` (required from `hyprland.lua`) undoes 4.5's per-monitor
+    workspaces (`default/hypr/monitor-workspaces.lua`, where each monitor owns its own
+    1-10 and Super+N acts on the focused monitor). It restores one shared set, 1-10:
+    Super+N shows workspace N on whichever monitor has it, and a new workspace opens on
+    the focused monitor unless `monitors.lua` pins it. Omarchy has no setting for this,
+    so the file replaces `o.workspaces.reconcile` (renumbering on start, reload and
+    hotplug), `focus`, `move_window` and `move_to_monitor`, rebinds the keys bound to
+    them, and deletes `~/.local/state/omarchy/monitor-workspaces`. Without that file
+    the bar lists 1-5 plus any others up to 10 on every monitor, as 4.0 did. Does
+    nothing before 4.5. See On update.
+  - `bindings.lua` unbinds 4.5's Alt+Space dictation toggle, which fired when Space was
+    pressed during Left Alt push-to-talk, and keeps F9 (hold) and Super+Ctrl+X.
   - `bindings.lua` binds Ctrl+Shift+Print to `wayscrollshot` (scrolling screenshots,
     which Omarchy's screenshot tool can't do). Install it per machine with
     `yay -S wayscrollshot-bin`; it ships no launcher entry. wayscrollshot runs
@@ -89,13 +101,6 @@ Reading `/dev/hidraw*` and writing `/dev/uinput` rely on the logind seat ACL
   `omarchy-update` runs it after the migrations, so a config a migration replaced with a real
   file is copied into the repo and re-linked. If the repo copy had uncommitted changes, the
   migrated one is only in `~/.local/state/dotfiles/backup/` and needs merging by hand.
-- **`hooks/theme-set.d/vscode-reload-theme`**: makes VS Code live-reload Omarchy's
-  generated "Omarchy" theme (used by themes without a `vscode.json`). It adds
-  `"_watch": true` to `~/.vscode/extensions/omarchy-theme/package.json`, which VS Code
-  reads only at startup, and touches the theme file after each switch, because VS Code
-  otherwise keeps a loaded theme's colors cached. VS Code Settings Sync ignores
-  `workbench.colorTheme` (set in VS Code, not the repo), so Omarchy machines follow the
-  OS theme and others keep Monokai Pro. Temporary; see On update.
 - **`hooks/theme-set.d/shared-wallpapers`**: symlinks
   `~/.config/omarchy/backgrounds/<theme-slug>` to `~/SyncDrive/images/Wallpapers` so the
   shared wallpapers appear in every theme (Omarchy has no all-themes folder). It leaves
@@ -398,11 +403,10 @@ hyprctl plugin load ~/.local/lib/hyprdrive/hyprdrive.so && hyprctl reload
 `BEGIN raw-snippet`), and the settings panel in `~/.config/omarchy/plugins/dragos.hyprdrive/`.
 Settings are in the bar's Hyprdrive panel.
 
-`hyprdrive/25-rules.lua` restates Omarchy's `default-opacity` rule as `0.985 0.85`
-(Omarchy's own is `0.985 0.96`), so every tagged window is more see-through when unfocused.
-Don't edit that part of the file (it's regenerated). To keep an app at a different opacity, give it
-a rule in `hyprland.lua` that drops the tag (`tag = "-default-opacity"`), as Discord's does.
-Super+Backspace (Omarchy's "Toggle window transparency") only sets a live `opaque` flag on
+`hyprdrive/25-rules.lua` restates Omarchy's old `default-opacity` rule as `0.985 0.85`. Since
+4.5 nothing carries that tag: windows are opaque unless opted in with `o.transparent_window()`
+(terminals, 1Password, Nautilus and a few others by default; add more in `looknfeel.lua`), so
+the rule does nothing. The repo has no opacity overrides. Super+Backspace (Omarchy's "Toggle window transparency") only sets a live `opaque` flag on
 the focused window. Nothing saves it, so a Hyprland reload (which every theme switch does) or
 restarting the app drops it. Use a rule for anything that should stay opaque.
 
@@ -425,6 +429,14 @@ Things to check after updating Omarchy (`omarchy update`). Check the version wit
 
 - **After a Hyprland update: rebuild Hyprdrive** (see above) if it fails with a version mismatch.
 
+- **Check `global-workspaces.lua` still holds.** It overrides internals of
+  `default/hypr/monitor-workspaces.lua` and the keys in `default/hypr/bindings/tiling.lua`.
+  If either changed, compare them with it. Signs that it broke: Super+N goes to the
+  focused monitor's own workspace, `~/.local/state/omarchy/monitor-workspaces` comes back,
+  or workspaces numbered above 10 appear (`hyprctl workspaces`). Also check that the bar
+  (`shell/plugins/bar/widgets/Workspaces.qml`) still calls `o.workspaces.focus` and still
+  falls back to block 0 without the state file.
+
 - **Re-sync `kyeotic.audio`.** A clone gets no upstream fixes. Compare it with the package
   (`config-linux/omarchy/plugins/kyeotic.audio/` against
   `/usr/share/omarchy/shell/plugins/panels/audio/`, and `AudioSlider.qml` against
@@ -433,12 +445,10 @@ Things to check after updating Omarchy (`omarchy update`). Check the version wit
   [#17105](https://github.com/omacom/omarchy/issues/17105) is fixed in a release, delete the
   clone and put `omarchy.audio` back in `shell.json`.
 
-- **Past 4.0.4: remove the VS Code theme reload hook.** Omarchy 4.0.4's generated
-  "Omarchy" VS Code theme doesn't reload when the theme changes
-  ([#9336](https://github.com/omacom/omarchy/issues/9336)), so
-  `config-linux/omarchy/hooks/theme-set.d/vscode-reload-theme` works around it.
-  The fix ([PR #10134](https://github.com/omacom/omarchy/pull/10134)) was merged
-  after 4.0.4. Once a newer release is installed, delete the hook and its entry
-  under Config in the repo above, then remove the dangling link with
-  `rm ~/.config/omarchy/hooks/theme-set.d/vscode-reload-theme`.
-  Leaving the hook in place is harmless, but it does nothing useful after the fix.
+- **Remove the old VS Code theme hook's link** on any Omarchy machine that had it. The
+  `vscode-reload-theme` hook worked around
+  [#9336](https://github.com/omacom/omarchy/issues/9336) (the generated "Omarchy" VS Code
+  theme didn't reload on a theme switch) and was deleted once 4.5.0 shipped the fix
+  ([PR #10134](https://github.com/omacom/omarchy/pull/10134)). Run
+  `rm ~/.config/omarchy/hooks/theme-set.d/vscode-reload-theme`. The dangling link is
+  harmless meanwhile, since `omarchy-hook` skips it.
