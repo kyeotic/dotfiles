@@ -75,4 +75,5 @@ macOS GUI apps are in `Brewfile` (casks only), applied by `scripts/install_apps`
 - Platform detection via `uname` (Darwin vs Linux); no NixOS-specific branches remain
 - Username detection via `whoami` selects between personal (`kyeotic`) and work (`tkye`) profiles on macOS
 - Machine-local overrides go in `~/.localrc` (sourced by `.zshrc` if present)
+- Shared secrets go in `~/.vault-env`, which `vault-sync sync` writes from this repo's `.vault-sync.toml` and `.zshrc` sources in every zsh, agent shells included. It holds `export` lines such as `CLOUDFLARE_API_TOKEN` and `CLOUDFLARE_ACCOUNT_ID`, which project tooling (terraform, wrangler) in repos like foodie and snow-tracker reads from the environment instead of a per-repo `.env`. Processes not started from zsh (desktop launchers, systemd units, cron) don't get these vars, and open shells keep the old values until restarted or re-sourced. Never read the file into context
 - Git config includes a conditional include for `.gitconfig.work` based on workspace path
