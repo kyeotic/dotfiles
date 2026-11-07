@@ -22,7 +22,8 @@ function aws-me {
   aws sts get-caller-identity | jq -r '.Account'
 }
 
-# Write ~/.aws/config for Terraform use via IAM console login.
+# Set up ~/.aws/config for Terraform use via IAM console login: a 'login' profile
+# for `aws login`, plus a default profile backed by it. Non-destructive.
 # Usage: aws-configure-tf [account-id] [iam-username] [region]
 #   account-id:   AWS account ID (default: 902498034412)
 #   iam-username: IAM username   (default: kyeotic)
@@ -35,24 +36,39 @@ function aws-configure-tf {
   local username="${2:-kyeotic}"
   local region="${3:-us-west-2}"
 
-  mkdir -p ~/.aws
-  cat > ~/.aws/config <<EOF
-[profile login]
-login_session = arn:aws:iam::${account_id}:user/${username}
-region = ${region}
-
-[profile default]
-credential_process = aws configure export-credentials --profile login --format process
-region = ${region}
-EOF
-  echo "AWS config written to ~/.aws/config (account: ${account_id}, user: ${username}, region: ${region})"
+  # `aws configure set` edits keys in place, keeping any other profiles in the file
+  aws configure set login_session "arn:aws:iam::${account_id}:user/${username}" --profile login || return
+  aws configure set region "$region" --profile login || return
+  _aws-ensure-default "$region" || return
+  echo "AWS config updated in ${AWS_CONFIG_FILE:-~/.aws/config} (account: ${account_id}, user: ${username}, region: ${region})"
 }
 
-# Log in to AWS via browser using the 'login' profile configured by aws-configure-tf.
-# Run aws-configure-tf first if ~/.aws/config does not exist.
-# Usage: aws-login
+# Add a default profile that serves the 'login' profile's session through
+# credential_process, so tools using the default credential chain (Terraform,
+# SDKs, plain `aws`) work without --profile. Leaves an existing default alone,
+# including an older `[profile default]` section.
+# Usage: _aws-ensure-default [region]
+function _aws-ensure-default {
+  local cp="aws configure export-credentials --profile login --format process"
+  if aws configure list-profiles 2>/dev/null | grep -qx default; then
+    if [ "$(aws configure get credential_process --profile default 2>/dev/null)" != "$cp" ]; then
+      echo "Note: default AWS profile exists and doesn't use the 'login' profile; left unchanged." >&2
+    fi
+    return 0
+  fi
+  local region="${1:-$(aws configure get region --profile login 2>/dev/null)}"
+  aws configure set credential_process "$cp" --profile default || return
+  aws configure set region "${region:-us-west-2}" --profile default || return
+  echo "Added default AWS profile (credentials from the 'login' profile)."
+}
+
+# Log in to AWS via browser with the 'login' profile, then make sure a default
+# profile points at it. Works on a fresh machine: `aws login` creates the
+# 'login' profile (asking for a region), so aws-configure-tf is optional.
+# Usage: aws-login [extra `aws login` args]
 function aws-login {
-  aws login --profile login
+  aws login --profile login "$@" || return
+  _aws-ensure-default
 }
 
 function passgen {
