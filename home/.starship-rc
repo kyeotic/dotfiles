@@ -19,16 +19,22 @@ setopt appendhistory
 setopt INC_APPEND_HISTORY
 setopt SHARE_HISTORY
 
-# Auto (zsh plugins + direnv — sourced from brew prefix)
-if command -v brew >/dev/null 2>&1; then
-  BREW_PREFIX="$(brew --prefix)"
-  [ -f "$BREW_PREFIX/share/zsh-autosuggestions/zsh-autosuggestions.zsh" ] && \
-    source "$BREW_PREFIX/share/zsh-autosuggestions/zsh-autosuggestions.zsh"
-  eval "$(direnv hook zsh)"
-
-  FPATH="$BREW_PREFIX/share/zsh/site-functions:$BREW_PREFIX/share/zsh-completions:$FPATH"
-  fpath=($^fpath(N)) # Remove non-existent directories
-fi
+# Auto (zsh plugins + direnv) — macOS gets them from nix (~/.nix-profile), Linux/WSL from Homebrew
+_pkg_prefixes=("$HOME/.nix-profile")
+command -v brew >/dev/null 2>&1 && _pkg_prefixes+=("$(brew --prefix)")
+for _prefix in "${_pkg_prefixes[@]}"; do
+  if [ -f "$_prefix/share/zsh-autosuggestions/zsh-autosuggestions.zsh" ]; then
+    source "$_prefix/share/zsh-autosuggestions/zsh-autosuggestions.zsh"
+    break
+  fi
+done
+for _prefix in "${_pkg_prefixes[@]}"; do
+  FPATH="$_prefix/share/zsh/site-functions:$_prefix/share/zsh-completions:$FPATH"
+done
+typeset -U fpath # Dedupe
+fpath=($^fpath(N)) # Remove non-existent directories
+unset _prefix _pkg_prefixes
+command -v direnv >/dev/null 2>&1 && eval "$(direnv hook zsh)"
 
 # Completions — must run unconditionally so compdef works in .zsh_git/.zsh_just_completions
 autoload -Uz compinit
