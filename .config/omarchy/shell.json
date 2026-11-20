@@ -1,27 +1,33 @@
 {
-  "version": 1,
-  "idle": {
-    "screensaver": 150,
-    "lock": 300
-  },
   "bar": {
-    "position": "top",
-    "transparent": true,
+    "background": "opaque",
     "layout": {
-      "left": [
-        {
-          "id": "omarchy.menu"
-        },
-        {
-          "id": "omarchy.workspaces"
-        }
-      ],
       "center": [
         {
           "id": "omarchy.weather"
         },
         {
           "id": "omarchy.system-update"
+        }
+      ],
+      "centerBegin": [
+        {
+          "id": "omarchy.indicators"
+        }
+      ],
+      "centerEnd": [
+        {
+          "collapse": false,
+          "display": "icon",
+          "id": "kyeotic.sysmon"
+        }
+      ],
+      "left": [
+        {
+          "id": "omarchy.menu"
+        },
+        {
+          "id": "omarchy.workspaces"
         }
       ],
       "right": [
@@ -32,10 +38,10 @@
           "id": "omarchy.keyboard-layout"
         },
         {
-          "id": "gamestats",
-          "type": "command",
           "exec": "~/.config/omarchy/bar/scripts/gamestats",
-          "interval": 1
+          "id": "gamestats",
+          "interval": 1,
+          "type": "command"
         },
         {
           "id": "omarchy.agents"
@@ -59,15 +65,14 @@
           "id": "omarchy.power"
         },
         {
-          "id": "omarchy.clock",
+          "birthYear": 0,
           "format": "ddd d MMM h:mm AP",
           "formatAlt": "d MMMM 'W'ww yyyy",
-          "verticalFormat": "HH\n—\nmm",
-          "birthYear": 0,
-          "lifeExpectancy": 90
+          "id": "omarchy.clock",
+          "lifeExpectancy": 90,
+          "verticalFormat": "HH\n—\nmm"
         },
         {
-          "id": "omarchy.elsewhen",
           "cities": [
             {
               "name": "Los Angeles",
@@ -89,19 +94,8 @@
               "name": "Tokyo",
               "zone": "Asia/Tokyo"
             }
-          ]
-        }
-      ],
-      "centerBegin": [
-        {
-          "id": "omarchy.indicators"
-        }
-      ],
-      "centerEnd": [
-        {
-          "id": "kyeotic.sysmon",
-          "display": "icon",
-          "collapse": false
+          ],
+          "id": "omarchy.elsewhen"
         }
       ],
       "tray": [
@@ -109,7 +103,13 @@
           "id": "superwhisper.panel"
         }
       ]
-    }
+    },
+    "position": "top"
   },
-  "plugins": []
+  "idle": {
+    "lock": 300,
+    "screensaver": 150
+  },
+  "plugins": [],
+  "version": 1
 }
