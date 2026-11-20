@@ -2,8 +2,8 @@
 
 Agent-agnostic skills, shared by every coding agent.
 
-Claude Code and Codex read the same format — `<skills-dir>/<name>/SKILL.md` with YAML
-frontmatter — so each skill is written once here and linked into both.
+Claude Code, Codex and Amp read the same format — `<skills-dir>/<name>/SKILL.md` with YAML
+frontmatter — so each skill is written once here and linked into each of them.
 
 The `.agents/` name follows the [Agent Skills open standard](https://agentskills.io),
 which is also what project repos use for their own skill directories.
@@ -12,13 +12,18 @@ which is also what project repos use for their own skill directories.
 skills/          canonical skill sources (edit these)
 claude/skills/   symlinks -> ../../skills/<name>, linked into ~/.claude/skills
 codex/skills/    symlinks -> ../../skills/<name>, linked into ~/.codex/skills
+agents/skills/   symlinks -> ../../skills/<name>, linked into ~/.agents/skills
 ```
+
+`agents` is not a single agent: `~/.agents/skills` is the standard's shared location, read
+by Amp, Codex and others. Claude Code does not read it, so the `claude` target is still
+needed.
 
 ## Adding a skill
 
 ```sh
-scripts/agent-skill add <name>              # both agents
-scripts/agent-skill add <name> codex        # one agent only
+scripts/agent-skill add <name>              # every target
+scripts/agent-skill add <name> codex        # one target only
 ```
 
 That creates `.agents/skills/<name>/SKILL.md` from a stub if it does not exist, symlinks
@@ -35,13 +40,13 @@ scripts/agent-skill rename <old> <new>
 ```
 
 Useful when a skill installed by another tool (a plugin, a synced directory) lands in
-`~/.claude/skills` or `~/.codex/skills` under the same name as one of ours. It moves
+`~/.claude/skills`, `~/.codex/skills` or `~/.agents/skills` under the same name as one of ours. It moves
 `.agents/skills/<old>` to `<new>`, updates `name:` in the SKILL.md frontmatter, re-points
 the per-agent symlinks, removes the old link from each agent's config dir (only if it was
 ours), and relinks under the new name. Nothing else at the old path is touched.
 
-A skill that genuinely cannot be shared can live directly in `claude/skills/` or
-`codex/skills/` as a real directory instead of a symlink.
+A skill that genuinely cannot be shared can live directly in `claude/skills/`,
+`codex/skills/` or `agents/skills/` as a real directory instead of a symlink.
 
 ## Private roots
 
@@ -58,8 +63,8 @@ name as one here overrides it. Unset, the only root is this directory. `add` and
 take `--root <dir>` to pick a root (default: the first); `rename` finds the root on its own
 when only one holds the skill. `scripts/agent-skill roots` prints the list.
 
-Linking is per-skill rather than whole-directory, because `~/.claude/skills` and
-`~/.codex/skills` also hold skills installed by other tools. An existing real directory
+Linking is per-skill rather than whole-directory, because `~/.claude/skills`,
+`~/.codex/skills` and `~/.agents/skills` also hold skills installed by other tools. An existing real directory
 at a target path is left alone with a warning.
 
 ## Writing skills

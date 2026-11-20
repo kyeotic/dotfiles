@@ -8,7 +8,8 @@
 #   agent-skill roots                             print the roots in precedence order
 #
 # Skills live once in <root>/skills/<name>/. Each agent opts in via a symlink in
-# <root>/<agent>/skills/. Default agents: claude codex.
+# <root>/<agent>/skills/. Default agents: claude codex agents. "agents" is not one agent
+# but the shared ~/.agents/skills dir that Amp, Codex and others read (Claude Code doesn't).
 #
 # Roots come from AGENT_SKILL_ROOTS, a colon-separated list of .agents dirs in precedence
 # order: later roots win when two hold a skill of the same name. Default is just
@@ -18,7 +19,7 @@
 set -eu
 
 DOTFILES="${DOTFILES:-$HOME/dotfiles}"
-DEFAULT_AGENTS=(claude codex)
+DEFAULT_AGENTS=(claude codex agents)
 
 ROOTS=()
 IFS=: read -r -a ROOTS <<< "${AGENT_SKILL_ROOTS:-$DOTFILES/.agents}"
@@ -33,6 +34,7 @@ skills_dir_for() {
   case $1 in
     claude) echo "$HOME/.claude/skills" ;;
     codex) echo "$HOME/.codex/skills" ;;
+    agents) echo "$HOME/.agents/skills" ;;
     *) echo "$HOME/.$1/skills" ;;
   esac
 }
