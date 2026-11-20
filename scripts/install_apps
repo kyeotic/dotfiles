@@ -121,6 +121,19 @@ if [[ "$(uname)" == "Linux" ]]; then
         fi
     fi
 
+    # nano from the distro package manager: brew's nano (Brewfile.linux) is only on the user's
+    # PATH, so root (pkexec/sudo) needs the system one. Check the path, since brew's nano
+    # satisfies `command -v`. Omarchy doesn't ship it; skip ostree (immutable, ships nano).
+    if [ ! -x /usr/bin/nano ] && [ ! -f /run/ostree-booted ]; then
+        if command -v pacman >/dev/null 2>&1; then
+            sudo pacman -S --needed --noconfirm nano
+        elif command -v apt-get >/dev/null 2>&1; then
+            sudo apt-get install -y nano
+        elif command -v dnf >/dev/null 2>&1; then
+            sudo dnf install -y nano
+        fi
+    fi
+
     # Omarchy: install udev rules from config-linux/udev (e.g. Keychron WebHID access).
     # Copied, not symlinked: udev can read rules before /home is mounted
     if command -v omarchy >/dev/null 2>&1; then

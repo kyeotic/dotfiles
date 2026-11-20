@@ -38,6 +38,7 @@ in
     yq-go
     podman
     pnpm
+    nano
     neovim
     ripgrep
     gcc
