@@ -41,12 +41,19 @@ the copies to `~/.local/state/dotfiles/backup/` and restore the repo version.
     the bar lists 1-5 plus any others up to 10 on every monitor, as 4.0 did. Does
     nothing before 4.5. See On update.
   - `bindings.lua` unbinds 4.5's Alt+Space dictation toggle, which fired when Space was
-    pressed during Left Alt push-to-talk, and keeps F9 (hold) and Super+Ctrl+X.
+    pressed during Left Alt push-to-talk, and keeps F9 (hold) and Super+Ctrl+X. They run
+    `omarchy-dictation`, which calls whichever backend is the default (see Dictation).
   - `bindings.lua` binds Ctrl+Shift+Print to `wayscrollshot` (scrolling screenshots,
     which Omarchy's screenshot tool can't do). Install it per machine with
     `yay -S wayscrollshot-bin`; it ships no launcher entry. wayscrollshot runs
     `grim -s 1`, which captures at logical size (blurry at scale 1.5), so the binding
     puts `.config/wayscrollshot/grim` first on PATH, a wrapper that drops `-s`.
+  - `bindings.lua` rebinds Print and Super+Ctrl+Alt+C (the default screenshot binds)
+    to delete `~/.local/state/Omarchy/omasnap/shortcuts-hidden` before running
+    `omarchy-capture-screenshot`. Omasnap writes that marker when its Shortcuts card is
+    closed and then hides the card on every later capture (only `?` brings it back),
+    so the rebind makes closing the card last for one capture only. Captures started
+    from the Omarchy menu still respect the marker.
   - `bindings.lua` binds Discord push-to-talk (Left Alt, the Naga side button
     `mouse:276`, which the Steam Controller bridge also presses) to the portal global shortcut
     `discord:discord-push-to-talk`. Discord only registers it while a PTT keybind exists
@@ -56,7 +63,7 @@ the copies to `~/.local/state/dotfiles/backup/` and restore the repo version.
 - **`omarchy/shell.json`**: bar and idle settings.
 - **`omarchy/bar/scripts/gamestats`** and **`MangoHud/MangoHud.conf`**: the game stats
   bar widget (see Game stats bar widget below).
-- **`voxtype/`**: dictation. `paste-hook` pastes output per window type (and adds a
+- **`voxtype/`**: the old dictation backend, kept as a fallback (see Dictation). `paste-hook` pastes output per window type (and adds a
   leading space when the previous dictation went to the same window within 60s), and
   `ollama-cleanup` post-processes transcripts with a local Ollama model (see Dictation
   below).
@@ -277,7 +284,40 @@ dotfiles (`.config/MangoHud/`, `.config/omarchy/bar/scripts/gamestats`,
 `MANGOHUD=1 vkcube --wsi wayland` and run `~/.config/omarchy/bar/scripts/gamestats`.
 It should print JSON while vkcube runs and nothing about 3s after it closes.
 
-## Dictation engine (voxtype + Parakeet)
+## Dictation (Superwhisper, offline)
+
+Since 4.5 dictation goes through `omarchy-dictation`, which calls the backend named in
+`~/.config/omarchy/defaults/dictation`. On `omanir` that's **Superwhisper** in **Offline** mode.
+Set it up per machine:
+
+```
+omarchy default dictation superwhisper            # installs superwhisper-bin, sets it as default
+superwhisper models download cohere-transcription # one at a time: then cleanup, vocabulary,
+                                                  # voice-detection (~2.2 GB in total)
+superwhisper models select offline
+```
+
+- Superwhisper defaults to **Cloud**, which sends audio off the machine. Check with
+  `superwhisper models show` (`processing`).
+- Offline is Cohere Transcribe plus S1 Mini cleanup, on the GPU through Vulkan. It loads as soon
+  as Offline is selected and stays loaded: about 3 GB VRAM and 1 GB RAM on the 4090.
+  `superwhisper general set linux.autoUnloadModels true` unloads it after
+  `voiceModelActiveDelay` seconds idle (a few seconds to reload on the next dictation), and
+  `superwhisper models unload` frees it now.
+- Change settings with the `superwhisper` CLI or its settings window, not by editing
+  `~/.config/superwhisper/`. That's also why it isn't in the repo: Superwhisper rewrites its
+  files, which would replace a stow link.
+- Superwhisper's own toggle shortcut (Ctrl+Alt+Space) isn't used; the Hyprland keys above are.
+
+## Voxtype (fallback dictation)
+
+Voxtype is still installed on `omanir`, with `voxtype.service` disabled. Switch back with
+`omarchy default dictation voxtype`, which runs Omarchy's Voxtype installer: it keeps the stowed
+`config.toml`, downloads the model if missing and re-enables the service. Superwhisper keeps
+running alongside until `systemctl --user disable --now superwhisper`. The sections below apply
+only when Voxtype is the backend.
+
+### Dictation engine (voxtype + Parakeet)
 
 `.config/voxtype/config.toml` uses the Parakeet engine (English-only, CUDA), loaded on
 demand so it holds no VRAM between recordings. Parakeet needs voxtype's ONNX binary and the
@@ -291,7 +331,7 @@ systemctl --user restart voxtype
 
 `voxtype setup onnx --disable` goes back to the Whisper (Vulkan) binary; set `engine = "whisper"` too.
 
-## Dictation cleanup (voxtype + Ollama)
+### Dictation cleanup (voxtype + Ollama)
 
 Voxtype pipes each transcript through `~/.config/voxtype/ollama-cleanup`, which fixes
 punctuation, drops filler words, and applies self-corrections ("at 3, no wait, at 4")

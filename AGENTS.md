@@ -20,7 +20,7 @@ DO NOT READ the .env file, it contains secrets that should NEVER be in the claud
 
 ## Omarchy
 
-Some Linux machines run Omarchy (Arch + Hyprland); others (macOS, WSL, work machines) don't. Everything Omarchy-specific (Hyprland, the Omarchy bar/shell, themes and hooks, MangoHud, voxtype dictation, per-machine setup, things to check after `omarchy update`) is documented in `omarchy.md`, not here.
+Some Linux machines run Omarchy (Arch + Hyprland); others (macOS, WSL, work machines) don't. Everything Omarchy-specific (Hyprland, the Omarchy bar/shell, themes and hooks, MangoHud, dictation (Superwhisper, Voxtype fallback), per-machine setup, things to check after `omarchy update`) is documented in `omarchy.md`, not here.
 
 - **On an Omarchy machine, read `omarchy.md` before answering any OS question or doing any OS task**: desktop, window manager, bar, themes, monitors, input, audio, gaming, dictation, apps, packages, services, system config, troubleshooting. You're on Omarchy if `command -v omarchy` succeeds (the kernel name from `uname -r` also contains `omarchy`)
 - On any machine, also read it before touching Omarchy config in this repo (`.config/hypr`, `.config/omarchy`, `.config/MangoHud`, `.config/voxtype`, `config-linux/omarchy`, `home/.local/share/applications/discord.desktop`). Those files are stowed everywhere but only used on Omarchy

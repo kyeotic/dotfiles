@@ -34,6 +34,13 @@
 -- aren't captured at 1x and blurry on scaled monitors.
 o.bind("CTRL + SHIFT + PRINT", "Scrolling screenshot", "pkill wayscrollshot || PATH=$HOME/.config/wayscrollshot:$PATH wayscrollshot")
 
+-- Screenshot binds (same as Omarchy's defaults), but closing Omasnap's Shortcuts card
+-- only lasts for that capture. Omasnap remembers a close with this marker file
+-- and has no setting to turn that off, so delete the marker before each launch.
+local omasnap_capture = 'rm -f "${XDG_STATE_HOME:-$HOME/.local/state}/Omarchy/omasnap/shortcuts-hidden"; omarchy-capture-screenshot'
+o.rebind("PRINT", "Screenshot", omasnap_capture)
+o.rebind("SUPER + CTRL + ALT + C", "Screenshot", omasnap_capture)
+
 -- Same command as the Omarchy menu's Suspend entry.
 o.bind("CTRL + SUPER + F12", "Suspend", "systemctl suspend")
 
