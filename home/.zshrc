@@ -18,6 +18,8 @@ if [[ ":$FPATH:" != *":$HOME/.zsh/completions:"* ]]; then export FPATH="$HOME/.z
 
 # Shared Dotfiles
 if [[ -a ~/.zsh_functions ]]; then source ~/.zsh_functions; fi
+# Omarchy-only functions (see omarchy.md)
+if [[ -a ~/.zsh_omarchy ]] && command -v omarchy >/dev/null 2>&1; then source ~/.zsh_omarchy; fi
 # Interactive only, so agent shells (`zsh -c -l`) get real commands instead of aliases
 if [[ -o interactive && -a ~/.zsh_aliases ]]; then source ~/.zsh_aliases; fi
 if [[ -o interactive && -a ~/.zsh_git ]]; then source ~/.zsh_git; fi

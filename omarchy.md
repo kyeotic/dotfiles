@@ -72,6 +72,12 @@ the copies to `~/.local/state/dotfiles/backup/` and restore the repo version.
 
 ### `home/`
 
+- **`.zsh_omarchy`** holds Omarchy-only shell functions. `.zshrc` sources it only when
+  `omarchy` is on PATH, so it's stowed everywhere but loads only here.
+  - `update-amp` installs the latest `amp-desktop-bin` from the omarchy repo without
+    syncing pacman's databases. It reads the current filename from the live `omarchy.db`
+    (repo URL from `pacman-conf --repo omarchy Server`) and runs `yay -U` on that file, so
+    it isn't a partial upgrade.
 - **`.local/share/applications/discord.desktop`** overrides the `discord` package's
   launcher to force XWayland (`--ozone-platform=x11`). Omarchy's
   `ELECTRON_OZONE_PLATFORM_HINT=wayland` otherwise breaks Discord keybind recording.

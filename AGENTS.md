@@ -58,7 +58,7 @@ macOS GUI apps are in `Brewfile` (casks only), applied by `scripts/install_apps`
 
 ## Repository Structure
 
-- **`home/`** - Files symlinked to `~/` (`.zshrc`, `.zsh_aliases`, `.zsh_functions`, `.zsh_git`, `.gitconfig`, `.starship-rc`). `.claude/CLAUDE.md` is the global Claude Code instructions file (e.g. use `pkexec` rather than `sudo` on Linux, since the agent's shell has no TTY); only the file is linked, since `~/.claude` is a real directory.
+- **`home/`** - Files symlinked to `~/` (`.zshrc`, `.zsh_aliases`, `.zsh_functions`, `.zsh_omarchy`, `.zsh_git`, `.gitconfig`, `.starship-rc`). `.claude/CLAUDE.md` is the global Claude Code instructions file (e.g. use `pkexec` rather than `sudo` on Linux, since the agent's shell has no TTY); only the file is linked, since `~/.claude` is a real directory.
 - **`.config/`** - Files symlinked to `~/.config/` (starship, kitty, ghostty, direnv, espanso).
 - **`config-linux/`** - Linux-only files symlinked to `~/.config/` (macOS never gets them). Same stow dir and target as `.config/`, so a dir both packages share is unfolded into per-file links. Holds `ghostty/linux.conf`, which `.config/ghostty/config` loads with `config-file = ?linux.conf` (Ghostty has no per-OS conditionals); the `?` makes it optional, so it's skipped on macOS. `config-linux/udev/rules.d/` is the exception: on Omarchy, `scripts/install_apps` copies those rules into `/etc/udev/rules.d/` (see `omarchy.md`).
 - **`scripts/`** - Installation and setup scripts (all bash, idempotent)
@@ -69,7 +69,7 @@ macOS GUI apps are in `Brewfile` (casks only), applied by `scripts/install_apps`
 
 ## Key Conventions
 
-- Shell config is split across `.zshrc` (main), `.zsh_aliases` (aliases), `.zsh_functions` (functions), `.zsh_git` (git helpers), and `.starship-rc` (prompt env setup)
+- Shell config is split across `.zshrc` (main), `.zsh_aliases` (aliases), `.zsh_functions` (functions), `.zsh_omarchy` (Omarchy-only functions, sourced only when `omarchy` is on PATH; see `omarchy.md`), `.zsh_git` (git helpers), and `.starship-rc` (prompt env setup)
 - `.zsh_aliases` and `.zsh_git` load only in interactive shells, so coding agents get real commands: Claude Code builds its shell snapshot with `zsh -c -l`, which still sources `.zshrc`. Keep PATH and env setup out of those two files, since agent shells never load them. A shell's snapshot is taken at session start, so changes apply to new sessions
 - `.starship-rc` sources nix-daemon.sh on macOS, initializes starship, sources zsh-autosuggestions and adds completions to fpath from `~/.nix-profile/share/` (macOS, nix) or `$(brew --prefix)/share/` (Linux/WSL)
 - Platform detection via `uname` (Darwin vs Linux); no NixOS-specific branches remain

@@ -1,0 +1,14 @@
+# Omarchy-only shell functions. Sourced by .zshrc only when `omarchy` is on PATH.
+
+# Install the latest amp-desktop-bin from the omarchy repo without syncing pacman's databases
+# (no `-Sy`, so no partial upgrade): read the current filename from the live repo index, then
+# `yay -U` that package file.
+function update-amp {
+  local repo file
+  repo=$(pacman-conf --repo omarchy Server | head -n1)
+  [[ -n $repo ]] || { echo "update-amp: no [omarchy] repo in pacman.conf" >&2; return 1; }
+  file=$(curl -sfL "$repo/omarchy.db" | bsdtar -xOf - '*/desc' |
+    awk '/^%FILENAME%/{getline; if ($0 ~ /^amp-desktop-bin-[0-9]/) print}')
+  [[ -n $file ]] || { echo "update-amp: amp-desktop-bin not found in $repo/omarchy.db" >&2; return 1; }
+  yay -U "$repo/$file"
+}
