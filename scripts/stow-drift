@@ -11,8 +11,21 @@
 # Not run by scripts/stow: on a fresh machine the real files are the distro's
 # defaults, and copying those into the repo is what --adopt got wrong. Omarchy
 # runs it after every update (config-linux/omarchy/hooks/post-update.d/stow-drift).
+#
+#   stow-drift          copy changed files into the repo, then re-link (scripts/stow)
+#   stow-drift --list   only print each drifted file, one per line, and change nothing:
+#                       <changed|unchanged> TAB <file in ~> TAB <file in the repo>
+#
+# On Omarchy, scripts/stow-drift-watch uses --list to announce drift as it happens.
 
 set -euo pipefail
+
+list=0
+case ${1:-} in
+  --list) list=1 ;;
+  "") ;;
+  *) echo "Usage: stow-drift [--list]" >&2; exit 1 ;;
+esac
 
 dotfiles="$HOME/dotfiles"
 backup_dir="${XDG_STATE_HOME:-$HOME/.local/state}/dotfiles/backup/$(date +%Y%m%d-%H%M%S)"
@@ -26,7 +39,7 @@ backup() {
 
 # check_pkg <package dir> <target dir>, the same pairs scripts/stow uses.
 check_pkg() {
-  local pkg=$1 tgt=$2 src rel dst
+  local pkg=$1 tgt=$2 src rel dst state
   while IFS= read -r -d '' src; do
     rel=${src#"$dotfiles/$pkg/"}
     dst="$tgt/$rel"
@@ -35,6 +48,12 @@ check_pkg() {
     # or a folded directory): nothing to do.
     [[ -f $dst && ! -L $dst ]] || continue
     [[ $dst -ef $src ]] && continue
+
+    if (( list )); then
+      if cmp -s "$dst" "$src"; then state=unchanged; else state=changed; fi
+      printf '%s\t%s\t%s\n' "$state" "$dst" "$src"
+      continue
+    fi
 
     backup "$dst"
 

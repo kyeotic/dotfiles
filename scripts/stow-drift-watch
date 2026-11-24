@@ -1,0 +1,143 @@
+#!/usr/bin/env bash
+
+# Announce stowed files that something replaced with a real copy, as it happens.
+#
+# Omarchy only. Tools that save a config with `mktemp` + `mv` (omarchy-bar, which
+# double-clicking the bar runs, some migrations, `omarchy refresh`) swap the stow
+# symlink for a regular file. The change then lives outside the repo until something
+# re-links it, and re-linking with scripts/stow would drop it. This never re-links:
+# it shows a toast, and clicking it runs scripts/stow-drift-agent, which opens the
+# default coding agent with the diff and the stow-drift skill, like Omarchy's
+# crash reports (omarchy-crash-watch, omarchy-agent-crash).
+#
+# Run by config-linux/systemd/user/dotfiles-drift-watch.service. It watches the
+# directories that held stowed files when it started, so restart the service after
+# stowing a file into a new directory.
+
+set -uo pipefail
+
+dotfiles="$HOME/dotfiles"
+
+# Settle time after the last event, so a burst of writes is checked once.
+readonly debounce=2
+
+# nf-md-link_off, escaped so this file reads without a Nerd Font.
+readonly DRIFT_GLYPH=$'\U000f0338'
+
+# The same package → target pairs as scripts/stow and scripts/stow-drift.
+pairs=(".config:$HOME/.config" "home:$HOME" "config-linux:$HOME/.config")
+
+# Every stowed path in ~, and the real directories that hold them. A directory that
+# resolves into the repo is a folded stow link: a file replaced in there changes the
+# repo itself, which git shows, so there is nothing to watch.
+declare -A targets=() dirs=()
+for pair in "${pairs[@]}"; do
+  pkg=${pair%%:*} tgt=${pair#*:}
+  [[ -d $dotfiles/$pkg ]] || continue
+  while IFS= read -r -d '' src; do
+    dst="$tgt/${src#"$dotfiles/$pkg/"}"
+    targets[$dst]=1
+    dirs[${dst%/*}]=1
+  done < <(find "$dotfiles/$pkg" \( -type f -o -type l \) -print0)
+done
+
+watch=()
+for dir in "${!dirs[@]}"; do
+  [[ -d $dir && ! -L $dir ]] || continue
+  [[ $(realpath "$dir") == "$dotfiles"/* ]] && continue
+  watch+=("$dir")
+done
+
+if ((${#watch[@]} == 0)); then
+  echo "No stowed directories to watch" >&2
+  exit 1
+fi
+
+# Files already announced, so a tool that saves again and again (each bar change)
+# toasts once. Forgotten once the file is a link again, so the next drift toasts.
+declare -A announced=()
+
+announce() {
+  local count=$1 name=$2 headline
+
+  if ((count == 1)); then
+    headline="Dotfiles link replaced: $name"
+  else
+    headline="$count dotfiles links replaced"
+  fi
+
+  # The shell owns the notification server, so wait for it at login or after a
+  # shell restart rather than sending into the gap.
+  omarchy-notification-wait || return 1
+
+  # Without a default agent there is nothing for a click to open.
+  if [[ -z $(omarchy-default-agent) ]]; then
+    omarchy-notification-send -u normal -g "$DRIFT_GLYPH" "$headline" \
+      "Review with ~/dotfiles/scripts/stow-drift --list"
+    return
+  fi
+
+  # --exec consumes the rest of the line, so it comes last. The handler looks the
+  # files up again when clicked, since they may be re-linked by then.
+  omarchy-notification-send -u normal -g "$DRIFT_GLYPH" "$headline" \
+    "Click to review with AI" \
+    --exec "$dotfiles/scripts/stow-drift-agent"
+}
+
+check() {
+  # omarchy-update's post-update hook runs scripts/stow-drift, which copies a
+  # migration's changes into the repo and re-links. Wait for it, then look again.
+  while pgrep -x omarchy-update >/dev/null; do sleep 5; done
+
+  local state live repo name="" fresh=() path
+  local -A drifted=()
+  while IFS=$'\t' read -r state live repo; do
+    [[ -n $live ]] || continue
+    drifted[$live]=1
+    [[ -n ${announced[$live]:-} ]] && continue
+    fresh+=("$live")
+    name=${live##*/}
+  done < <("$dotfiles/scripts/stow-drift" --list 2>/dev/null)
+
+  for path in "${!announced[@]}"; do
+    [[ -n ${drifted[$path]:-} ]] || unset 'announced[$path]'
+  done
+
+  ((${#fresh[@]})) || return 0
+
+  # Only a delivered toast counts, so a failed send is retried on the next event.
+  # Logged to the journal: journalctl --user -u dotfiles-drift-watch
+  if announce "${#fresh[@]}" "$name"; then
+    for path in "${fresh[@]}"; do
+      announced[$path]=1
+      echo "Announced drift: $path"
+    done
+  else
+    echo "Could not announce drift: ${fresh[*]}" >&2
+  fi
+}
+
+# Drift from before this started (a change made while logged out, or while the
+# service was stopped) is announced at login.
+check
+
+# moved_to catches `mv tmp file` and `sed -i`; create catches rm then write. Writes
+# through the link land in the repo and aren't drift.
+inotifywait -m -q -e moved_to,create --format '%w%f' "${watch[@]}" |
+  {
+    pending=0
+    while true; do
+      IFS= read -r -t "$debounce" path
+      status=$?
+      if ((status == 0)); then
+        [[ -n ${targets[$path]:-} ]] && pending=1
+        continue
+      fi
+      # Above 128 is the timeout; anything else means inotifywait exited, and
+      # systemd restarts this.
+      ((status > 128)) || exit 1
+      ((pending)) || continue
+      pending=0
+      check
+    done
+  }

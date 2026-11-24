@@ -1,0 +1,72 @@
+#!/usr/bin/env bash
+
+# Open the default coding agent to review stowed files that were replaced with real
+# copies. The click action of scripts/stow-drift-watch's toast; also fine to run by
+# hand. Like omarchy-agent-crash, it only gathers the facts: the method lives in the
+# stow-drift skill, so it works with whichever agent is the default.
+
+set -euo pipefail
+
+dotfiles="$HOME/dotfiles"
+skill="$dotfiles/.agents/skills/stow-drift/SKILL.md"
+
+# Lines of output from diff per file, so a large file doesn't swamp the prompt.
+readonly max_diff_lines=200
+
+# The agent starts where this runs; the repo holds AGENTS.md and omarchy.md.
+cd "$dotfiles"
+
+drift=$("$dotfiles/scripts/stow-drift" --list)
+
+# Re-linked between the toast and the click (an update, or by hand).
+if [[ -z $drift ]]; then
+  omarchy-notification-send -u low "Dotfiles links are fine" "Nothing left to review"
+  exit 0
+fi
+
+details=""
+while IFS=$'\t' read -r state live repo; do
+  rel=${repo#"$dotfiles/"}
+  git_state=$(git status --short -- "$rel")
+  last_commit=$(git log -1 --format='%h %ad %s' --date=iso -- "$rel")
+
+  details+="
+File in ~:    $live
+Repo copy:    $rel
+Contents:     $state compared with the repo copy
+Live file:    $(ls -l --time-style=long-iso "$live")
+Repo state:   ${git_state:-no uncommitted changes}
+Last commit:  ${last_commit:-not committed}
+"
+
+  if [[ $state == changed ]]; then
+    diff_text=$(diff -u --label "repo: $rel" --label "live: $live" "$repo" "$live" || true)
+    lines=$(wc -l <<<"$diff_text")
+    if ((lines > max_diff_lines)); then
+      diff_text="$(head -n "$max_diff_lines" <<<"$diff_text")
+... diff cut at $max_diff_lines of $lines lines; run the diff yourself for the rest"
+    fi
+    details+="
+Diff from the repo copy to the live file:
+$diff_text
+"
+  fi
+done <<<"$drift"
+
+prompt=$(
+  cat <<PROMPT
+Something replaced stowed dotfiles symlinks on this machine with real files, so their
+current contents live outside the repo. Nothing has been re-linked yet. Help me decide
+what to keep before anything is re-linked or overwritten.
+
+What scripts/stow-drift --list found:
+$details
+Use the stow-drift skill: it covers how to find what wrote each file, the choices to
+offer me, and how to re-link without losing anything. If your harness has no skill
+mechanism, read the skill file directly and follow it instead:
+
+  $skill
+PROMPT
+)
+
+exec omarchy-agent --prompt "$prompt"

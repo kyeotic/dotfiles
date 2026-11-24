@@ -149,6 +149,12 @@ if [[ "$(uname)" == "Linux" ]]; then
             sudo udevadm control --reload-rules
             sudo udevadm trigger
         fi
+
+        # Toast when something replaces a stowed link with a real file, with a click
+        # to review it with the default agent (scripts/stow-drift-watch). The unit is
+        # linked by scripts/stow, which install_shell runs first.
+        systemctl --user daemon-reload
+        systemctl --user enable --now dotfiles-drift-watch.service
     fi
 
     # Discord flatpak: grant access to the secret service so login tokens survive reboots

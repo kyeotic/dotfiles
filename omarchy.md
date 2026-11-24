@@ -11,10 +11,20 @@ per-machine files that stay out of the repo, and one-time manual steps. Run
 ## Config in the repo
 
 `omarchy refresh` and some migrations (e.g. 4.5.0's `jq … > tmp && mv tmp shell.json`)
-replace stowed symlinks with real files. After an update the `stow-drift` hook (below)
-copies changed ones back into the repo and re-links them; review with `git diff`. After
-`omarchy refresh`, run `scripts/stow-drift` yourself. Running only `scripts/stow` would move
-the copies to `~/.local/state/dotfiles/backup/` and restore the repo version.
+replace stowed symlinks with real files. So does every `omarchy-bar` change (position,
+background, layout), which saves `shell.json` with `mktemp` + `mv`. That includes
+double-clicking an empty spot on the bar, which cycles the background. A `shell.json`
+that is a real `-rw-------` file means one of those ran.
+
+When that happens between updates, `dotfiles-drift-watch` (below) shows a
+"Dotfiles link replaced" toast. Clicking it opens the default agent with the diff and
+the `stow-drift` skill to decide what to keep. Nothing is re-linked automatically. By
+hand: `scripts/stow-drift --list` shows what drifted, `scripts/stow-drift` keeps the
+changes and `scripts/stow` drops them (both act on every drifted file). After an update
+the `stow-drift` hook (below) copies changed ones back into the repo and re-links them;
+review with `git diff`. After `omarchy refresh`, run `scripts/stow-drift` yourself.
+Running only `scripts/stow` would move the copies to `~/.local/state/dotfiles/backup/`
+and restore the repo version.
 
 ### `.config/` (stowed on every machine, used only on Omarchy)
 
@@ -61,6 +71,10 @@ the copies to `~/.local/state/dotfiles/backup/` and restore the repo version.
     `pass`/`send_key_state` failed in fullscreen Proton games, which grab the X keyboard.
     See Steam Controller push-to-talk below for the controller.
 - **`omarchy/shell.json`**: bar and idle settings.
+- **`omarchy/defaults/agent`**: the default coding agent (`claude`, Claude Code), which
+  `omarchy-agent`, the quake console and other agent entry points open. Set it with
+  `omarchy default agent <name>`, which writes through the link into the repo. Only this
+  file is linked: the rest of `defaults/` (`dictation`, `dictation.lock`) is per machine.
 - **`omarchy/bar/scripts/gamestats`** and **`MangoHud/MangoHud.conf`**: the game stats
   bar widget (see Game stats bar widget below).
 - **`voxtype/`**: the old dictation backend, kept as a fallback (see Dictation). `paste-hook` pastes output per window type (and adds a
@@ -116,6 +130,21 @@ systemctl --user daemon-reload && systemctl --user enable --now steam-ptt.servic
 ```
 Reading `/dev/hidraw*` and writing `/dev/uinput` rely on the logind seat ACL
 (`getfacl /dev/hidraw3 /dev/uinput`).
+
+### Stow drift toast (`config-linux/systemd/user/dotfiles-drift-watch.service`)
+
+Runs `scripts/stow-drift-watch`, modeled on Omarchy's `omarchy-crash-watch`. It watches the
+real directories that hold stowed files (`inotifywait`, from `omarchy-base`) and, when one
+is replaced by a real file, toasts once per file until it is a link again. It also scans
+at login. It waits for a running `omarchy-update` to finish, since the post-update hook
+re-links on its own. Clicking the toast runs `scripts/stow-drift-agent`, which re-checks,
+then starts `omarchy-agent` in `~/dotfiles` with each file's diff and git state and points
+it at the `stow-drift` skill (`.agents/skills/stow-drift/`). Without a default agent the
+toast only names the command to run. `scripts/install_apps` enables it on Omarchy.
+
+- Log: `journalctl --user -u dotfiles-drift-watch` (one line per announced file)
+- It watches the directories that existed when it started. After stowing a file into a
+  new directory, `systemctl --user restart dotfiles-drift-watch`
 
 ### `config-linux/omarchy/` (Linux only)
 

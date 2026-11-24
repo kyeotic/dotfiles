@@ -1,0 +1,18 @@
+[Unit]
+Description=Announce dotfiles links replaced by real files and offer an AI review
+# Needs the session bus to notify, and the graphical session to open the agent
+# terminal. Modeled on Omarchy's omarchy-crash-watch.service.
+After=graphical-session.target
+PartOf=graphical-session.target
+ConditionEnvironment=WAYLAND_DISPLAY
+# Omarchy only: the toast and the agent launch are Omarchy commands.
+ConditionPathExists=/usr/bin/omarchy-notification-send
+
+[Service]
+Type=simple
+ExecStart=%h/dotfiles/scripts/stow-drift-watch
+Restart=always
+RestartSec=5
+
+[Install]
+WantedBy=graphical-session.target
