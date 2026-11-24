@@ -78,6 +78,15 @@ the copies to `~/.local/state/dotfiles/backup/` and restore the repo version.
     syncing pacman's databases. It reads the current filename from the live `omarchy.db`
     (repo URL from `pacman-conf --repo omarchy Server`) and runs `yay -U` on that file, so
     it isn't a partial upgrade.
+  - `passkey-bt [seconds]` keeps a Bluetooth scan running (default 120s, detached, so the
+    terminal can close) so phone passkey sign-in (the QR code) works in Chromium. Run it,
+    then start the sign-in. Without it the phone sits on "connecting": on sites with
+    passkey autofill, Chromium starts a scan when the page loads, then stops it and
+    immediately starts a new one when the QR code opens. BlueZ is still stopping the first
+    and rejects the restart (`org.bluez.Error.InProgress`), and Chromium never retries
+    (`chrome://device-log` shows `Failed to start caBLE discovery`). With another scan
+    holding discovery open, the restart succeeds. Rebooting doesn't help. Seen on Chromium
+    155 with BlueZ 5.87; drop it once a sign-in works without it.
 - **`.local/share/applications/discord.desktop`** overrides the `discord` package's
   launcher to force XWayland (`--ozone-platform=x11`). Omarchy's
   `ELECTRON_OZONE_PLATFORM_HINT=wayland` otherwise breaks Discord keybind recording.

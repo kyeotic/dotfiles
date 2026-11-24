@@ -12,3 +12,17 @@ function update-amp {
   [[ -n $file ]] || { echo "update-amp: amp-desktop-bin not found in $repo/omarchy.db" >&2; return 1; }
   yay -U "$repo/$file"
 }
+
+# Keep a Bluetooth scan running for a while (default 120s) so a phone passkey sign-in
+# (QR code) works in Chromium. On sites with passkey autofill, Chromium stops its own scan
+# and starts a new one when the QR code opens; BlueZ rejects the restart with InProgress
+# and Chromium never retries, so the phone sits on "connecting". With another scan holding
+# discovery open, the restart succeeds. Run it, then open the QR code within the window.
+function passkey-bt {
+  local secs=${1:-120}
+  [[ $secs == <-> ]] || { echo "usage: passkey-bt [seconds]" >&2; return 1; }
+  bluetoothctl show | grep -q 'Powered: yes' ||
+    { echo "passkey-bt: Bluetooth is off; turn it on first" >&2; return 1; }
+  setsid -f bluetoothctl --timeout "$secs" scan on </dev/null >/dev/null 2>&1
+  echo "Bluetooth scan running for ${secs}s; start the passkey sign-in now"
+}
